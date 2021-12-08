@@ -5,15 +5,19 @@
 #include <libgba-sprite-engine/palette/palette_manager.h>
 #include <libgba-sprite-engine/allocator.h>
 
+#include "BattlemapScene.h"
+
 int main()
 {
     std::shared_ptr<GBAEngine> engine(new GBAEngine());
 
 
+    BattlemapScene* startScene = new BattlemapScene(engine);
+    engine->setScene(startScene);
 
-    while (true)
-    {
-
+    while (true) {
+        engine->update();
+        engine->delay(1000);
     }
 
     return 0;
