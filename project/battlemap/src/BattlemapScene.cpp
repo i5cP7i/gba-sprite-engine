@@ -12,34 +12,43 @@
 #include "plains.h"
 #include "soldier.h"
 
+#define VIEWPLAYER
+
 void BattlemapScene::load()
 {
-    // backgroundPalette = std::unique_ptr<BackgroundPaletteManager>(new BackgroundPaletteManager(flying_stuff_bgPal, sizeof(flying_stuff_bgPal)));
-    foregroundPalette = std::unique_ptr<ForegroundPaletteManager>(new ForegroundPaletteManager(soldierPal, sizeof(soldierPal)));
+    engine.get()->disableText();
 
+    #ifdef VIEWPLAYER
+        foregroundPalette = std::unique_ptr<ForegroundPaletteManager>(new ForegroundPaletteManager(soldierPal, sizeof(soldierPal)));
+    #endif
+    backgroundPalette = std::unique_ptr<BackgroundPaletteManager>(new BackgroundPaletteManager(GizaPlainsMapPal, sizeof(GizaPlainsMapPal)));
+    Battlemap = std::unique_ptr<Background>(new Background(0, GizaPlainsMapTiles, sizeof(GizaPlainsMapTiles), GizaPlainsMapMap, sizeof(GizaPlainsMapMap)));
+    Battlemap.get()->useMapScreenBlock(16);
+
+    #ifdef VIEWPLAYER
     SpriteBuilder<Sprite> Builder;
 
     player = Builder
             .withData(soldierTiles, sizeof(soldierTiles))
             .withSize(SIZE_16_32)
-            .withAnimated(24, 6)
+            .withAnimated(6, 10)
             .withLocation(10, 10)
             .buildPtr();
 
     // player->stopAnimating();
     // player->setBeginFrame(1);
-    // Battlemap = std::unique_ptr<Background>(new Background(1, flying_stuff_bgTiles, sizeof(flying_stuff_bgTiles), test, sizeof(test)));
-    // Battlemap.get()->useMapScreenBlock(16);
+    #endif
 }
 
 void BattlemapScene::tick(u16 keys)
 {
+    #ifdef VIEWPLAYER
     static u32 PlayerPrevFrame = 0;
     static u32 PlayerFrameOrientation = 2;
     static enum ePlayerDirection {Down, Left, Right, Up} PlayerDirection;
 
     static VECTOR PlayerR = {player->getX(), player->getY()};
-    Battlemap.get()->updateMap(this);
+    // Battlemap.get()->updateMap(this);
 
     // TextStream::instance().setText(std::to_string(player->getCurrentFrame()), 18, 1);
 
@@ -92,34 +101,42 @@ void BattlemapScene::tick(u16 keys)
         switch (PlayerDirection)
         {
             case Down:
-                player->moveTo(player->getX()-1, player->getY()+1);
+                player->moveTo(player->getX()-2, player->getY()+1);
                 player->update();
                 break;
             case Left:
-                player->moveTo(player->getX()-1, player->getY()-1);
+                player->moveTo(player->getX()-2, player->getY()-1);
                 player->update();
                 break;
             case Right:
-                player->moveTo(player->getX()+1, player->getY()+1);
+                player->moveTo(player->getX()+2, player->getY()+1);
                 player->update();
                 break;
             case Up:
-                player->moveTo(player->getX()+1, player->getY()-1);
+                player->moveTo(player->getX()+2, player->getY()-1);
                 player->update();
                 break;
             default:
                 break;
         }
     }
+    #endif
 
 }
 
 std::vector<Sprite *> BattlemapScene::sprites()
 {
-    return {player.get()};
+
+    return
+    {
+        #ifdef VIEWPLAYER
+            player.get()
+        #endif
+    };
+
 }
 
 std::vector<Background *> BattlemapScene::backgrounds()
 {
-    return {/*Battlemap.get()*/};
+    return {Battlemap.get()};
 }
