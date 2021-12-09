@@ -10,26 +10,51 @@
 #include <libgba-sprite-engine/effects/fade_out_scene.h>
 
 #include "plains.h"
+#include "soldier.h"
 
 void BattlemapScene::load()
 {
-    backgroundPalette = std::unique_ptr<BackgroundPaletteManager>(new BackgroundPaletteManager(plainsPal, sizeof(plainsPal)));
+    // backgroundPalette = std::unique_ptr<BackgroundPaletteManager>(new BackgroundPaletteManager(flying_stuff_bgPal, sizeof(flying_stuff_bgPal)));
+    foregroundPalette = std::unique_ptr<ForegroundPaletteManager>(new ForegroundPaletteManager(soldierPal, sizeof(soldierPal)));
 
-    Battlemap = std::unique_ptr<Background>(new Background(1, plainsTiles, sizeof(plainsTiles), test, sizeof(test)));
-    Battlemap.get()->useMapScreenBlock(16);
+    SpriteBuilder<AffineSprite> affineBuilder;
+
+    player = affineBuilder
+            .withData(soldierTiles, sizeof(soldierTiles))
+            .withSize(SIZE_16_32)
+            .withAnimated(24, 5)
+            .withLocation(10, 10)
+            .buildPtr();
+    player->stopAnimating();
+    player->setBeginFrame(1);
+    // Battlemap = std::unique_ptr<Background>(new Background(1, flying_stuff_bgTiles, sizeof(flying_stuff_bgTiles), test, sizeof(test)));
+    // Battlemap.get()->useMapScreenBlock(16);
 }
 
 void BattlemapScene::tick(u16 keys)
 {
     Battlemap.get()->updateMap(this);
+
+    if (player->getCurrentFrame() == 2)
+    {
+        player->stopAnimating();
+    }
+    if (!player->isAnimating())
+    {
+        player->animate();
+        player->makeAnimated(1, 2, 10);
+    }
+
+
+
 }
 
 std::vector<Sprite *> BattlemapScene::sprites()
 {
-    return {};
+    return {player.get()};
 }
 
 std::vector<Background *> BattlemapScene::backgrounds()
 {
-    return {Battlemap.get()};
+    return {/*Battlemap.get()*/};
 }
