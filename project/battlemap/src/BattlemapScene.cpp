@@ -17,35 +17,59 @@ void BattlemapScene::load()
     // backgroundPalette = std::unique_ptr<BackgroundPaletteManager>(new BackgroundPaletteManager(flying_stuff_bgPal, sizeof(flying_stuff_bgPal)));
     foregroundPalette = std::unique_ptr<ForegroundPaletteManager>(new ForegroundPaletteManager(soldierPal, sizeof(soldierPal)));
 
-    SpriteBuilder<AffineSprite> affineBuilder;
+    SpriteBuilder<Sprite> Builder;
 
-    player = affineBuilder
+    player = Builder
             .withData(soldierTiles, sizeof(soldierTiles))
             .withSize(SIZE_16_32)
-            .withAnimated(24, 5)
+            .withAnimated(24, 6)
             .withLocation(10, 10)
             .buildPtr();
-    player->stopAnimating();
-    player->setBeginFrame(1);
+    // player->stopAnimating();
+    // player->setBeginFrame(1);
     // Battlemap = std::unique_ptr<Background>(new Background(1, flying_stuff_bgTiles, sizeof(flying_stuff_bgTiles), test, sizeof(test)));
     // Battlemap.get()->useMapScreenBlock(16);
 }
 
 void BattlemapScene::tick(u16 keys)
 {
+    static u32 PlayerPrevFrame = 0;
     Battlemap.get()->updateMap(this);
 
-    if (player->getCurrentFrame() == 2)
-    {
-        player->stopAnimating();
-    }
-    if (!player->isAnimating())
-    {
-        player->animate();
-        player->makeAnimated(1, 2, 10);
-    }
+    TextStream::instance().setText(std::to_string(player->getCurrentFrame()), 18, 1);
 
+    if (player->getCurrentFrame() == 2 && PlayerPrevFrame != 2)
+    {
+        PlayerPrevFrame = player->getCurrentFrame();
+        player->animateToFrame(0);
+    }
+    else if (player->getCurrentFrame() == 1 && PlayerPrevFrame == 2)
+    {
+        PlayerPrevFrame = player->getCurrentFrame();
+        player->animateToFrame(-1);
 
+    }
+    player->update();
+    if (keys & KEY_LEFT)
+    {
+        player->flipHorizontally(false);
+    }
+    else if (keys & KEY_RIGHT)
+    {
+        player->flipHorizontally(true);
+    }
+    else if(keys & KEY_UP)
+    {
+        player->flipHorizontally(true);
+    }
+    else if(keys & KEY_DOWN)
+    {
+        player->flipHorizontally(false);
+    }
+    else if((keys & KEY_A) || (keys & KEY_B))
+    {
+
+    }
 
 }
 

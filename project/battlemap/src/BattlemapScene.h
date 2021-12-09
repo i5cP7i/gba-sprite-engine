@@ -15,7 +15,7 @@ class BattlemapScene : public Scene
 private:
     std::unique_ptr<Background> Battlemap;
 
-    std::unique_ptr<AffineSprite> player;
+    std::unique_ptr<Sprite> player;
 
     int scrollX, scrollY;
 

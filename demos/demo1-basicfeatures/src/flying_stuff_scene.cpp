@@ -53,7 +53,7 @@ void FlyingStuffScene::load() {
             .withLocation(150, 60)
             .buildPtr();
 
-    TextStream::instance() << "level 1 ofwa" << "ziet da af";
+    TextStream::instance() << "level 1: frontend zooi" << "troep";
 
     bg = std::unique_ptr<Background>(new Background(1, background_data, sizeof(background_data), map, sizeof(map)));
     bg.get()->useMapScreenBlock(16);
