@@ -25,6 +25,7 @@ void BattlemapScene::load()
             .withAnimated(24, 6)
             .withLocation(10, 10)
             .buildPtr();
+
     // player->stopAnimating();
     // player->setBeginFrame(1);
     // Battlemap = std::unique_ptr<Background>(new Background(1, flying_stuff_bgTiles, sizeof(flying_stuff_bgTiles), test, sizeof(test)));
@@ -34,41 +35,81 @@ void BattlemapScene::load()
 void BattlemapScene::tick(u16 keys)
 {
     static u32 PlayerPrevFrame = 0;
+    static u32 PlayerFrameOrientation = 2;
+    static enum ePlayerDirection {Down, Left, Right, Up} PlayerDirection;
+
+    static VECTOR PlayerR = {player->getX(), player->getY()};
     Battlemap.get()->updateMap(this);
 
-    TextStream::instance().setText(std::to_string(player->getCurrentFrame()), 18, 1);
+    // TextStream::instance().setText(std::to_string(player->getCurrentFrame()), 18, 1);
 
-    if (player->getCurrentFrame() == 2 && PlayerPrevFrame != 2)
+    if (player->getCurrentFrame() == PlayerFrameOrientation && PlayerPrevFrame != PlayerFrameOrientation)
     {
         PlayerPrevFrame = player->getCurrentFrame();
-        player->animateToFrame(0);
+        player->animateToFrame(PlayerFrameOrientation-2);
     }
-    else if (player->getCurrentFrame() == 1 && PlayerPrevFrame == 2)
+    else if (player->getCurrentFrame() == PlayerFrameOrientation-1 && PlayerPrevFrame == PlayerFrameOrientation)
     {
         PlayerPrevFrame = player->getCurrentFrame();
-        player->animateToFrame(-1);
-
+        player->animateToFrame(PlayerFrameOrientation-3);
     }
     player->update();
+
     if (keys & KEY_LEFT)
     {
         player->flipHorizontally(false);
+        PlayerFrameOrientation = 5;
+        PlayerPrevFrame = 3;
+        player->animateToFrame(PlayerFrameOrientation-3);
+        PlayerDirection = Left;
     }
     else if (keys & KEY_RIGHT)
     {
         player->flipHorizontally(true);
+        PlayerFrameOrientation = 2;
+        PlayerPrevFrame = 0;
+        player->animateToFrame(PlayerFrameOrientation-3);
+        PlayerDirection = Right;
     }
     else if(keys & KEY_UP)
     {
         player->flipHorizontally(true);
+        PlayerFrameOrientation = 5;
+        PlayerPrevFrame = 3;
+        player->animateToFrame(PlayerFrameOrientation-3);
+        PlayerDirection = Up;
     }
     else if(keys & KEY_DOWN)
     {
         player->flipHorizontally(false);
+        PlayerFrameOrientation = 2;
+        PlayerPrevFrame = 0;
+        player->animateToFrame(PlayerFrameOrientation-3);
+        PlayerDirection = Down;
     }
-    else if((keys & KEY_A) || (keys & KEY_B))
+    else if((keys & KEY_A))
     {
-
+        switch (PlayerDirection)
+        {
+            case Down:
+                player->moveTo(player->getX()-1, player->getY()+1);
+                player->update();
+                break;
+            case Left:
+                player->moveTo(player->getX()-1, player->getY()-1);
+                player->update();
+                break;
+            case Right:
+                player->moveTo(player->getX()+1, player->getY()+1);
+                player->update();
+                break;
+            case Up:
+                player->moveTo(player->getX()+1, player->getY()-1);
+                player->update();
+                break;
+            default:
+                break;
+        }
     }
 
 }
