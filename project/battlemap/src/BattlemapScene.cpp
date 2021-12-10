@@ -9,119 +9,120 @@
 #include <libgba-sprite-engine/gba_engine.h>
 #include <libgba-sprite-engine/effects/fade_out_scene.h>
 
-#include "plains.h"
-#include "soldier.h"
-
-#define VIEWPLAYER
+#include "Plains.h"
+#include "Soldier.h"
 
 void BattlemapScene::load()
 {
     engine.get()->disableText();
 
-    #ifdef VIEWPLAYER
+    #ifdef _DEBUGMODE_0
         foregroundPalette = std::unique_ptr<ForegroundPaletteManager>(new ForegroundPaletteManager(soldierPal, sizeof(soldierPal)));
     #endif
     backgroundPalette = std::unique_ptr<BackgroundPaletteManager>(new BackgroundPaletteManager(GizaPlainsMapPal, sizeof(GizaPlainsMapPal)));
-    Battlemap = std::unique_ptr<Background>(new Background(0, GizaPlainsMapTiles, sizeof(GizaPlainsMapTiles), GizaPlainsMapMap, sizeof(GizaPlainsMapMap)));
-    Battlemap.get()->useMapScreenBlock(16);
+    Battlemap = std::unique_ptr<Background>(new Background(0, GizaPlainsMapTiles, sizeof(GizaPlainsMapTiles), GizaPlainsMapMap, sizeof(GizaPlainsMapMap),16,8, BG_REG_64x32));
+    Battlemap.get()->useMapScreenBlock(8);
 
-    #ifdef VIEWPLAYER
+    #ifdef _DEBUGMODE_0
     SpriteBuilder<Sprite> Builder;
 
-    player = Builder
+    playertest = Builder
             .withData(soldierTiles, sizeof(soldierTiles))
             .withSize(SIZE_16_32)
-            .withAnimated(6, 10)
-            .withLocation(10, 10)
+            .withAnimated(24, 20)
+            .withLocation(80, 102)
             .buildPtr();
 
-    // player->stopAnimating();
-    // player->setBeginFrame(1);
+    // playertest->stopAnimating();
+    // playertest->setBeginFrame(1);
     #endif
 }
 
 void BattlemapScene::tick(u16 keys)
 {
-    #ifdef VIEWPLAYER
+    #ifdef _DEBUGMODE_0
     static u32 PlayerPrevFrame = 0;
     static u32 PlayerFrameOrientation = 2;
     static enum ePlayerDirection {Down, Left, Right, Up} PlayerDirection;
 
-    static VECTOR PlayerR = {player->getX(), player->getY()};
+    static VECTOR PlayerR = {playertest->getX(), playertest->getY()};
     // Battlemap.get()->updateMap(this);
 
-    // TextStream::instance().setText(std::to_string(player->getCurrentFrame()), 18, 1);
+    // TextStream::instance().setText(std::to_string(playertest->getCurrentFrame()), 18, 1);
 
-    if (player->getCurrentFrame() == PlayerFrameOrientation && PlayerPrevFrame != PlayerFrameOrientation)
+    if (playertest->getCurrentFrame() == PlayerFrameOrientation && PlayerPrevFrame != PlayerFrameOrientation)
     {
-        PlayerPrevFrame = player->getCurrentFrame();
-        player->animateToFrame(PlayerFrameOrientation-2);
+        PlayerPrevFrame = playertest->getCurrentFrame();
+        playertest->animateToFrame(PlayerFrameOrientation-2);
     }
-    else if (player->getCurrentFrame() == PlayerFrameOrientation-1 && PlayerPrevFrame == PlayerFrameOrientation)
+    else if (playertest->getCurrentFrame() == PlayerFrameOrientation-1 && PlayerPrevFrame == PlayerFrameOrientation)
     {
-        PlayerPrevFrame = player->getCurrentFrame();
-        player->animateToFrame(PlayerFrameOrientation-3);
+        PlayerPrevFrame = playertest->getCurrentFrame();
+        playertest->animateToFrame(PlayerFrameOrientation-3);
     }
-    player->update();
+    playertest->update();
 
     if (keys & KEY_LEFT)
     {
-        player->flipHorizontally(false);
+        playertest->flipHorizontally(false);
         PlayerFrameOrientation = 5;
         PlayerPrevFrame = 3;
-        player->animateToFrame(PlayerFrameOrientation-3);
+        playertest->animateToFrame(PlayerFrameOrientation-3);
         PlayerDirection = Left;
     }
     else if (keys & KEY_RIGHT)
     {
-        player->flipHorizontally(true);
+        playertest->flipHorizontally(true);
         PlayerFrameOrientation = 2;
         PlayerPrevFrame = 0;
-        player->animateToFrame(PlayerFrameOrientation-3);
+        playertest->animateToFrame(PlayerFrameOrientation-3);
         PlayerDirection = Right;
     }
     else if(keys & KEY_UP)
     {
-        player->flipHorizontally(true);
+        playertest->flipHorizontally(true);
         PlayerFrameOrientation = 5;
         PlayerPrevFrame = 3;
-        player->animateToFrame(PlayerFrameOrientation-3);
+        playertest->animateToFrame(PlayerFrameOrientation-3);
         PlayerDirection = Up;
     }
     else if(keys & KEY_DOWN)
     {
-        player->flipHorizontally(false);
+        playertest->flipHorizontally(false);
         PlayerFrameOrientation = 2;
         PlayerPrevFrame = 0;
-        player->animateToFrame(PlayerFrameOrientation-3);
+        playertest->animateToFrame(PlayerFrameOrientation-3);
         PlayerDirection = Down;
     }
     else if((keys & KEY_A))
     {
+        /*
         switch (PlayerDirection)
         {
             case Down:
-                player->moveTo(player->getX()-2, player->getY()+1);
-                player->update();
+                playertest->moveTo(playertest->getX()-2, playertest->getY()+1);
+                playertest->update();
                 break;
             case Left:
-                player->moveTo(player->getX()-2, player->getY()-1);
-                player->update();
+                playertest->moveTo(playertest->getX()-2, playertest->getY()-1);
+                playertest->update();
                 break;
             case Right:
-                player->moveTo(player->getX()+2, player->getY()+1);
-                player->update();
+                playertest->moveTo(playertest->getX()+2, playertest->getY()+1);
+                playertest->update();
                 break;
             case Up:
-                player->moveTo(player->getX()+2, player->getY()-1);
-                player->update();
+                playertest->moveTo(playertest->getX()+2, playertest->getY()-1);
+                playertest->update();
                 break;
             default:
                 break;
         }
+        */
     }
     #endif
 
+    // Battlemap->scroll(offsetX, offsetY);
 }
 
 std::vector<Sprite *> BattlemapScene::sprites()
@@ -129,8 +130,8 @@ std::vector<Sprite *> BattlemapScene::sprites()
 
     return
     {
-        #ifdef VIEWPLAYER
-            player.get()
+        #ifdef _DEBUGMODE_0
+            playertest.get()
         #endif
     };
 

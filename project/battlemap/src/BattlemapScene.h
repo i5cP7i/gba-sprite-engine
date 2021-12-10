@@ -10,14 +10,17 @@
 #include <libgba-sprite-engine/scene.h>
 #include <libgba-sprite-engine/background/background.h>
 
+// #define _DEBUGMODE_0
+
 class BattlemapScene : public Scene
 {
 private:
     std::unique_ptr<Background> Battlemap;
 
-    std::unique_ptr<Sprite> player;
-
-    int scrollX, scrollY;
+    #ifdef _DEBUGMODE_0
+    std::unique_ptr<Sprite> playertest;
+    #endif
+    int offsetX, offsetY;
 
 public:
     std::vector<Sprite *> sprites() override;

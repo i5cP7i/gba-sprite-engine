@@ -376,7 +376,7 @@
 #define REG_SND2FREQ		*(vu16*)(REG_BASE+0x006C)	//!< Channel 2 frequency
 //\}
 
-//! \name Channel 3: Wave player
+//! \name Channel 3: Wave playertest
 //\{
 #define REG_SND3SEL			*(vu16*)(REG_BASE+0x0070)	//!< Channel 3 wave select
 #define REG_SND3CNT			*(vu16*)(REG_BASE+0x0072)	//!< Channel 3 control

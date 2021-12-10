@@ -133,7 +133,7 @@
 #define BG_SIZE2		0x8000
 #define BG_SIZE3		0xC000
 #define BG_REG_32x32		 0	//!< reg bg, 32x32 (256x256 px)
-#define BG_REG_64x32	0x4000	//!< reg bg, 64x32 (512x256 px)
+#define BG_REG_64x32	0x0001	//!< reg bg, 64x32 (512x256 px)
 #define BG_REG_32x64	0x8000	//!< reg bg, 32x64 (256x512 px)
 #define BG_REG_64x64	0xC000	//!< reg bg, 64x64 (512x512 px)
 #define BG_AFF_16x16		 0	//!< affine bg, 16x16 (128x128 px)
@@ -615,7 +615,7 @@
 #define SIOM_BAUD_SHIFT		 0
 #define SIOM_BAUD(n)	((n)<<SIOM_BAUD_SHIFT)
 
-#define SIOM_ID_MASK	0x0030	//!< Multi-player ID mask (R)
+#define SIOM_ID_MASK	0x0030	//!< Multi-playertest ID mask (R)
 #define SIOM_ID_SHIFT		 4
 #define SIOM_ID(n)		((n)<<SIOM_ID_SHIFT)
 //\}
