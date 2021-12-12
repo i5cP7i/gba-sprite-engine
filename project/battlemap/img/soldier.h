@@ -3,13 +3,13 @@
 
 //======================================================================
 //
-//	soldier, 16x192@8, 
-//	+ palette 256 entries, not compressed
-//	+ 48 tiles not compressed
-//	Total size: 512 + 3072 = 3584
+//	soldier, 16x768@4, 
+//	+ palette 32 entries, not compressed
+//	+ 192 tiles Metatiled by 1x2 not compressed
+//	Total size: 64 + 6144 = 6208
 //
-//	Time-stamp: 2021-12-09, 22:24:33
-//	Exported by Cearn's GBA Image Transmogrifier, v0.8.17
+//	Time-stamp: 2021-12-12, 23:38:18
+//	Exported by Cearn's GBA Image Transmogrifier, v0.8.6
 //	( http://www.coranac.com/projects/#grit )
 //
 //======================================================================
@@ -17,11 +17,11 @@
 #ifndef GRIT_SOLDIER_H
 #define GRIT_SOLDIER_H
 
-#define soldierTilesLen 3072
-extern const unsigned int soldierTiles[768];
+#define soldierTilesLen 6144
+extern const unsigned short soldierTiles[3072];
 
-#define soldierPalLen 512
-extern const unsigned short soldierPal[256];
+#define soldierPalLen 64
+extern const unsigned short soldierPal[32];
 
 #endif // GRIT_SOLDIER_H
 

@@ -69,7 +69,7 @@ void Background::buildRegister() {
                  bgIndex |        /* priority, 0 is highest, 3 is lowest */
                  (charBlockIndex << 2) |    /* the char block the image data is stored in */
                  (0 << 6)  |       /* the mosaic flag */
-                 (1 << 7)  |       /* color mode, 0 is 16 colors, 1 is 256 colors */
+                 (0 << 7)  |       /* color mode, 0 is 16 colors, 1 is 256 colors */
                  (screenBlockIndex << 8) |       /* the screen block the tile data is stored in */
                  (1 << 13) |       /* wrapping flag */
                  (mapLayout << 14);

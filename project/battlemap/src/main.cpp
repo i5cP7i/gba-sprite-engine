@@ -7,10 +7,14 @@
 
 #include "BattlemapScene.h"
 
+/*
+ * 16 bit color mode!!!!!!!!!!!!
+ * grit bg.png -ftc -mRtpf -gB4 -pe16 -pu16
+ */
+
 int main()
 {
     std::shared_ptr<GBAEngine> engine(new GBAEngine());
-
 
     BattlemapScene* startScene = new BattlemapScene(engine);
     engine->setScene(startScene);

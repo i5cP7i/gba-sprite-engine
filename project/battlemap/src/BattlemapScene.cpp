@@ -3,11 +3,7 @@
 //
 
 #include "BattlemapScene.h"
-#include <libgba-sprite-engine/sprites/sprite_builder.h>
-#include <libgba-sprite-engine/background/text_stream.h>
-#include <libgba-sprite-engine/gba/tonc_memdef.h>
-#include <libgba-sprite-engine/gba_engine.h>
-#include <libgba-sprite-engine/effects/fade_out_scene.h>
+
 
 #include "Plains.h"
 #include "Soldier.h"
@@ -15,17 +11,14 @@
 void BattlemapScene::load()
 {
     engine.get()->disableText();
-
     #ifdef _DEBUGMODE_0
         foregroundPalette = std::unique_ptr<ForegroundPaletteManager>(new ForegroundPaletteManager(soldierPal, sizeof(soldierPal)));
     #endif
     backgroundPalette = std::unique_ptr<BackgroundPaletteManager>(new BackgroundPaletteManager(GizaPlainsMapPal, sizeof(GizaPlainsMapPal)));
-    Battlemap = std::unique_ptr<Background>(new Background(0, GizaPlainsMapTiles, sizeof(GizaPlainsMapTiles), GizaPlainsMapMap, sizeof(GizaPlainsMapMap),16,8, BG_REG_64x32));
-    Battlemap.get()->useMapScreenBlock(8);
+    Battlemap = std::unique_ptr<Background>(new Background(0, GizaPlainsMapTiles, sizeof(GizaPlainsMapTiles), GizaPlainsMapMap, sizeof(GizaPlainsMapMap),16,0, BG_REG_64x32));
+    // Battlemap.get()->useMapScreenBlock(8);
 
     #ifdef _DEBUGMODE_0
-    SpriteBuilder<Sprite> Builder;
-
     playertest = Builder
             .withData(soldierTiles, sizeof(soldierTiles))
             .withSize(SIZE_16_32)
@@ -45,10 +38,11 @@ void BattlemapScene::tick(u16 keys)
     static u32 PlayerFrameOrientation = 2;
     static enum ePlayerDirection {Down, Left, Right, Up} PlayerDirection;
 
-    static VECTOR PlayerR = {playertest->getX(), playertest->getY()};
+    // static VECTOR PlayerR = {playertest->getX(), playertest->getY()};
     // Battlemap.get()->updateMap(this);
 
     // TextStream::instance().setText(std::to_string(playertest->getCurrentFrame()), 18, 1);
+
 
     if (playertest->getCurrentFrame() == PlayerFrameOrientation && PlayerPrevFrame != PlayerFrameOrientation)
     {
@@ -96,7 +90,7 @@ void BattlemapScene::tick(u16 keys)
     }
     else if((keys & KEY_A))
     {
-        /*
+
         switch (PlayerDirection)
         {
             case Down:
@@ -118,7 +112,7 @@ void BattlemapScene::tick(u16 keys)
             default:
                 break;
         }
-        */
+
     }
     #endif
 

@@ -129,7 +129,7 @@ void Sprite::setAttributesBasedOnSize(SpriteSize size) {
         case SIZE_64_32: size_bits = 3; shape_bits = 1; w = 64; h = 32; animation_offset = 32; break;
         case SIZE_8_16:  size_bits = 0; shape_bits = 2; w = 8; h = 16; animation_offset = 2; break;
         case SIZE_8_32:  size_bits = 1; shape_bits = 2; w = 8; h = 32; animation_offset = 4; break;
-        case SIZE_16_32: size_bits = 2; shape_bits = 2; w = 16; h = 32; animation_offset = 8; break;
+        case SIZE_16_32: size_bits = 2; shape_bits = 2; w = 16; h = 32; animation_offset = 4; break; // animation offset = 8 for 256 color mode
         case SIZE_32_64: size_bits = 3; shape_bits = 2; w = 32; h = 64; animation_offset = 32; break;
     }
 }
@@ -154,7 +154,7 @@ void Sprite::buildOam(int tileIndex) {
             ATTR0_MODE(0) |
             (GFX_MODE << 10) |
             (MOSAIC_MODE << 12) |
-            (COLOR_MODE_256 << 13) |
+            (COLOR_MODE_16 << 13) | // 0 is 16 colors, 1 is 256 colors
             (this->shape_bits << 14);
     oam.attr1 = (this->x & 0x01FF) |
             (AFFINE_FLAG_NONE_SET_YET << 9) |
