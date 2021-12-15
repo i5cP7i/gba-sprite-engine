@@ -15,12 +15,18 @@
 #include <libgba-sprite-engine/sprites/sprite.h>
 #include <libgba-sprite-engine/sprites/sprite_builder.h>
 
-#define _DEBUGMODE_0
+#include "Player.h"
+#include "Plains.h"
+#include "Soldier.h"
+
+// #define _DEBUGMODE_0
 
 class BattlemapScene : public Scene
 {
 private:
     std::unique_ptr<Background> Battlemap;
+
+    std::unique_ptr<Player> PlayerCharacter;
 
     #ifdef _DEBUGMODE_0
     SpriteBuilder<Sprite> Builder;

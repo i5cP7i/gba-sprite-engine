@@ -3,3 +3,12 @@
 //
 
 #include "CharacterBase.h"
+
+CharacterBase::CharacterBase()
+{
+}
+
+void CharacterBase::Move(eDirection Direction, int NumTiles)
+{
+
+}

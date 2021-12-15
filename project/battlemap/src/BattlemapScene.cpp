@@ -5,24 +5,21 @@
 #include "BattlemapScene.h"
 
 
-#include "Plains.h"
-#include "Soldier.h"
-
 void BattlemapScene::load()
 {
     engine.get()->disableText();
-    #ifdef _DEBUGMODE_0
-        foregroundPalette = std::unique_ptr<ForegroundPaletteManager>(new ForegroundPaletteManager(soldierPal, sizeof(soldierPal)));
-    #endif
+    foregroundPalette = std::unique_ptr<ForegroundPaletteManager>(new ForegroundPaletteManager(soldierPal, sizeof(soldierPal)));
     backgroundPalette = std::unique_ptr<BackgroundPaletteManager>(new BackgroundPaletteManager(GizaPlainsMapPal, sizeof(GizaPlainsMapPal)));
     Battlemap = std::unique_ptr<Background>(new Background(0, GizaPlainsMapTiles, sizeof(GizaPlainsMapTiles), GizaPlainsMapMap, sizeof(GizaPlainsMapMap),16,0, BG_REG_64x32));
+
     // Battlemap.get()->useMapScreenBlock(8);
 
+    PlayerCharacter = std::unique_ptr<Player>(new Player(soldierTiles, sizeof(soldierTiles), 80, 102, 30, 24));
     #ifdef _DEBUGMODE_0
     playertest = Builder
             .withData(soldierTiles, sizeof(soldierTiles))
             .withSize(SIZE_16_32)
-            .withAnimated(24, 20)
+            .withAnimated(24, 30)
             .withLocation(80, 102)
             .buildPtr();
 
@@ -33,6 +30,29 @@ void BattlemapScene::load()
 
 void BattlemapScene::tick(u16 keys)
 {
+    PlayerCharacter->AnimateWalking();
+    if (keys & KEY_LEFT) // NorthWest
+    {
+        PlayerCharacter->SetDirection(CharacterBase::eDirection::NorthWest);
+    }
+    else if (keys & KEY_RIGHT) // SouthEast
+    {
+        PlayerCharacter->SetDirection(CharacterBase::eDirection::SouthEast);
+    }
+    else if(keys & KEY_UP) // NorthEast
+    {
+        PlayerCharacter->SetDirection(CharacterBase::eDirection::NorthEast);
+    }
+    else if(keys & KEY_DOWN) // SouthWest
+    {
+        PlayerCharacter->SetDirection(CharacterBase::eDirection::SouthWest);
+    }
+
+    else if (keys & KEY_A)
+    {
+        PlayerCharacter->HandleMovement();
+    }
+
     #ifdef _DEBUGMODE_0
     static u32 PlayerPrevFrame = 0;
     static u32 PlayerFrameOrientation = 2;
@@ -42,7 +62,6 @@ void BattlemapScene::tick(u16 keys)
     // Battlemap.get()->updateMap(this);
 
     // TextStream::instance().setText(std::to_string(playertest->getCurrentFrame()), 18, 1);
-
 
     if (playertest->getCurrentFrame() == PlayerFrameOrientation && PlayerPrevFrame != PlayerFrameOrientation)
     {
@@ -125,8 +144,9 @@ std::vector<Sprite *> BattlemapScene::sprites()
     return
     {
         #ifdef _DEBUGMODE_0
-            playertest.get()
+            playertest.get(),
         #endif
+        PlayerCharacter->Get(),
     };
 
 }

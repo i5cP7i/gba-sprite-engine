@@ -3,7 +3,11 @@ project(battlemap)
 add_executable(${PROJECT_NAME}.elf
         src/main.cpp
         src/BattlemapScene.h
-        src/BattlemapScene.cpp)
+        src/BattlemapScene.cpp
+        src/CharacterBase.h
+        src/CharacterBase.cpp
+        src/Player.h
+        src/Player.cpp)
 
 target_link_libraries(${PROJECT_NAME}.elf gba-sprite-engine)
 
