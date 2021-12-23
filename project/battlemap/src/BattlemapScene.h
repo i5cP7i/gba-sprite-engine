@@ -17,7 +17,6 @@
 
 #include "Player.h"
 #include "Plains.h"
-#include "Soldier.h"
 
 // #define _DEBUGMODE_0
 
@@ -25,9 +24,11 @@ class BattlemapScene : public Scene
 {
 private:
     std::unique_ptr<Background> Battlemap;
+    std::unique_ptr<Background> Text;
+    std::unique_ptr<Background> bg1;
+    std::unique_ptr<Background> bg2;
 
     std::unique_ptr<Player> PlayerCharacter;
-
     #ifdef _DEBUGMODE_0
     SpriteBuilder<Sprite> Builder;
     std::unique_ptr<Sprite> playertest;

@@ -12,14 +12,26 @@
 class CharacterBase
 {
 private:
-    std::unique_ptr<Sprite> CharacterSprite;
-public:
-    CharacterBase();
-    enum class eDirection: unsigned char {SouthEast, SouthWest, NorthEast, NorthWest} Direction;
 
-protected:
+public:
+    enum class eDirection: unsigned char {SouthEast, SouthWest, NorthEast, NorthWest} Direction;
+    CharacterBase(const void *ImageData, int ImageSize, int x, int y, int AnimationDelay, int AnimationFrames);
 
     void Move(eDirection Direction, int NumTiles);
+
+
+protected:
+    SpriteBuilder<Sprite> CharacterBuilder;
+    std::unique_ptr<Sprite> CharacterSprite;
+    u32 PrevFrame = 0;
+    u32 FrameOrientation = 2;
+    eDirection CharacterDirection;
+    int AnimationDelay;
+    int AnimationFrames;
+    int x;
+    int y;
+    int dx;
+    int dy;
 };
 
 

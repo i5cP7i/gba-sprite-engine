@@ -3,36 +3,33 @@
 //
 
 #include "Player.h"
-#include "Soldier.h"
 
-Player::Player(const void *ImageData, int ImageSize, int x, int y, int AnimationDelay, int AnimationFrames)
-    : PlayerDirection(eDirection::SouthWest), dx(2), dy(1)
+Player::Player()
+        : CharacterBase(soldierTiles, sizeof(soldierTiles), 80, 102, 30, 24)
 {
-    PlayerCharacterSprite = PlayerCharacterBuilder
-            .withData(ImageData, ImageSize)
-            .withSize(SIZE_16_32)
-            .withAnimated(AnimationFrames, AnimationDelay)
-            .withLocation(x, y)
-            .buildPtr();
-    PlayerCharacterSprite->flipHorizontally(false);
-    PlayerFrameOrientation = 2;
-    PlayerPrevFrame = 0;
+
+}
+
+Player::Player(int x, int y)
+        : CharacterBase(soldierTiles, sizeof(soldierTiles), x, y, 30, 24)
+{
+
 }
 
 void Player::HandleMovement() {
-    switch(PlayerDirection)
+    switch(CharacterDirection)
     {
         case eDirection::SouthEast: // KEY_RIGHT
-            PlayerCharacterSprite->moveTo(PlayerCharacterSprite->getX()+2, PlayerCharacterSprite->getY()+1);
+            CharacterSprite->moveTo(CharacterSprite->getX()+2, CharacterSprite->getY()+1);
             break;
         case eDirection::SouthWest: // KEY_DOWN
-            PlayerCharacterSprite->moveTo(PlayerCharacterSprite->getX()-2, PlayerCharacterSprite->getY()+1);
+            CharacterSprite->moveTo(CharacterSprite->getX()-2, CharacterSprite->getY()+1);
             break;
         case eDirection::NorthEast: // KEY_UP
-            PlayerCharacterSprite->moveTo(PlayerCharacterSprite->getX()+2, PlayerCharacterSprite->getY()-1);
+            CharacterSprite->moveTo(CharacterSprite->getX()+2, CharacterSprite->getY()-1);
             break;
         case eDirection::NorthWest: // KEY_LEFT
-            PlayerCharacterSprite->moveTo(PlayerCharacterSprite->getX()-2, PlayerCharacterSprite->getY()-1);
+            CharacterSprite->moveTo(CharacterSprite->getX()-2, CharacterSprite->getY()-1);
             break;
         default:
             break;
@@ -44,44 +41,44 @@ void Player::SetDirection(eDirection Direction)
     switch(Direction)
     {
         case eDirection::SouthEast: // KEY_RIGHT
-            PlayerCharacterSprite->flipHorizontally(true);
-            PlayerFrameOrientation = 2;
-            PlayerPrevFrame = 0;
+            CharacterSprite->flipHorizontally(true);
+            FrameOrientation = 2;
+            PrevFrame = 0;
             break;
         case eDirection::SouthWest: // KEY_DOWN
-            PlayerCharacterSprite->flipHorizontally(false);
-            PlayerFrameOrientation = 2;
-            PlayerPrevFrame = 0;
+            CharacterSprite->flipHorizontally(false);
+            FrameOrientation = 2;
+            PrevFrame = 0;
             break;
         case eDirection::NorthEast: // KEY_UP
-            PlayerCharacterSprite->flipHorizontally(true);
-            PlayerFrameOrientation = 5;
-            PlayerPrevFrame = 3;
+            CharacterSprite->flipHorizontally(true);
+            FrameOrientation = 5;
+            PrevFrame = 3;
             break;
         case eDirection::NorthWest: // KEY_LEFT
-            PlayerCharacterSprite->flipHorizontally(false);
-            PlayerFrameOrientation = 5;
-            PlayerPrevFrame = 3;
+            CharacterSprite->flipHorizontally(false);
+            FrameOrientation = 5;
+            PrevFrame = 3;
             break;
         default:
             break;
     }
-    PlayerCharacterSprite->animateToFrame(PlayerFrameOrientation-3);
-    PlayerDirection = Direction;
+    CharacterSprite->animateToFrame(FrameOrientation-3);
+    CharacterDirection = Direction;
     Update();
 }
 
 void Player::AnimateWalking()
 {
-    if (PlayerCharacterSprite->getCurrentFrame() == PlayerFrameOrientation && PlayerPrevFrame != PlayerFrameOrientation)
+    if (CharacterSprite->getCurrentFrame() == FrameOrientation && PrevFrame != FrameOrientation)
     {
-        PlayerPrevFrame = PlayerCharacterSprite->getCurrentFrame();
-        PlayerCharacterSprite->animateToFrame(PlayerFrameOrientation-2);
+        PrevFrame = CharacterSprite->getCurrentFrame();
+        CharacterSprite->animateToFrame(FrameOrientation-2);
     }
-    else if (PlayerCharacterSprite->getCurrentFrame() == PlayerFrameOrientation-1 && PlayerPrevFrame == PlayerFrameOrientation)
+    else if (CharacterSprite->getCurrentFrame() == FrameOrientation-1 && PrevFrame == FrameOrientation)
     {
-        PlayerPrevFrame = PlayerCharacterSprite->getCurrentFrame();
-        PlayerCharacterSprite->animateToFrame(PlayerFrameOrientation-3);
+        PrevFrame = CharacterSprite->getCurrentFrame();
+        CharacterSprite->animateToFrame(FrameOrientation-3);
     }
     Update();
 }

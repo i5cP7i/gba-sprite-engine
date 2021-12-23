@@ -7,14 +7,14 @@
 
 void BattlemapScene::load()
 {
-    engine.get()->disableText();
+    // engine.get()->disableText();
     foregroundPalette = std::unique_ptr<ForegroundPaletteManager>(new ForegroundPaletteManager(soldierPal, sizeof(soldierPal)));
     backgroundPalette = std::unique_ptr<BackgroundPaletteManager>(new BackgroundPaletteManager(GizaPlainsMapPal, sizeof(GizaPlainsMapPal)));
     Battlemap = std::unique_ptr<Background>(new Background(0, GizaPlainsMapTiles, sizeof(GizaPlainsMapTiles), GizaPlainsMapMap, sizeof(GizaPlainsMapMap),16,0, BG_REG_64x32));
 
     // Battlemap.get()->useMapScreenBlock(8);
 
-    PlayerCharacter = std::unique_ptr<Player>(new Player(soldierTiles, sizeof(soldierTiles), 80, 102, 30, 24));
+    PlayerCharacter = std::unique_ptr<Player>(new Player(80, 102));
     #ifdef _DEBUGMODE_0
     playertest = Builder
             .withData(soldierTiles, sizeof(soldierTiles))
@@ -31,6 +31,7 @@ void BattlemapScene::load()
 void BattlemapScene::tick(u16 keys)
 {
     PlayerCharacter->AnimateWalking();
+    #ifdef _DEBUGMODE_0
     if (keys & KEY_LEFT) // NorthWest
     {
         PlayerCharacter->SetDirection(CharacterBase::eDirection::NorthWest);
@@ -53,7 +54,6 @@ void BattlemapScene::tick(u16 keys)
         PlayerCharacter->HandleMovement();
     }
 
-    #ifdef _DEBUGMODE_0
     static u32 PlayerPrevFrame = 0;
     static u32 PlayerFrameOrientation = 2;
     static enum ePlayerDirection {Down, Left, Right, Up} PlayerDirection;
@@ -133,14 +133,12 @@ void BattlemapScene::tick(u16 keys)
         }
 
     }
-    #endif
-
     // Battlemap->scroll(offsetX, offsetY);
+    #endif
 }
 
 std::vector<Sprite *> BattlemapScene::sprites()
 {
-
     return
     {
         #ifdef _DEBUGMODE_0
@@ -153,5 +151,5 @@ std::vector<Sprite *> BattlemapScene::sprites()
 
 std::vector<Background *> BattlemapScene::backgrounds()
 {
-    return {Battlemap.get()};
+    return {Battlemap.get(),};
 }
