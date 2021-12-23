@@ -19,6 +19,14 @@ public:
 
     void Move(eDirection Direction, int NumTiles);
 
+    void HandleMovement();
+    void AnimateWalking();
+
+    void SetDirection(eDirection Direction);
+
+    void Update() const { CharacterSprite->update(); }
+    Sprite* Get() const { return CharacterSprite.get(); }
+
 
 protected:
     SpriteBuilder<Sprite> CharacterBuilder;

@@ -16,12 +16,8 @@ private:
 public:
     Player();
     Player(int x, int y);
-    void SetDirection(eDirection Direction);
+
     eDirection GetDirection() const { return Direction; }
-    void HandleMovement();
-    void AnimateWalking();
-    void Update() const { CharacterSprite->update(); }
-    Sprite* Get() const { return CharacterSprite.get(); }
 };
 
 
