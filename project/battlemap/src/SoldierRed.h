@@ -13,7 +13,7 @@
 //
 //======================================================================
 
-const unsigned int soldierRedTiles[1536] __attribute__((aligned(4))) __attribute__((visibility("hidden")))=
+const unsigned int soldierRedTiles[1536] =
         {
                 0x00000000,0x00000000,0x00000000,0x00000000,0xBBB00000,0xDDEB0000,0xDDEB0000,0xE533B000,
                 0x00000000,0x00000000,0x00000000,0x00000000,0x00000BBB,0x0000BEED,0x000BEDDD,0x00BEDDDD,
