@@ -6,7 +6,7 @@
 #define GBA_SPRITE_ENGINE_PROJECT_PLAYER_H
 
 #include "CharacterBase.h"
-#include "Soldier.h"
+#include "SoldierBlue.h"
 #include <libgba-sprite-engine/gba_engine.h>
 
 class Player : public CharacterBase

@@ -8,13 +8,12 @@
 void BattlemapScene::load()
 {
     // engine.get()->disableText();
-    foregroundPalette = std::unique_ptr<ForegroundPaletteManager>(new ForegroundPaletteManager(soldierPal, sizeof(soldierPal)));
+    foregroundPalette = std::unique_ptr<ForegroundPaletteManager>(new ForegroundPaletteManager(sharedPal, sizeof(sharedPal)));
     backgroundPalette = std::unique_ptr<BackgroundPaletteManager>(new BackgroundPaletteManager(GizaPlainsMapPal, sizeof(GizaPlainsMapPal)));
-    Battlemap = std::unique_ptr<Background>(new Background(0, GizaPlainsMapTiles, sizeof(GizaPlainsMapTiles), GizaPlainsMapMap, sizeof(GizaPlainsMapMap),16,0, BG_REG_64x32));
-
     // Battlemap.get()->useMapScreenBlock(8);
-
+    EnemyCharacter = std::unique_ptr<Enemy>(new Enemy(100, 102));
     PlayerCharacter = std::unique_ptr<Player>(new Player(80, 102));
+
     #ifdef _DEBUGMODE_0
     playertest = Builder
             .withData(soldierTiles, sizeof(soldierTiles))
@@ -26,11 +25,14 @@ void BattlemapScene::load()
     // playertest->stopAnimating();
     // playertest->setBeginFrame(1);
     #endif
+    Battlemap = std::unique_ptr<Background>(new Background(0, GizaPlainsMapTiles, sizeof(GizaPlainsMapTiles), GizaPlainsMapMap, sizeof(GizaPlainsMapMap),16,8, BG_REG_64x32));
+
 }
 
 void BattlemapScene::tick(u16 keys)
 {
     PlayerCharacter->AnimateWalking();
+    EnemyCharacter->AnimateWalking();
     #ifdef _DEBUGMODE_0
     if (keys & KEY_LEFT) // NorthWest
     {
@@ -145,6 +147,7 @@ std::vector<Sprite *> BattlemapScene::sprites()
             playertest.get(),
         #endif
         PlayerCharacter->Get(),
+        EnemyCharacter->Get(),
     };
 
 }

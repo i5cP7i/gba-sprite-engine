@@ -4,17 +4,16 @@
 //======================================================================
 //
 //	soldier, 16x768@4, 
-//	+ palette 16 entries, not compressed
-//	+ 192 tiles Metatiled by 2x4 not compressed
-//	Total size: 32 + 6144 = 6176
+//	+ 192 tiles not compressed
+//	Total size: 6144 = 6144
 //
-//	Time-stamp: 2021-12-12, 23:41:37
-//	Exported by Cearn's GBA Image Transmogrifier, v0.8.6
+//	Time-stamp: 2021-12-26, 22:16:05
+//	Exported by Cearn's GBA Image Transmogrifier, v0.8.17
 //	( http://www.coranac.com/projects/#grit )
 //
 //======================================================================
 
-const unsigned short soldierTiles[3072] __attribute__((aligned(4)))=
+const unsigned short soldierTiles[3072] __attribute__((aligned(4))) __attribute__((visibility("hidden")))=
 {
 	0x0000,0x0000,0x0000,0x0000,0x0000,0x0000,0x0000,0x0000,
 	0x0000,0xBBB0,0x0000,0x661B,0x0000,0x661B,0xB000,0x1255,
@@ -447,12 +446,6 @@ const unsigned short soldierTiles[3072] __attribute__((aligned(4)))=
 	0x0000,0x0000,0x0000,0x0000,0x0000,0x0000,0x0000,0x0000,
 	0x9998,0x0B88,0x8888,0x0B98,0xAAA9,0x0B89,0x448B,0x00B4,
 	0x88B0,0x00B8,0x99B0,0x00B4,0xBB00,0x000B,0x0000,0x0000,
-};
-
-const unsigned short soldierPal[16] __attribute__((aligned(4)))=
-{
-	0x0000,0x7500,0x0115,0x7F6E,0x1CC0,0x023D,0x7DEA,0x03DF,
-	0x1DC0,0x6BF5,0x7BF8,0x0021,0x77FF,0x0000,0x0000,0x0000,
 };
 
 //}}BLOCK(soldier)

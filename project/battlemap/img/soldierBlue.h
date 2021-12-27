@@ -1,24 +1,24 @@
 
-//{{BLOCK(soldier)
+//{{BLOCK(soldierBlue)
 
 //======================================================================
 //
-//	soldier, 16x768@4, 
+//	soldierBlue, 16x768@4, 
 //	+ 192 tiles not compressed
 //	Total size: 6144 = 6144
 //
-//	Time-stamp: 2021-12-26, 22:16:05
+//	Time-stamp: 2021-12-27, 22:28:06
 //	Exported by Cearn's GBA Image Transmogrifier, v0.8.17
 //	( http://www.coranac.com/projects/#grit )
 //
 //======================================================================
 
-#ifndef GRIT_SOLDIER_H
-#define GRIT_SOLDIER_H
+#ifndef GRIT_SOLDIERBLUE_H
+#define GRIT_SOLDIERBLUE_H
 
-#define soldierTilesLen 6144
-extern const unsigned short soldierTiles[3072];
+#define soldierBlueTilesLen 6144
+extern const unsigned int soldierBlueTiles[1536];
 
-#endif // GRIT_SOLDIER_H
+#endif // GRIT_SOLDIERBLUE_H
 
-//}}BLOCK(soldier)
+//}}BLOCK(soldierBlue)

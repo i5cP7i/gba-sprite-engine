@@ -16,7 +16,9 @@
 #include <libgba-sprite-engine/sprites/sprite_builder.h>
 
 #include "Player.h"
+#include "Enemy.h"
 #include "Plains.h"
+#include "ForegroundPalette.h"
 
 // #define _DEBUGMODE_0
 
@@ -29,6 +31,7 @@ private:
     std::unique_ptr<Background> bg2;
 
     std::unique_ptr<Player> PlayerCharacter;
+    std::unique_ptr<Enemy> EnemyCharacter;
     #ifdef _DEBUGMODE_0
     SpriteBuilder<Sprite> Builder;
     std::unique_ptr<Sprite> playertest;
