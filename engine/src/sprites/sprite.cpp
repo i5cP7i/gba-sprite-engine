@@ -164,5 +164,5 @@ void Sprite::buildOam(int tileIndex) {
 
     oam.attr2 = ATTR2_ID(tileIndex) |
             ATTR2_PRIO(priority) |
-            ATTR2_PALBANK(0);
+            ATTR2_PALBANK(PalBank);
 }

@@ -49,9 +49,11 @@ private:
     void updateVelocity();
     void updateAnimation();
     void syncVelocity();
+    int PalBank = 0;
 
 protected:
     const void *data;
+
     int x, y, dx, dy;
     u8 animation_offset;
     u32 priority, w, h, size_bits, shape_bits;
@@ -73,6 +75,7 @@ public:
     explicit Sprite(const void *imageData, int imageSize, int x, int y, SpriteSize size);
     virtual ~Sprite() {}
 
+    void setPalBank(int Palbank) { this->PalBank = Palbank; };
     void makeAnimated(int beginFrame, int numberOfFrames, int animationDelay);
     void setBeginFrame(int frame) { this->beginFrame = frame; }
     void animateToFrame(int frame) { this->currentFrame = frame; }

@@ -12,6 +12,11 @@ void BattlemapScene::load()
     EnemyCharacter = std::unique_ptr<Enemy>(new Enemy(100, 102));
     PlayerCharacter = std::unique_ptr<Player>(new Player(80, 102));
 
+    PlayerCharacter->Get()->setPalBank(0);
+    EnemyCharacter->Get()->setPalBank(1);
+
+    TextStream::instance().setText("FINAL FANTASY TACTICS CLONE!", 0, 1);
+    #ifdef _DEBUGMODE_0
     TextStream::instance().setText("FINAL FANTASY TACTICS CLONE!", 3, 1);
 
     TextStream::instance().setRGB(31,31,31);
@@ -23,8 +28,6 @@ void BattlemapScene::load()
     TextStream::instance().setRGB(31,0,0);
     TextStream::instance().setText("WERKT!!!", 6, 6);
 
-
-    #ifdef _DEBUGMODE_0
     playertest = Builder
             .withData(soldierTiles, sizeof(soldierTiles))
             .withSize(SIZE_16_32)
@@ -35,9 +38,9 @@ void BattlemapScene::load()
     // playertest->stopAnimating();
     // playertest->setBeginFrame(1);
     #endif
-    Battlemap = std::unique_ptr<Background>(new Background(1, GizaPlainsMapTiles, sizeof(GizaPlainsMapTiles), GizaPlainsMapMap, sizeof(GizaPlainsMapMap),14,2, BG_REG_64x32));
-    bg1 = std::unique_ptr<Background>(new Background(2, GizaPlainsMapTiles, sizeof(GizaPlainsMapTiles), GizaPlainsMapMap, sizeof(GizaPlainsMapMap),14,2, BG_REG_64x32));
-    bg2 = std::unique_ptr<Background>(new Background(3, GizaPlainsMapTiles, sizeof(GizaPlainsMapTiles), GizaPlainsMapMap, sizeof(GizaPlainsMapMap),14,2, BG_REG_64x32));
+    Battlemap = std::unique_ptr<Background>(new Background(1, GizaPlainsMapTiles, sizeof(GizaPlainsMapTiles), GizaPlainsMapMap, sizeof(GizaPlainsMapMap),4,1, BG_REG_64x32));
+    bg1 = std::unique_ptr<Background>(new Background(2, GizaPlainsMapTiles, sizeof(GizaPlainsMapTiles), GizaPlainsMapMap, sizeof(GizaPlainsMapMap),4,1, BG_REG_64x32));
+    bg2 = std::unique_ptr<Background>(new Background(3, GizaPlainsMapTiles, sizeof(GizaPlainsMapTiles), GizaPlainsMapMap, sizeof(GizaPlainsMapMap),4,1, BG_REG_64x32));
 
 }
 
