@@ -31,6 +31,10 @@ private:
     TextStream(TextStream& other) = delete;
     TextStream(TextStream&& other) = delete;
 
+    u32 FontColorR = 31;
+    u32 FontColorG = 31;
+    u32 FontColorB = 31;
+
 public:
     void clear();
     void setText(std::string text, int row, int col);
@@ -42,6 +46,8 @@ public:
     static TextStream& instance();
 
     void persist() override;
+
+    void setRGB(u32 r, u32 g, u32 b);
 
     TextStream& operator << (const char* s);
     TextStream& operator << (const int s);

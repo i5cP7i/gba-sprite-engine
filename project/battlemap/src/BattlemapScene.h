@@ -26,7 +26,7 @@ class BattlemapScene : public Scene
 {
 private:
     std::unique_ptr<Background> Battlemap;
-    std::unique_ptr<Background> Text;
+    // std::unique_ptr<Background> Text;
     std::unique_ptr<Background> bg1;
     std::unique_ptr<Background> bg2;
 

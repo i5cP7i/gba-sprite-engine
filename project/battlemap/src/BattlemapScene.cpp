@@ -4,15 +4,21 @@
 
 #include "BattlemapScene.h"
 
-
 void BattlemapScene::load()
 {
-    // engine.get()->disableText();
     foregroundPalette = std::unique_ptr<ForegroundPaletteManager>(new ForegroundPaletteManager(sharedPal, sizeof(sharedPal)));
     backgroundPalette = std::unique_ptr<BackgroundPaletteManager>(new BackgroundPaletteManager(GizaPlainsMapPal, sizeof(GizaPlainsMapPal)));
-    // Battlemap.get()->useMapScreenBlock(8);
     EnemyCharacter = std::unique_ptr<Enemy>(new Enemy(100, 102));
     PlayerCharacter = std::unique_ptr<Player>(new Player(80, 102));
+
+    TextStream::instance().setRGB(31,0,31);
+
+    TextStream::instance() << "!!abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!!";
+
+    TextStream::instance().setText("YES!!!", 3, 3);
+
+    TextStream::instance().setRGB(31,31,0);
+    TextStream::instance().setText("WERKT!!!", 3, 3);
 
     #ifdef _DEBUGMODE_0
     playertest = Builder
@@ -25,7 +31,9 @@ void BattlemapScene::load()
     // playertest->stopAnimating();
     // playertest->setBeginFrame(1);
     #endif
-    Battlemap = std::unique_ptr<Background>(new Background(0, GizaPlainsMapTiles, sizeof(GizaPlainsMapTiles), GizaPlainsMapMap, sizeof(GizaPlainsMapMap),16,8, BG_REG_64x32));
+    Battlemap = std::unique_ptr<Background>(new Background(1, GizaPlainsMapTiles, sizeof(GizaPlainsMapTiles), GizaPlainsMapMap, sizeof(GizaPlainsMapMap),14,2, BG_REG_64x32));
+    bg1 = std::unique_ptr<Background>(new Background(2, GizaPlainsMapTiles, sizeof(GizaPlainsMapTiles), GizaPlainsMapMap, sizeof(GizaPlainsMapMap),14,2, BG_REG_64x32));
+    bg2 = std::unique_ptr<Background>(new Background(3, GizaPlainsMapTiles, sizeof(GizaPlainsMapTiles), GizaPlainsMapMap, sizeof(GizaPlainsMapMap),14,2, BG_REG_64x32));
 
 }
 
@@ -33,6 +41,7 @@ void BattlemapScene::tick(u16 keys)
 {
     PlayerCharacter->AnimateWalking();
     EnemyCharacter->AnimateWalking();
+
     #ifdef _DEBUGMODE_0
     if (keys & KEY_LEFT) // NorthWest
     {
@@ -154,5 +163,5 @@ std::vector<Sprite *> BattlemapScene::sprites()
 
 std::vector<Background *> BattlemapScene::backgrounds()
 {
-    return {Battlemap.get(),};
+    return {Battlemap.get(),bg1.get(),bg2.get()};
 }
