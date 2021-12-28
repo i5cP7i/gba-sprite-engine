@@ -15,7 +15,7 @@
 #define CHAR_OFFSET_INDEX 32
 #define TILE_WIDTH 32
 #define PALETTE_COLOR_INDEX 15
-#define PALETTE_TEXT_BANK 15
+#define PALETTE_TEXT_BANK 0
 
 #define failure_gba(__mess) (consoleLog_func(__FILE__, __LINE__, __PRETTY_FUNCTION__, #__mess))
 void log_text(const char* text);
@@ -24,7 +24,7 @@ void consoleLog_func(const char* fileName, const int lineNr, const char* fnName,
 class TextStream : public Background {
 private:
     int currRow, currCol;
-    std::unique_ptr<BackgroundPaletteManager> palette;
+
 
     static TextStream* inst;
     TextStream();
@@ -36,6 +36,7 @@ private:
     u32 FontColorB = 31;
 
 public:
+    std::unique_ptr<BackgroundPaletteManager> palette;
     void clear();
     void setText(std::string text, int row, int col);
     void setText(const char* text, int row, int col);

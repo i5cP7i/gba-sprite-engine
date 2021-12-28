@@ -8,17 +8,21 @@ void BattlemapScene::load()
 {
     foregroundPalette = std::unique_ptr<ForegroundPaletteManager>(new ForegroundPaletteManager(sharedPal, sizeof(sharedPal)));
     backgroundPalette = std::unique_ptr<BackgroundPaletteManager>(new BackgroundPaletteManager(GizaPlainsMapPal, sizeof(GizaPlainsMapPal)));
+
     EnemyCharacter = std::unique_ptr<Enemy>(new Enemy(100, 102));
     PlayerCharacter = std::unique_ptr<Player>(new Player(80, 102));
 
-    TextStream::instance().setRGB(31,0,31);
+    TextStream::instance().setText("FINAL FANTASY TACTICS CLONE!", 3, 1);
+
+    TextStream::instance().setRGB(31,31,31);
 
     TextStream::instance() << "!!abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!!";
 
-    TextStream::instance().setText("YES!!!", 3, 3);
+    TextStream::instance().setText("YES!!!", 4, 3);
 
-    TextStream::instance().setRGB(31,31,0);
-    TextStream::instance().setText("WERKT!!!", 3, 3);
+    TextStream::instance().setRGB(31,0,0);
+    TextStream::instance().setText("WERKT!!!", 6, 6);
+
 
     #ifdef _DEBUGMODE_0
     playertest = Builder
