@@ -9,14 +9,25 @@ void BattlemapScene::load()
     foregroundPalette = std::unique_ptr<ForegroundPaletteManager>(new ForegroundPaletteManager(sharedPal, sizeof(sharedPal)));
     backgroundPalette = std::unique_ptr<BackgroundPaletteManager>(new BackgroundPaletteManager(GizaPlainsMapPal, sizeof(GizaPlainsMapPal)));
 
-    EnemyCharacter = std::unique_ptr<Enemy>(new Enemy(100, 102));
-    PlayerCharacter = std::unique_ptr<Player>(new Player(80, 102));
+    EnemyCharacter = std::unique_ptr<Enemy>(new Enemy(94, 110));
+    PlayerCharacter = std::unique_ptr<Player>(new Player(78, 102));
+
+
 
     PlayerCharacter->Get()->setPalBank(0);
     EnemyCharacter->Get()->setPalBank(1);
 
+    TileSelector = std::unique_ptr<TileSelection>(new TileSelection()); // Tile delta_x = 16, delta_y = 8
+    TileSelector->Get().at(0)->setPalBank(2);
+    TileSelector->Get().at(1)->setPalBank(2);
+
+
     TextStream::instance().setText("FINAL FANTASY TACTICS CLONE!", 0, 1);
     #ifdef _DEBUGMODE_0
+    TileSelector = std::unique_ptr<TileSelection>(new TileSelection()); // Tile delta_x = 16, delta_y = 8
+    TileSelector->Get().at(0)->setPalBank(2);
+    TileSelector->Get().at(1)->setPalBank(2);
+
     TextStream::instance().setText("FINAL FANTASY TACTICS CLONE!", 3, 1);
 
     TextStream::instance().setRGB(31,31,31);
@@ -41,15 +52,16 @@ void BattlemapScene::load()
     Battlemap = std::unique_ptr<Background>(new Background(1, GizaPlainsMapTiles, sizeof(GizaPlainsMapTiles), GizaPlainsMapMap, sizeof(GizaPlainsMapMap),4,1, BG_REG_64x32));
     bg1 = std::unique_ptr<Background>(new Background(2, GizaPlainsMapTiles, sizeof(GizaPlainsMapTiles), GizaPlainsMapMap, sizeof(GizaPlainsMapMap),4,1, BG_REG_64x32));
     bg2 = std::unique_ptr<Background>(new Background(3, GizaPlainsMapTiles, sizeof(GizaPlainsMapTiles), GizaPlainsMapMap, sizeof(GizaPlainsMapMap),4,1, BG_REG_64x32));
-
 }
 
 void BattlemapScene::tick(u16 keys)
 {
     PlayerCharacter->AnimateWalking();
     EnemyCharacter->AnimateWalking();
+    TileSelector->Update();
 
     #ifdef _DEBUGMODE_0
+    TileSelector->Update();
     if (keys & KEY_LEFT) // NorthWest
     {
         PlayerCharacter->SetDirection(CharacterBase::eDirection::NorthWest);
@@ -161,9 +173,13 @@ std::vector<Sprite *> BattlemapScene::sprites()
     {
         #ifdef _DEBUGMODE_0
             playertest.get(),
+            TileSelector->Get().at(0),
+            TileSelector->Get().at(1),
         #endif
         PlayerCharacter->Get(),
         EnemyCharacter->Get(),
+        TileSelector->Get().at(0),
+        TileSelector->Get().at(1),
     };
 
 }

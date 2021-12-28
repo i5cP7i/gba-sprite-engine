@@ -5,7 +5,7 @@
 #include "Player.h"
 
 Player::Player()
-        : CharacterBase(soldierBlueTiles, sizeof(soldierBlueTiles), 80, 102, 30, 24)
+        : CharacterBase(soldierBlueTiles, sizeof(soldierBlueTiles), 78, 102, 30, 24)
 {
 
 }

@@ -17,6 +17,7 @@
 
 #include "Player.h"
 #include "Enemy.h"
+#include "TileSelection.h"
 #include "Plains.h"
 #include "ForegroundPalette.h"
 
@@ -32,6 +33,8 @@ private:
 
     std::unique_ptr<Player> PlayerCharacter;
     std::unique_ptr<Enemy> EnemyCharacter;
+    std::unique_ptr<TileSelection> TileSelector;
+
     #ifdef _DEBUGMODE_0
     SpriteBuilder<Sprite> Builder;
     std::unique_ptr<Sprite> playertest;

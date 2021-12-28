@@ -10,7 +10,7 @@ add_executable(${PROJECT_NAME}.elf
         src/Player.cpp
         src/Enemy.h
         src/Enemy.cpp
-        src/SoldierRed.h)
+        src/SoldierRed.h src/TileSelection.cpp src/TileSelection.h src/TileSelectionData.h)
 
 target_link_libraries(${PROJECT_NAME}.elf gba-sprite-engine)
 
