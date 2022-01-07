@@ -9,6 +9,8 @@
 #include <libgba-sprite-engine/sprites/sprite.h>
 #include <libgba-sprite-engine/sprites/sprite_builder.h>
 
+#include "TileSystemBase.h"
+
 class CharacterBase
 {
 private:
@@ -26,7 +28,7 @@ public:
 
     void Update() const { CharacterSprite->update(); }
     Sprite* Get() const { return CharacterSprite.get(); }
-
+    std::unique_ptr<TileSystemBase> tileSystem;
 
 protected:
     SpriteBuilder<Sprite> CharacterBuilder;

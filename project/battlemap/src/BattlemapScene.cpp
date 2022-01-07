@@ -9,17 +9,19 @@ void BattlemapScene::load()
     foregroundPalette = std::unique_ptr<ForegroundPaletteManager>(new ForegroundPaletteManager(sharedPal, sizeof(sharedPal)));
     backgroundPalette = std::unique_ptr<BackgroundPaletteManager>(new BackgroundPaletteManager(GizaPlainsMapPal, sizeof(GizaPlainsMapPal)));
 
-    EnemyCharacter = std::unique_ptr<Enemy>(new Enemy(94, 110));
-    PlayerCharacter = std::unique_ptr<Player>(new Player(78, 102));
-
-
+    EnemyCharacter = std::unique_ptr<Enemy>(new Enemy(93, 108));
+    PlayerCharacter = std::unique_ptr<Player>(new Player(78, 101));
 
     PlayerCharacter->Get()->setPalBank(0);
     EnemyCharacter->Get()->setPalBank(1);
 
-    TileSelector = std::unique_ptr<TileSelection>(new TileSelection()); // Tile delta_x = 16, delta_y = 8
-    TileSelector->Get().at(0)->setPalBank(2);
-    TileSelector->Get().at(1)->setPalBank(2);
+    TileSystem = std::unique_ptr<TileSystemBase>(new TileSystemBase()); // Tile delta_x = 16, delta_y = 8
+    TileSystem->Get().at(0)->setPalBank(2);
+    TileSystem->Get().at(1)->setPalBank(2);
+
+    TileSystem->Get().at(0)->moveTo(PlayerCharacter->Get()->getX()-8, PlayerCharacter->Get()->getY()+19);
+    TileSystem->Get().at(1)->moveTo(PlayerCharacter->Get()->getX()-8+16, PlayerCharacter->Get()->getY()+19);
+
 
 
     TextStream::instance().setText("FINAL FANTASY TACTICS CLONE!", 0, 1);
@@ -58,7 +60,8 @@ void BattlemapScene::tick(u16 keys)
 {
     PlayerCharacter->AnimateWalking();
     EnemyCharacter->AnimateWalking();
-    TileSelector->Update();
+    TileSystem->Update();
+
 
     #ifdef _DEBUGMODE_0
     TileSelector->Update();
@@ -169,6 +172,16 @@ void BattlemapScene::tick(u16 keys)
 
 std::vector<Sprite *> BattlemapScene::sprites()
 {
+    std::vector<Sprite *> SpriteCollector;
+    SpriteCollector.push_back(PlayerCharacter->Get());
+    SpriteCollector.push_back(EnemyCharacter->Get());
+
+
+    for (int i = 0; i < TileSystem->Get().size(); ++i)
+    {
+        SpriteCollector.push_back(TileSystem->Get().at(i));
+    }
+
     return
     {
         #ifdef _DEBUGMODE_0
@@ -176,10 +189,7 @@ std::vector<Sprite *> BattlemapScene::sprites()
             TileSelector->Get().at(0),
             TileSelector->Get().at(1),
         #endif
-        PlayerCharacter->Get(),
-        EnemyCharacter->Get(),
-        TileSelector->Get().at(0),
-        TileSelector->Get().at(1),
+            SpriteCollector
     };
 
 }

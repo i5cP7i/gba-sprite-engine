@@ -2,8 +2,8 @@
 // Created by eduar on 12/28/2021.
 //
 
-#ifndef GBA_SPRITE_ENGINE_PROJECT_TILESELECTION_H
-#define GBA_SPRITE_ENGINE_PROJECT_TILESELECTION_H
+#ifndef GBA_SPRITE_ENGINE_PROJECT_TILESYSTEMBASE_H
+#define GBA_SPRITE_ENGINE_PROJECT_TILESYSTEMBASE_H
 
 #include <libgba-sprite-engine/sprites/sprite.h>
 #include <libgba-sprite-engine/sprites/sprite_builder.h>
@@ -14,9 +14,10 @@
 #include "TileSelectionData.h"
 
 
-class TileSelection
+class TileSystemBase
 {
 private:
+
     SpriteBuilder<Sprite> TileSelectionBuilder; // Tile delta_x = 16, delta_y = 8
     std::vector<std::unique_ptr<Sprite>> TileSelectionSpriteVector;
 
@@ -28,10 +29,10 @@ private:
     unsigned ColorShiftTimer = 0;
     void ShiftColor();
 public:
-    TileSelection();
+    TileSystemBase();
     void Update();
     std::vector<Sprite*> Get() const;
 };
 
 
-#endif //GBA_SPRITE_ENGINE_PROJECT_TILESELECTION_H
+#endif //GBA_SPRITE_ENGINE_PROJECT_TILESYSTEMBASE_H

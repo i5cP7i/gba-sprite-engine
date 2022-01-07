@@ -6,7 +6,6 @@
 
 CharacterBase::CharacterBase(const void *ImageData, int ImageSize, int x, int y, int AnimationDelay, int AnimationFrames)
 {
-
     CharacterSprite = CharacterBuilder
             .withData(ImageData, ImageSize)
             .withSize(SIZE_16_32)
