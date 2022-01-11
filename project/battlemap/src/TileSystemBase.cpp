@@ -9,7 +9,7 @@ TileSystemBase::TileSystemBase()
     std::unique_ptr<Sprite> TempTileSelectionSprite = TileSelectionBuilder
             .withData(TileSelectionTiles, sizeof(TileSelectionTiles))
             .withSize(SIZE_16_16)
-            .withLocation(140, 121)
+            .withLocation(240, 180)
             .buildPtr();
     TileSelectionSpriteVector.push_back(std::move(TempTileSelectionSprite));
 
@@ -24,6 +24,7 @@ TileSystemBase::TileSystemBase()
     {
         TileSelectionSpriteVector.at(i).get()->setPalBank(2);
     }
+    SetTileStatus(eStatus::Inactive);
 }
 
 std::vector<Sprite*> TileSystemBase::Get() const
@@ -44,28 +45,96 @@ void TileSystemBase::Update()
 
 void TileSystemBase::ShiftColor()
 {
-    ColorShiftTimer++;
-    if (ColorShiftTimer >= 7)
+    if (TileStatus == eStatus::Valid || TileStatus == eStatus::Invalid)
     {
-        unsigned short Temp = TileSelectionColors[0];
-        for (size_t i= 0; i < (sizeof(TileSelectionColors)/2 - 1); ++i)
+        ColorShiftTimer++;
+        if (ColorShiftTimer >= 7)
         {
-            TileSelectionColors[i] = TileSelectionColors[i+1];
-        }
-        TileSelectionColors[sizeof(TileSelectionColors)/2-1] = Temp;
+            unsigned short Temp = TileColors[0];
+            for (size_t i = 0; i < (sizeof(TileColors) / 2 - 1); ++i)
+            {
+                TileColors[i] = TileColors[i + 1];
+            }
+            TileColors[sizeof(TileColors) / 2 - 1] = Temp;
 
+            for (size_t i = 0; i < 10; ++i)
+            {
+                pal_obj_mem[32+i] = TileColors[ColorShift];
+                if (ColorShift >= (sizeof(TileColors) / 2 - 1))
+                {
+                    ColorShift = 0;
+                }
+                else
+                {
+                    ColorShift++;
+                }
+            }
+            ColorShiftTimer = 0;
+        }
+    }
+    else
+    {
+        ColorShiftTimer = 0;
         for (size_t i = 0; i < 10; ++i)
         {
-            pal_obj_mem[32+i] = TileSelectionColors[ColorShift];
-            if (ColorShift >= (sizeof(TileSelectionColors)/2-1))
-            {
-                ColorShift = 0;
-            }
-            else
-            {
-                ColorShift++;
-            }
+            pal_obj_mem[32+i] = 0xF000;
         }
-        ColorShiftTimer = 0;
+
+    }
+}
+
+void TileSystemBase::Move(int x, int y)
+{
+    this->x = x;
+    this->y = y;
+    for (int i = 0; i < TileSelectionSpriteVector.size() / 2; i += 2)
+    {
+        TileSelectionSpriteVector.at(i)->moveTo(x, y);
+        TileSelectionSpriteVector.at(i+1)->moveTo(x+16, y);
+    }
+
+}
+
+void TileSystemBase::MoveRight()
+{
+
+    Move(x+2*8, y+8);
+}
+
+void TileSystemBase::MoveLeft()
+{
+    Move(x-2*8, y-8);
+}
+
+void TileSystemBase::MoveUp()
+{
+    Move(x+2*8, y-8);
+}
+
+void TileSystemBase::MoveDown()
+{
+    Move(x-2*8, y+8);
+}
+
+void TileSystemBase::SetTileStatus(TileSystemBase::eStatus Status)
+{
+    this->TileStatus = Status;
+    switch (TileStatus)
+    {
+        case eStatus::Valid:
+            for (size_t i = 0; i < 7 ; ++i)
+            {
+                TileColors[i] = TileColorSet[i];
+            }
+            break;
+        case eStatus::Invalid:
+            for (size_t i = 7; i < 14 ; ++i)
+            {
+                TileColors[i-7] = TileColorSet[i];
+            }
+            break;
+        case eStatus::Inactive:
+        default:
+            break;
     }
 }

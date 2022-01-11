@@ -28,7 +28,6 @@ public:
 
     void Update() const { CharacterSprite->update(); }
     Sprite* Get() const { return CharacterSprite.get(); }
-    std::unique_ptr<TileSystemBase> tileSystem;
 
 protected:
     SpriteBuilder<Sprite> CharacterBuilder;

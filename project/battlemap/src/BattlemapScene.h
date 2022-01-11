@@ -36,6 +36,30 @@ private:
 
     std::unique_ptr<TileSystemBase> TileSystem;
 
+    enum class eGameState {Setup, Play, End} GameState;
+
+    bool isGameOver();
+
+    u16 prev_keys = 0;
+    void Setup(u16 keys);
+    void Play(u16 keys);
+    void End(u16 keys);
+    void Reset(u16 keys);
+
+
+    bool GetKeyState(u16 keys, u16 key);
+    bool isKeyReleased(u16 keys, u16 key);
+    bool isKeyPressed(u16 keys, u16 key);
+
+    u16 old_key;
+    bool RightKeyPressed = false;
+    bool isRightKeyRising(u16 keys);
+    bool LeftKeyPressed = false;
+    bool isLeftKeyRising(u16 keys);
+    bool UpKeyPressed = false;
+    bool isUpKeyRising(u16 keys);
+    bool DownKeyPressed = false;
+    bool isDownKeyRising(u16 keys);
 
     #ifdef _DEBUGMODE_0
     std::unique_ptr<TileSystem> TileSelector;
@@ -43,7 +67,6 @@ private:
     std::unique_ptr<Sprite> playertest;
     #endif
     int offsetX, offsetY;
-
 public:
     std::vector<Sprite *> sprites() override;
     std::vector<Background *> backgrounds() override;
