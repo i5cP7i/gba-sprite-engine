@@ -297,42 +297,20 @@ void BattlemapScene::Menu(u16 keys)
     {
         case eGameMenu::Init:
         {
-            // MenuSystem["main"].DrawSelf(MenuScreenOffset);
-            MenuObject *command = nullptr;
-
-            if (isAKeyRising(keys)) {
-                if (!MenuSystemManager.isOpen()) {
-                    MenuSystemManager.Open(&MenuSystem["main"]);
-                } else {
-                    command = MenuSystemManager.OnConfirm();
-                }
-            }
-            if (isDownKeyRising(keys)) MenuSystemManager.OnDown();
-            if (isUpKeyRising(keys)) MenuSystemManager.OnUp();
-            if (isBKeyRising(keys)) {
-                MenuSystemManager.OnBack();
-            }
-            TextStream::instance().setText("M.bO.: " + std::to_string(MenuSystemManager.isOpen()), 0, 1);
-            if (command != nullptr)
-            {
-                MenuSystem.sLastAction = "L.Act.: " + command->GetName() + "ID: " + std::to_string(command->GetID());
-                MenuSystemManager.Close();
-                TextStream::instance().setText(MenuSystem.sLastAction, 1, 1);
-                switch (command->GetID())
-                {
-                    case 100:
-                        TileSystem->SetTileStatus(TileSystemBase::eStatus::Valid);
-                        TileSystem->Move(PlayerCharacter->Get()->getX() - 8, PlayerCharacter->Get()->getY() + 19);
-                        GameMenu = eGameMenu::Move;
-                        break;
-                }
-            }
-
-            MenuSystemManager.Draw(MenuScreenOffset);
+            InitMenu(keys);
             break;
         }
         case eGameMenu::Move:
             MoveMenu(keys);
+            break;
+        case eGameMenu::Attack:
+            AttackMenu(keys);
+            break;
+        case eGameMenu::Items:
+            break;
+        case eGameMenu::Wait:
+            break;
+        default:
             break;
     }
 
@@ -450,6 +428,46 @@ void BattlemapScene::Menu(u16 keys)
     #endif
 }
 
+void BattlemapScene::InitMenu(u16 keys)
+{
+    // MenuSystem["main"].DrawSelf(MenuScreenOffset);
+    MenuObject *command = nullptr;
+
+    if (isAKeyRising(keys)) {
+        if (!MenuSystemManager.isOpen()) {
+            MenuSystemManager.Open(&MenuSystem["main"]);
+        } else {
+            command = MenuSystemManager.OnConfirm();
+        }
+    }
+    if (isDownKeyRising(keys)) MenuSystemManager.OnDown();
+    if (isUpKeyRising(keys)) MenuSystemManager.OnUp();
+    if (isBKeyRising(keys)) {
+        MenuSystemManager.OnBack();
+    }
+    TextStream::instance().setText("M.bO.: " + std::to_string(MenuSystemManager.isOpen()), 0, 1);
+    if (command != nullptr)
+    {
+        MenuSystem.sLastAction = "L.Act.: " + command->GetName() + "ID: " + std::to_string(command->GetID());
+        MenuSystemManager.Close();
+        TextStream::instance().setText(MenuSystem.sLastAction, 1, 1);
+        switch (command->GetID())
+        {
+            case 100:
+                TileSystem->SetTileStatus(TileSystemBase::eStatus::Valid);
+                TileSystem->Move(PlayerCharacter->Get()->getX() - 8, PlayerCharacter->Get()->getY() + 19);
+                GameMenu = eGameMenu::Move;
+                break;
+            case 200:
+                TileSystem->SetTileStatus(TileSystemBase::eStatus::Valid);
+                TileSystem->Move(PlayerCharacter->Get()->getX() - 8, PlayerCharacter->Get()->getY() + 19);
+                GameMenu = eGameMenu::Attack;
+        }
+    }
+
+    MenuSystemManager.Draw(MenuScreenOffset);
+}
+
 void BattlemapScene::MoveMenu(u16 keys)
 {
     if (isRightKeyRising(keys))
@@ -476,7 +494,37 @@ void BattlemapScene::MoveMenu(u16 keys)
     }
     else if (isAKeyRising(keys))
     {
-        
+        PlayerCharacter->Get()->moveTo(TileSystem->x+8, TileSystem->y-19);
+    }
+}
+
+void BattlemapScene::AttackMenu(u16 keys)
+{
+    if (isRightKeyRising(keys))
+    {
+        TileSystem->MoveRight(offsetX, offsetY);
+    }
+    else if (isLeftKeyRising(keys))
+    {
+        TileSystem->MoveLeft(offsetX, offsetY);
+    }
+    else if (isUpKeyRising(keys))
+    {
+        TileSystem->MoveUp(offsetX, offsetY);
+    }
+    else if (isDownKeyRising(keys))
+    {
+        TileSystem->MoveDown(offsetX, offsetY);
+    }
+    else if (isBKeyRising(keys))
+    {
+        TileSystem->ResetPos();
+        TileSystem->SetTileStatus(TileSystemBase::eStatus::Inactive);
+        GameMenu = eGameMenu::Init;
+    }
+    else if (isAKeyRising(keys))
+    {
+
     }
 }
 
@@ -621,5 +669,6 @@ bool BattlemapScene::isBKeyRising(u16 keys)
     }
     return false;
 }
+
 
 

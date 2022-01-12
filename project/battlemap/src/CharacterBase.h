@@ -14,10 +14,7 @@
 class CharacterBase
 {
 private:
-    int Health;
-    int MoveRadius;
-    int Strength;
-    int Evasion;
+
 public:
     enum class eDirection: unsigned char {SouthEast, SouthWest, NorthEast, NorthWest} Direction;
     CharacterBase(const void *ImageData, int ImageSize, int x, int y, int AnimationDelay, int AnimationFrames);
@@ -45,6 +42,16 @@ protected:
     int y;
     int dx;
     int dy;
+
+    // Character Attributes
+    int Health;
+    int MoveRadius;
+    int Strength;
+    int Evasion;
+public:
+    int GetHealth() const { return Health; }
+    void SetHealth(int Health)  { this->Health = Health; }
+    int GetMoveRadius() const { return MoveRadius; }
 };
 
 

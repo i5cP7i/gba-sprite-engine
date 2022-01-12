@@ -54,11 +54,13 @@ private:
     void Reset(u16 keys);
 
     // Gameplay MenuObject Functions
-    enum class eGameMenu {Init = 0, Move = 1, Action = 2, Attack = 3, Items = 4, Wait = 5} GameMenu = eGameMenu::Init;
-    enum class eMenuSelect {Init, Move, Action, Wait} MenuSelect;
+    enum class eGameMenu {Init = 0, Move = 1, Attack = 2, Items = 3, Wait = 4} GameMenu = eGameMenu::Init;
+    // enum class eMenuSelect {Init, Move, Action, Wait} MenuSelect;
 
     void Menu(u16 keys);
+    void InitMenu(u16 keys);
     void MoveMenu(u16 keys);
+    void AttackMenu(u16 keys);
 
     // Gameplay MenuObject variables
     unsigned char MenuSelected = 0;
