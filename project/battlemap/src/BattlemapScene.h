@@ -21,6 +21,8 @@
 #include "Enemy.h"
 #include "TileSystemBase.h"
 #include "ForegroundPalette.h"
+#include "MenuObject.h"
+#include "MenuManager.h"
 
 // #define _DEBUGMODE_0
 
@@ -35,6 +37,10 @@ private:
     std::unique_ptr<Player> PlayerCharacter;
     std::unique_ptr<Enemy> EnemyCharacter;
 
+    MenuObject MenuSystem;
+    MenuManager MenuSystemManager;
+    MenuObject::vi2d MenuScreenOffset = {1,4};
+
     std::unique_ptr<TileSystemBase> TileSystem;
 
     enum class eGameState {Setup, Play, End} GameState;
@@ -47,18 +53,18 @@ private:
     void End(u16 keys);
     void Reset(u16 keys);
 
-    // Gameplay Menu Functions
+    // Gameplay MenuObject Functions
     enum class eGameMenu {Init = 0, Move = 1, Action = 2, Attack = 3, Items = 4, Wait = 5} GameMenu = eGameMenu::Init;
     enum class eMenuSelect {Init, Move, Action, Wait} MenuSelect;
 
     void Menu(u16 keys);
     void MoveMenu(u16 keys);
 
-    // Gameplay Menu variables
+    // Gameplay MenuObject variables
     unsigned char MenuSelected = 0;
     unsigned char GameMenuSelected = 0;
 
-    // Menu Aux Functions
+    // MenuObject Aux Functions
     unsigned char ClipValue(unsigned char Number, unsigned char LowerBound, unsigned char UpperBound);;
 
 
@@ -67,6 +73,8 @@ private:
     bool isKeyPressed(u16 keys, u16 key);
 
     u16 old_key;
+    bool StartKeyPressed = false;
+    bool isStartKeyRising(u16 keys);
     bool RightKeyPressed = false;
     bool isRightKeyRising(u16 keys);
     bool LeftKeyPressed = false;

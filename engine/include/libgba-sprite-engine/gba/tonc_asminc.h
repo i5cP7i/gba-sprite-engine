@@ -60,7 +60,7 @@
 
 //! Start an assembly function.
 /*!
-	\param _name	Name of function.
+	\param _name	sName of function.
 	\param _section	Section to place function in (like .text)
 */
 #define BEGIN_FUNC(_name, _section, _iset)	\
@@ -76,14 +76,14 @@ _name:
 
 //! Begin an ARM function
 /*!
-	\param _name	Name of function.
+	\param _name	sName of function.
 	\param _section	Section to place function in (like .text)
 */
 #define BEGIN_FUNC_ARM(_name, _section)		BEGIN_FUNC(_name, _section, ARM_FUNC)
 
 //! Begin a THUMB function.
 /*!
-	\param _name	Name of function.
+	\param _name	sName of function.
 	\param _section	Section to place function in (like .text)
 */
 #define BEGIN_FUNC_THUMB(_name, _section)	BEGIN_FUNC(_name, _section, THUMB_FUNC)

@@ -9,6 +9,14 @@ void BattlemapScene::load()
     foregroundPalette = std::unique_ptr<ForegroundPaletteManager>(new ForegroundPaletteManager(sharedPal, sizeof(sharedPal)));
     backgroundPalette = std::unique_ptr<BackgroundPaletteManager>(new BackgroundPaletteManager(GizaPlainsMapPal, sizeof(GizaPlainsMapPal)));
 
+    MenuSystem["main"].SetTable(1, 10);
+    MenuSystem["main"]["Move"].SetID(101);
+    MenuSystem["main"]["Action"]["Attack"].SetID(102).Enable(true);
+    MenuSystem["main"]["Action"]["Items"]["Potion"].SetID(102).Enable(true);
+    MenuSystem["main"]["Wait"].SetID(103);
+    MenuSystem.Build();
+
+
     EnemyCharacter = std::unique_ptr<Enemy>(new Enemy(96+4*16, 124-2*8));
     PlayerCharacter = std::unique_ptr<Player>(new Player(78, 101));
 
@@ -252,10 +260,11 @@ void BattlemapScene::Play(u16 keys)
     TileSystem->Update();
     Menu(keys);
 
-    TextStream::instance().setText(std::string("TX: " + std::to_string(TileSystem->Get().at(0)->getX())), 0, 0);
-    TextStream::instance().setText(std::string("TY: " + std::to_string(TileSystem->Get().at(0)->getY())), 1, 0);
-    TextStream::instance().setText(std::string("Menu: " + std::to_string(MenuSelected)), 2, 0);
-
+    #ifdef _DEBUGMODE_0
+        TextStream::instance().setText(std::string("TX: " + std::to_string(TileSystem->Get().at(0)->getX())), 0, 0);
+        TextStream::instance().setText(std::string("TY: " + std::to_string(TileSystem->Get().at(0)->getY())), 1, 0);
+        TextStream::instance().setText(std::string("MenuObject: " + std::to_string(MenuSelected)), 2, 0);
+    #endif
 
     Battlemap->scroll(bglerpX, bglerpY);
     bg1->scroll(bglerpX, bglerpY);
@@ -274,6 +283,176 @@ void BattlemapScene::Reset(u16 keys)
 
 }
 
+void BattlemapScene::Menu(u16 keys)
+{
+    // MenuSystem["main"].DrawSelf(MenuScreenOffset);
+    MenuObject* command = nullptr;
+
+    if (isAKeyRising(keys))
+    {
+        if (!MenuSystemManager.isOpen())
+        {
+            MenuSystemManager.Open(&MenuSystem["main"]);
+        }
+        else
+        {
+            command = MenuSystemManager.OnConfirm();
+        }
+    }
+    if (isDownKeyRising(keys)) MenuSystemManager.OnDown();
+    if (isUpKeyRising(keys)) MenuSystemManager.OnUp();
+    if (isBKeyRising(keys))
+    {
+        MenuSystemManager.OnBack();
+    }
+    TextStream::instance().setText("M.bO.: " + std::to_string(MenuSystemManager.isOpen()),0,1);
+    if (command != nullptr)
+    {
+        MenuSystem.sLastAction = "L.Act.: " + command->GetName() + "ID: " + std::to_string(command->GetID());
+        MenuSystemManager.Close();
+        TextStream::instance().setText(MenuSystem.sLastAction,1,1);
+    }
+
+    MenuSystemManager.Draw(MenuScreenOffset);
+
+    #ifdef _DEBUGMODE_0
+    if (MenuSelected >= 1 && isDownKeyRising(keys))
+    {
+        MenuSelected++;
+        MenuSelected = ClipValue(MenuSelected, 1, 3);
+        MenuSelect = static_cast<eMenuSelect>(MenuSelected);
+        TextStream::instance().clear();
+    }
+    else if (MenuSelected >= 1 && isUpKeyRising(keys))
+    {
+        MenuSelected--;
+        MenuSelected = ClipValue(MenuSelected, 1, 3);
+        MenuSelect = static_cast<eMenuSelect>(MenuSelected);
+        TextStream::instance().clear();
+    }
+    else if (isAKeyRising(keys))
+    {
+        switch (MenuSelect)
+        {
+            case eMenuSelect::Init:
+                MenuSelected = 1;
+                MenuSelect = static_cast<eMenuSelect>(MenuSelected);
+                GameMenu = eGameMenu::Init;
+                break;
+            case eMenuSelect::Move:
+                MenuSelected = 0;
+                MenuSelect = static_cast<eMenuSelect>(MenuSelected);
+                GameMenu = eGameMenu::Move;
+                break;
+            case eMenuSelect::Action:
+
+                break;
+            case eMenuSelect::Wait:
+
+                break;
+            default:
+                break;
+        }
+    }
+    else if (isBKeyRising(keys))
+    {
+        switch (GameMenu)
+        {
+            case eGameMenu::Init:
+                MenuSelected = 0;
+                MenuSelect = static_cast<eMenuSelect>(MenuSelected);
+                GameMenu = eGameMenu::Init;
+                break;
+            case eGameMenu::Move:
+                MenuSelected = 1;
+                MenuSelect = static_cast<eMenuSelect>(MenuSelected);
+                GameMenu = eGameMenu::Init;
+                break;
+            case eGameMenu::Action:
+                MenuSelected = 1;
+                MenuSelect = static_cast<eMenuSelect>(MenuSelected);
+                GameMenu = eGameMenu::Init;
+                break;
+            case eGameMenu::Wait:
+                MenuSelected = 1;
+                MenuSelect = static_cast<eMenuSelect>(MenuSelected);
+                GameMenu = eGameMenu::Init;
+                break;
+            default:
+                break;
+        }
+    }
+    switch(MenuSelect)
+    {
+        case eMenuSelect::Init:
+            TextStream::instance().clear();
+            break;
+        case eMenuSelect::Move:
+            TextStream::instance().setText("MenuObject", 6, 4);
+            TextStream::instance().setText("->Move", 7, 1);
+            TextStream::instance().setText("Action", 8, 3);
+            TextStream::instance().setText("Wait", 9, 3);
+            break;
+        case eMenuSelect::Action:
+            TextStream::instance().setText("MenuObject", 6, 4);
+            TextStream::instance().setText("Move", 7, 3);
+            TextStream::instance().setText("->Action", 8, 1);
+            TextStream::instance().setText("Wait", 9, 3);
+            break;
+        case eMenuSelect::Wait:
+            TextStream::instance().setText("MenuObject", 6, 4);
+            TextStream::instance().setText("Move", 7, 3);
+            TextStream::instance().setText("Action", 8, 3);
+            TextStream::instance().setText("->Wait", 9, 1);
+            break;
+        default:
+            break;
+    }
+
+    switch (GameMenu)
+    {
+        case eGameMenu::Init:
+            break;
+        case eGameMenu::Move:
+            MoveMenu(keys);
+            break;
+        case eGameMenu::Action:
+            break;
+        case eGameMenu::Items:
+            break;
+        case eGameMenu::Wait:
+            break;
+        default:
+            break;
+    }
+    #endif
+}
+
+void BattlemapScene::MoveMenu(u16 keys)
+{
+    if (isRightKeyRising(keys))
+    {
+        TileSystem->MoveRight(offsetX, offsetY);
+    }
+    else if (isLeftKeyRising(keys))
+    {
+        TileSystem->MoveLeft(offsetX, offsetY);
+    }
+    else if (isUpKeyRising(keys))
+    {
+        TileSystem->MoveUp(offsetX, offsetY);
+    }
+    else if (isDownKeyRising(keys))
+    {
+        TileSystem->MoveDown(offsetX, offsetY);
+    }
+}
+
+unsigned char BattlemapScene::ClipValue(unsigned char Number, unsigned char LowerBound, unsigned char UpperBound)
+{
+    return std::max(LowerBound, std::min(Number, UpperBound));
+}
+
 bool BattlemapScene::GetKeyState(u16 keys, u16 key)
 {
     return !(key & (keys));
@@ -287,6 +466,25 @@ bool BattlemapScene::isKeyReleased(u16 keys, u16 key)
 bool BattlemapScene::isKeyPressed(u16 keys, u16 key)
 {
     return (key) & (~keys & prev_keys);
+}
+
+bool BattlemapScene::isStartKeyRising(u16 keys)
+{
+    if (isKeyPressed(keys, KEY_START) && !StartKeyPressed)
+    {
+        // TextStream::instance().setText("Start Key Press.", 4, 1);
+        StartKeyPressed = true;
+
+        return true;
+    }
+    else if (isKeyReleased(keys, KEY_START) && StartKeyPressed)
+    {
+        // TextStream::instance().setText("Start Key Release.", 4, 1);
+        StartKeyPressed = false;
+
+        return false;
+    }
+    return false;
 }
 
 bool BattlemapScene::isRightKeyRising(u16 keys)
@@ -392,140 +590,4 @@ bool BattlemapScene::isBKeyRising(u16 keys)
     return false;
 }
 
-void BattlemapScene::Menu(u16 keys)
-{
-    if (MenuSelected >= 1 && isDownKeyRising(keys))
-    {
-        MenuSelected++;
-        MenuSelected = ClipValue(MenuSelected, 1, 3);
-        MenuSelect = static_cast<eMenuSelect>(MenuSelected);
-        TextStream::instance().clear();
-    }
-    else if (MenuSelected >= 1 && isUpKeyRising(keys))
-    {
-        MenuSelected--;
-        MenuSelected = ClipValue(MenuSelected, 1, 3);
-        MenuSelect = static_cast<eMenuSelect>(MenuSelected);
-        TextStream::instance().clear();
-    }
-    else if (isAKeyRising(keys))
-    {
-        switch (MenuSelect)
-        {
-            case eMenuSelect::Init:
-                MenuSelected = 1;
-                MenuSelect = static_cast<eMenuSelect>(MenuSelected);
-                GameMenu = eGameMenu::Init;
-                break;
-            case eMenuSelect::Move:
-                MenuSelected = 0;
-                MenuSelect = static_cast<eMenuSelect>(MenuSelected);
-                GameMenu = eGameMenu::Move;
-                break;
-            case eMenuSelect::Action:
 
-                break;
-            case eMenuSelect::Wait:
-
-                break;
-            default:
-                break;
-        }
-    }
-    else if (isBKeyRising(keys))
-    {
-        switch (GameMenu)
-        {
-            case eGameMenu::Init:
-                MenuSelected = 0;
-                MenuSelect = static_cast<eMenuSelect>(MenuSelected);
-                GameMenu = eGameMenu::Init;
-                break;
-            case eGameMenu::Move:
-                MenuSelected = 1;
-                MenuSelect = static_cast<eMenuSelect>(MenuSelected);
-                GameMenu = eGameMenu::Init;
-                break;
-            case eGameMenu::Action:
-                MenuSelected = 1;
-                MenuSelect = static_cast<eMenuSelect>(MenuSelected);
-                GameMenu = eGameMenu::Init;
-                break;
-            case eGameMenu::Wait:
-                MenuSelected = 1;
-                MenuSelect = static_cast<eMenuSelect>(MenuSelected);
-                GameMenu = eGameMenu::Init;
-                break;
-            default:
-                break;
-        }
-    }
-    switch(MenuSelect)
-    {
-        case eMenuSelect::Init:
-            TextStream::instance().clear();
-            break;
-        case eMenuSelect::Move:
-            TextStream::instance().setText("Menu", 6, 4);
-            TextStream::instance().setText("->Move", 7, 1);
-            TextStream::instance().setText("Action", 8, 3);
-            TextStream::instance().setText("Wait", 9, 3);
-            break;
-        case eMenuSelect::Action:
-            TextStream::instance().setText("Menu", 6, 4);
-            TextStream::instance().setText("Move", 7, 3);
-            TextStream::instance().setText("->Action", 8, 1);
-            TextStream::instance().setText("Wait", 9, 3);
-            break;
-        case eMenuSelect::Wait:
-            TextStream::instance().setText("Menu", 6, 4);
-            TextStream::instance().setText("Move", 7, 3);
-            TextStream::instance().setText("Action", 8, 3);
-            TextStream::instance().setText("->Wait", 9, 1);
-            break;
-        default:
-            break;
-    }
-
-    switch (GameMenu)
-    {
-        case eGameMenu::Init:
-            break;
-        case eGameMenu::Move:
-            MoveMenu(keys);
-            break;
-        case eGameMenu::Action:
-            break;
-        case eGameMenu::Items:
-            break;
-        case eGameMenu::Wait:
-            break;
-        default:
-            break;
-    }
-}
-
-void BattlemapScene::MoveMenu(u16 keys)
-{
-    if (isRightKeyRising(keys))
-    {
-        TileSystem->MoveRight(offsetX, offsetY);
-    }
-    else if (isLeftKeyRising(keys))
-    {
-        TileSystem->MoveLeft(offsetX, offsetY);
-    }
-    else if (isUpKeyRising(keys))
-    {
-        TileSystem->MoveUp(offsetX, offsetY);
-    }
-    else if (isDownKeyRising(keys))
-    {
-        TileSystem->MoveDown(offsetX, offsetY);
-    }
-}
-
-unsigned char BattlemapScene::ClipValue(unsigned char Number, unsigned char LowerBound, unsigned char UpperBound)
-{
-    return std::max(LowerBound, std::min(Number, UpperBound));
-}
