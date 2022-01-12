@@ -21,7 +21,6 @@ private:
     SpriteBuilder<Sprite> TileSelectionBuilder; // Tile delta_x = 16, delta_y = 8
     std::vector<std::unique_ptr<Sprite>> TileSelectionSpriteVector;
 
-
     const unsigned short TileColorSet[14] =
     {
         0x7860,0x78C0,0x7941,0x7DC1,0x7E42,0x7EC3,0x7DC1,
@@ -35,12 +34,16 @@ private:
     void ShiftColor();
 public:
     int x, y;
+    int ResetX = 240;
+    int ResetY = 180;
+
     enum class eStatus {Valid, Invalid, Inactive};
     eStatus TileStatus;
     TileSystemBase();
     void SetTileStatus(eStatus Status);
     void Update();
     void Move(int x, int y);
+    void ResetPos() { Move(ResetX, ResetY); }
     void MoveRight(int offsetX, int offsetY);
     void MoveLeft(int offsetX, int offsetY);
     void MoveUp(int offsetX, int offsetY);

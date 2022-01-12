@@ -9,7 +9,7 @@ TileSystemBase::TileSystemBase()
     std::unique_ptr<Sprite> TempTileSelectionSprite = TileSelectionBuilder
             .withData(TileSelectionTiles, sizeof(TileSelectionTiles))
             .withSize(SIZE_16_16)
-            .withLocation(240, 180)
+            .withLocation(ResetX, ResetY)
             .buildPtr();
     TileSelectionSpriteVector.push_back(std::move(TempTileSelectionSprite));
 

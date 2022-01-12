@@ -9,11 +9,21 @@ void BattlemapScene::load()
     foregroundPalette = std::unique_ptr<ForegroundPaletteManager>(new ForegroundPaletteManager(sharedPal, sizeof(sharedPal)));
     backgroundPalette = std::unique_ptr<BackgroundPaletteManager>(new BackgroundPaletteManager(GizaPlainsMapPal, sizeof(GizaPlainsMapPal)));
 
+    /*
     MenuSystem["main"].SetTable(1, 10);
     MenuSystem["main"]["Move"].SetID(101);
     MenuSystem["main"]["Action"]["Attack"].SetID(102).Enable(true);
     MenuSystem["main"]["Action"]["Items"]["Potion"].SetID(102).Enable(true);
     MenuSystem["main"]["Wait"].SetID(103);
+    */
+    MenuSystem["main"].SetTable(1, 3);
+    MenuSystem["main"]["Move"].SetID(100);
+    MenuSystem["main"]["Action"].SetTable(1, 3);
+    auto& MenuAction = MenuSystem["main"]["Action"];
+    MenuAction["Attack"].SetID(200);
+    MenuAction["Item"]["Potion"].SetID(300);
+
+    MenuSystem["main"]["Wait"].SetID(101);
     MenuSystem.Build();
 
 
@@ -245,8 +255,8 @@ void BattlemapScene::Setup(u16 keys)
     if (GetKeyState(keys, KEY_START))
     {
         TextStream::instance().clear();
-        TileSystem->SetTileStatus(TileSystemBase::eStatus::Valid);
-        TileSystem->Move(PlayerCharacter->Get()->getX()-8, PlayerCharacter->Get()->getY()+19);
+        // TileSystem->SetTileStatus(TileSystemBase::eStatus::Valid);
+        // TileSystem->Move(PlayerCharacter->Get()->getX()-8, PlayerCharacter->Get()->getY()+19);
         GameState = eGameState::Play;
         // prev_keys = keys;
         old_key = KEY_START;
@@ -269,8 +279,6 @@ void BattlemapScene::Play(u16 keys)
     Battlemap->scroll(bglerpX, bglerpY);
     bg1->scroll(bglerpX, bglerpY);
     bg2->scroll(bglerpX, bglerpY);
-
-
 }
 
 void BattlemapScene::End(u16 keys)
@@ -285,35 +293,49 @@ void BattlemapScene::Reset(u16 keys)
 
 void BattlemapScene::Menu(u16 keys)
 {
-    // MenuSystem["main"].DrawSelf(MenuScreenOffset);
-    MenuObject* command = nullptr;
-
-    if (isAKeyRising(keys))
+    switch (GameMenu)
     {
-        if (!MenuSystemManager.isOpen())
+        case eGameMenu::Init:
         {
-            MenuSystemManager.Open(&MenuSystem["main"]);
+            // MenuSystem["main"].DrawSelf(MenuScreenOffset);
+            MenuObject *command = nullptr;
+
+            if (isAKeyRising(keys)) {
+                if (!MenuSystemManager.isOpen()) {
+                    MenuSystemManager.Open(&MenuSystem["main"]);
+                } else {
+                    command = MenuSystemManager.OnConfirm();
+                }
+            }
+            if (isDownKeyRising(keys)) MenuSystemManager.OnDown();
+            if (isUpKeyRising(keys)) MenuSystemManager.OnUp();
+            if (isBKeyRising(keys)) {
+                MenuSystemManager.OnBack();
+            }
+            TextStream::instance().setText("M.bO.: " + std::to_string(MenuSystemManager.isOpen()), 0, 1);
+            if (command != nullptr)
+            {
+                MenuSystem.sLastAction = "L.Act.: " + command->GetName() + "ID: " + std::to_string(command->GetID());
+                MenuSystemManager.Close();
+                TextStream::instance().setText(MenuSystem.sLastAction, 1, 1);
+                switch (command->GetID())
+                {
+                    case 100:
+                        TileSystem->SetTileStatus(TileSystemBase::eStatus::Valid);
+                        TileSystem->Move(PlayerCharacter->Get()->getX() - 8, PlayerCharacter->Get()->getY() + 19);
+                        GameMenu = eGameMenu::Move;
+                        break;
+                }
+            }
+
+            MenuSystemManager.Draw(MenuScreenOffset);
+            break;
         }
-        else
-        {
-            command = MenuSystemManager.OnConfirm();
-        }
-    }
-    if (isDownKeyRising(keys)) MenuSystemManager.OnDown();
-    if (isUpKeyRising(keys)) MenuSystemManager.OnUp();
-    if (isBKeyRising(keys))
-    {
-        MenuSystemManager.OnBack();
-    }
-    TextStream::instance().setText("M.bO.: " + std::to_string(MenuSystemManager.isOpen()),0,1);
-    if (command != nullptr)
-    {
-        MenuSystem.sLastAction = "L.Act.: " + command->GetName() + "ID: " + std::to_string(command->GetID());
-        MenuSystemManager.Close();
-        TextStream::instance().setText(MenuSystem.sLastAction,1,1);
+        case eGameMenu::Move:
+            MoveMenu(keys);
+            break;
     }
 
-    MenuSystemManager.Draw(MenuScreenOffset);
 
     #ifdef _DEBUGMODE_0
     if (MenuSelected >= 1 && isDownKeyRising(keys))
@@ -445,6 +467,16 @@ void BattlemapScene::MoveMenu(u16 keys)
     else if (isDownKeyRising(keys))
     {
         TileSystem->MoveDown(offsetX, offsetY);
+    }
+    else if (isBKeyRising(keys))
+    {
+        TileSystem->ResetPos();
+        TileSystem->SetTileStatus(TileSystemBase::eStatus::Inactive);
+        GameMenu = eGameMenu::Init;
+    }
+    else if (isAKeyRising(keys))
+    {
+        
     }
 }
 
