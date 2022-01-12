@@ -15,10 +15,11 @@
 #include <libgba-sprite-engine/sprites/sprite.h>
 #include <libgba-sprite-engine/sprites/sprite_builder.h>
 
+#include <algorithm>
+
 #include "Player.h"
 #include "Enemy.h"
 #include "TileSystemBase.h"
-#include "Plains.h"
 #include "ForegroundPalette.h"
 
 // #define _DEBUGMODE_0
@@ -46,6 +47,20 @@ private:
     void End(u16 keys);
     void Reset(u16 keys);
 
+    // Gameplay Menu Functions
+    enum class eGameMenu {Init = 0, Move = 1, Action = 2, Attack = 3, Items = 4, Wait = 5} GameMenu = eGameMenu::Init;
+    enum class eMenuSelect {Init, Move, Action, Wait} MenuSelect;
+
+    void Menu(u16 keys);
+    void MoveMenu(u16 keys);
+
+    // Gameplay Menu variables
+    unsigned char MenuSelected = 0;
+    unsigned char GameMenuSelected = 0;
+
+    // Menu Aux Functions
+    unsigned char ClipValue(unsigned char Number, unsigned char LowerBound, unsigned char UpperBound);;
+
 
     bool GetKeyState(u16 keys, u16 key);
     bool isKeyReleased(u16 keys, u16 key);
@@ -60,13 +75,23 @@ private:
     bool isUpKeyRising(u16 keys);
     bool DownKeyPressed = false;
     bool isDownKeyRising(u16 keys);
+    bool AKeyPressed = false;
+    bool isAKeyRising(u16 keys);
+    bool BKeyPressed = false;
+    bool isBKeyRising(u16 keys);
 
     #ifdef _DEBUGMODE_0
     std::unique_ptr<TileSystem> TileSelector;
     SpriteBuilder<Sprite> Builder;
     std::unique_ptr<Sprite> playertest;
     #endif
-    int offsetX, offsetY;
+    bool offsetSprites = false;
+    int m_offsetX = 0;
+    int m_offsetY = 0;
+    int offsetX = 0;
+    int offsetY = 0;
+    int bglerpX = 0;
+    int bglerpY = 0;
 public:
     std::vector<Sprite *> sprites() override;
     std::vector<Background *> backgrounds() override;

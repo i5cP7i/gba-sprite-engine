@@ -14,7 +14,10 @@
 class CharacterBase
 {
 private:
-
+    int Health;
+    int MoveRadius;
+    int Strength;
+    int Evasion;
 public:
     enum class eDirection: unsigned char {SouthEast, SouthWest, NorthEast, NorthWest} Direction;
     CharacterBase(const void *ImageData, int ImageSize, int x, int y, int AnimationDelay, int AnimationFrames);
@@ -35,6 +38,7 @@ protected:
     u32 PrevFrame = 0;
     u32 FrameOrientation = 2;
     eDirection CharacterDirection;
+
     int AnimationDelay;
     int AnimationFrames;
     int x;

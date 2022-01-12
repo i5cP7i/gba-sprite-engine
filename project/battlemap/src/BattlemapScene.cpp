@@ -9,7 +9,7 @@ void BattlemapScene::load()
     foregroundPalette = std::unique_ptr<ForegroundPaletteManager>(new ForegroundPaletteManager(sharedPal, sizeof(sharedPal)));
     backgroundPalette = std::unique_ptr<BackgroundPaletteManager>(new BackgroundPaletteManager(GizaPlainsMapPal, sizeof(GizaPlainsMapPal)));
 
-    EnemyCharacter = std::unique_ptr<Enemy>(new Enemy(93+4*16, 108-2*8));
+    EnemyCharacter = std::unique_ptr<Enemy>(new Enemy(96+4*16, 124-2*8));
     PlayerCharacter = std::unique_ptr<Player>(new Player(78, 101));
 
     PlayerCharacter->Get()->setPalBank(0);
@@ -250,25 +250,18 @@ void BattlemapScene::Play(u16 keys)
     PlayerCharacter->AnimateWalking();
     EnemyCharacter->AnimateWalking();
     TileSystem->Update();
+    Menu(keys);
 
-    if (isRightKeyRising(keys))
-    {
-        TileSystem->MoveRight();
-    }
-    else if (isLeftKeyRising(keys))
-    {
-        TileSystem->MoveLeft();
-    }
-    else if (isUpKeyRising(keys))
-    {
-        TileSystem->MoveUp();
-    }
-    else if (isDownKeyRising(keys))
-    {
-        TileSystem->MoveDown();
-    }
     TextStream::instance().setText(std::string("TX: " + std::to_string(TileSystem->Get().at(0)->getX())), 0, 0);
-    TextStream::instance().setText(std::string("TY: " + std::to_string(TileSystem->Get().at(0)->getY())), 2, 0);
+    TextStream::instance().setText(std::string("TY: " + std::to_string(TileSystem->Get().at(0)->getY())), 1, 0);
+    TextStream::instance().setText(std::string("Menu: " + std::to_string(MenuSelected)), 2, 0);
+
+
+    Battlemap->scroll(bglerpX, bglerpY);
+    bg1->scroll(bglerpX, bglerpY);
+    bg2->scroll(bglerpX, bglerpY);
+
+
 }
 
 void BattlemapScene::End(u16 keys)
@@ -300,14 +293,14 @@ bool BattlemapScene::isRightKeyRising(u16 keys)
 {
     if (isKeyPressed(keys, KEY_RIGHT) && !RightKeyPressed)
     {
-        // TextStream::instance().setText("Right Key Press.", 0, 1);
+        // TextStream::instance().setText("Right Key Press.", 4, 1);
         RightKeyPressed = true;
 
         return true;
     }
     else if (isKeyReleased(keys, KEY_RIGHT) && RightKeyPressed)
     {
-        // TextStream::instance().setText("Right Key Release.", 0, 1);
+        // TextStream::instance().setText("Right Key Release.", 4, 1);
         RightKeyPressed = false;
 
         return false;
@@ -319,13 +312,13 @@ bool BattlemapScene::isLeftKeyRising(u16 keys)
 {
     if (isKeyPressed(keys, KEY_LEFT) && !LeftKeyPressed)
     {
-        // TextStream::instance().setText("Left Key Press.", 0, 1);
+        // TextStream::instance().setText("Left Key Press.", 4, 1);
         LeftKeyPressed = true;
         return true;
     }
     else if (isKeyReleased(keys, KEY_LEFT) && LeftKeyPressed)
     {
-        // TextStream::instance().setText("Left Key Release.", 0, 1);
+        // TextStream::instance().setText("Left Key Release.", 4, 1);
         LeftKeyPressed = false;
         return false;
     }
@@ -336,13 +329,13 @@ bool BattlemapScene::isUpKeyRising(u16 keys)
 {
     if (isKeyPressed(keys, KEY_UP) && !UpKeyPressed)
     {
-        // TextStream::instance().setText("Up Key Press.", 0, 1);
+        // TextStream::instance().setText("Up Key Press.", 4, 1);
         UpKeyPressed = true;
         return true;
     }
     else if (isKeyReleased(keys, KEY_UP) && UpKeyPressed)
     {
-        // TextStream::instance().setText("Up Key Release.", 0, 1);
+        // TextStream::instance().setText("Up Key Release.", 4, 1);
         UpKeyPressed = false;
         return false;
     }
@@ -353,15 +346,186 @@ bool BattlemapScene::isDownKeyRising(u16 keys)
 {
     if (isKeyPressed(keys, KEY_DOWN) && !DownKeyPressed)
     {
-        // TextStream::instance().setText("Down Key Press.", 0, 1);
+        // TextStream::instance().setText("Down Key Press.", 4, 1);
         DownKeyPressed = true;
         return true;
     }
     else if (isKeyReleased(keys, KEY_DOWN) && DownKeyPressed)
     {
-        // TextStream::instance().setText("Down Key Release.", 0, 1);
+        // TextStream::instance().setText("Down Key Release.", 4, 1);
         DownKeyPressed = false;
         return false;
     }
     return false;
+}
+
+bool BattlemapScene::isAKeyRising(u16 keys) {
+    if (isKeyPressed(keys, KEY_A) && !AKeyPressed)
+    {
+        // TextStream::instance().setText("A Key Press.", 4, 1);
+        AKeyPressed = true;
+        return true;
+    }
+    else if (isKeyReleased(keys, KEY_A) && AKeyPressed)
+    {
+        // TextStream::instance().setText("A Key Release.", 4, 1);
+        AKeyPressed = false;
+        return false;
+    }
+    return false;
+}
+
+bool BattlemapScene::isBKeyRising(u16 keys)
+{
+    if (isKeyPressed(keys, KEY_B) && !BKeyPressed)
+    {
+        // TextStream::instance().setText("B Key Press.", 4, 1);
+        BKeyPressed = true;
+        return true;
+    }
+    else if (isKeyReleased(keys, KEY_B) && BKeyPressed)
+    {
+        // TextStream::instance().setText("B Key Release.", 4, 1);
+        BKeyPressed = false;
+        return false;
+    }
+    return false;
+}
+
+void BattlemapScene::Menu(u16 keys)
+{
+    if (MenuSelected >= 1 && isDownKeyRising(keys))
+    {
+        MenuSelected++;
+        MenuSelected = ClipValue(MenuSelected, 1, 3);
+        MenuSelect = static_cast<eMenuSelect>(MenuSelected);
+        TextStream::instance().clear();
+    }
+    else if (MenuSelected >= 1 && isUpKeyRising(keys))
+    {
+        MenuSelected--;
+        MenuSelected = ClipValue(MenuSelected, 1, 3);
+        MenuSelect = static_cast<eMenuSelect>(MenuSelected);
+        TextStream::instance().clear();
+    }
+    else if (isAKeyRising(keys))
+    {
+        switch (MenuSelect)
+        {
+            case eMenuSelect::Init:
+                MenuSelected = 1;
+                MenuSelect = static_cast<eMenuSelect>(MenuSelected);
+                GameMenu = eGameMenu::Init;
+                break;
+            case eMenuSelect::Move:
+                MenuSelected = 0;
+                MenuSelect = static_cast<eMenuSelect>(MenuSelected);
+                GameMenu = eGameMenu::Move;
+                break;
+            case eMenuSelect::Action:
+
+                break;
+            case eMenuSelect::Wait:
+
+                break;
+            default:
+                break;
+        }
+    }
+    else if (isBKeyRising(keys))
+    {
+        switch (GameMenu)
+        {
+            case eGameMenu::Init:
+                MenuSelected = 0;
+                MenuSelect = static_cast<eMenuSelect>(MenuSelected);
+                GameMenu = eGameMenu::Init;
+                break;
+            case eGameMenu::Move:
+                MenuSelected = 1;
+                MenuSelect = static_cast<eMenuSelect>(MenuSelected);
+                GameMenu = eGameMenu::Init;
+                break;
+            case eGameMenu::Action:
+                MenuSelected = 1;
+                MenuSelect = static_cast<eMenuSelect>(MenuSelected);
+                GameMenu = eGameMenu::Init;
+                break;
+            case eGameMenu::Wait:
+                MenuSelected = 1;
+                MenuSelect = static_cast<eMenuSelect>(MenuSelected);
+                GameMenu = eGameMenu::Init;
+                break;
+            default:
+                break;
+        }
+    }
+    switch(MenuSelect)
+    {
+        case eMenuSelect::Init:
+            TextStream::instance().clear();
+            break;
+        case eMenuSelect::Move:
+            TextStream::instance().setText("Menu", 6, 4);
+            TextStream::instance().setText("->Move", 7, 1);
+            TextStream::instance().setText("Action", 8, 3);
+            TextStream::instance().setText("Wait", 9, 3);
+            break;
+        case eMenuSelect::Action:
+            TextStream::instance().setText("Menu", 6, 4);
+            TextStream::instance().setText("Move", 7, 3);
+            TextStream::instance().setText("->Action", 8, 1);
+            TextStream::instance().setText("Wait", 9, 3);
+            break;
+        case eMenuSelect::Wait:
+            TextStream::instance().setText("Menu", 6, 4);
+            TextStream::instance().setText("Move", 7, 3);
+            TextStream::instance().setText("Action", 8, 3);
+            TextStream::instance().setText("->Wait", 9, 1);
+            break;
+        default:
+            break;
+    }
+
+    switch (GameMenu)
+    {
+        case eGameMenu::Init:
+            break;
+        case eGameMenu::Move:
+            MoveMenu(keys);
+            break;
+        case eGameMenu::Action:
+            break;
+        case eGameMenu::Items:
+            break;
+        case eGameMenu::Wait:
+            break;
+        default:
+            break;
+    }
+}
+
+void BattlemapScene::MoveMenu(u16 keys)
+{
+    if (isRightKeyRising(keys))
+    {
+        TileSystem->MoveRight(offsetX, offsetY);
+    }
+    else if (isLeftKeyRising(keys))
+    {
+        TileSystem->MoveLeft(offsetX, offsetY);
+    }
+    else if (isUpKeyRising(keys))
+    {
+        TileSystem->MoveUp(offsetX, offsetY);
+    }
+    else if (isDownKeyRising(keys))
+    {
+        TileSystem->MoveDown(offsetX, offsetY);
+    }
+}
+
+unsigned char BattlemapScene::ClipValue(unsigned char Number, unsigned char LowerBound, unsigned char UpperBound)
+{
+    return std::max(LowerBound, std::min(Number, UpperBound));
 }

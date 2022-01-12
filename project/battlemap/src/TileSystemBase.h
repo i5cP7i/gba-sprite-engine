@@ -13,15 +13,14 @@
 
 #include "TileSelectionData.h"
 #include "CharacterBase.h"
+#include "Plains.h"
 
 class TileSystemBase
 {
 private:
-
     SpriteBuilder<Sprite> TileSelectionBuilder; // Tile delta_x = 16, delta_y = 8
     std::vector<std::unique_ptr<Sprite>> TileSelectionSpriteVector;
 
-    int x, y;
 
     const unsigned short TileColorSet[14] =
     {
@@ -35,16 +34,17 @@ private:
     unsigned ColorShiftTimer = 0;
     void ShiftColor();
 public:
+    int x, y;
     enum class eStatus {Valid, Invalid, Inactive};
     eStatus TileStatus;
     TileSystemBase();
     void SetTileStatus(eStatus Status);
     void Update();
     void Move(int x, int y);
-    void MoveRight();
-    void MoveLeft();
-    void MoveUp();
-    void MoveDown();
+    void MoveRight(int offsetX, int offsetY);
+    void MoveLeft(int offsetX, int offsetY);
+    void MoveUp(int offsetX, int offsetY);
+    void MoveDown(int offsetX, int offsetY);
 
     std::vector<Sprite*> Get() const;
 };

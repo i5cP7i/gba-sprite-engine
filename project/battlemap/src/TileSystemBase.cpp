@@ -95,23 +95,32 @@ void TileSystemBase::Move(int x, int y)
 
 }
 
-void TileSystemBase::MoveRight()
+void TileSystemBase::MoveRight(int offsetX, int offsetY)
 {
 
     Move(x+2*8, y+8);
 }
 
-void TileSystemBase::MoveLeft()
+void TileSystemBase::MoveLeft(int offsetX, int offsetY)
 {
-    Move(x-2*8, y-8);
+    if (!(x == 102 && y == 88) && !(x == 86 && y == 96) && !(x == 70 && y == 104) && !(x == 54 && y == 112)
+            && !(x == 134 && y == 88) && !(x == 86 && y == 144) && !(x == 70 && y == 152) && x >= 54)
+    {
+        Move(x-2*8, y-8);
+    }
+
 }
 
-void TileSystemBase::MoveUp()
+void TileSystemBase::MoveUp(int offsetX, int offsetY)
 {
-    Move(x+2*8, y-8);
+    if (!(x == 102 && y == 88) && !(x == 134 && y == 88) && !(x == 150 && y == 96) && !(x == 166 && y == 104) && !(x == 182 && y == 112) && !(x == 214 && y == 112))
+    {
+        Move(x+2*8, y-8);
+    }
+
 }
 
-void TileSystemBase::MoveDown()
+void TileSystemBase::MoveDown(int offsetX, int offsetY)
 {
     Move(x-2*8, y+8);
 }
