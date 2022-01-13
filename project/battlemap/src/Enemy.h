@@ -10,9 +10,12 @@
 
 class Enemy : public CharacterBase
 {
+private:
+
 public:
     Enemy();
     Enemy(int x, int y);
+
 };
 
 

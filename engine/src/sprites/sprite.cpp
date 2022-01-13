@@ -166,3 +166,24 @@ void Sprite::buildOam(int tileIndex) {
             ATTR2_PRIO(priority) |
             ATTR2_PALBANK(PalBank);
 }
+
+void Sprite::buildOam(int tileIndex, u32 priority)
+{
+    this->tileIndex = tileIndex;
+
+    oam.attr0 = ATTR0_Y(this->y & 0x00FF) |
+                ATTR0_MODE(0) |
+                (GFX_MODE << 10) |
+                (MOSAIC_MODE << 12) |
+                (COLOR_MODE_16 << 13) | // 0 is 16 colors, 1 is 256 colors
+                (this->shape_bits << 14);
+    oam.attr1 = (this->x & 0x01FF) |
+                (AFFINE_FLAG_NONE_SET_YET << 9) |
+                (HORIZONTAL_FLIP_FLAG << 12) |
+                (VERTICAL_FLIP_FLAG << 13) |
+                (this->size_bits << 14);
+
+    oam.attr2 = ATTR2_ID(tileIndex) |
+                ATTR2_PRIO(priority) |
+                ATTR2_PALBANK(PalBank);
+}

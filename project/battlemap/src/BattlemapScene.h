@@ -53,6 +53,13 @@ private:
     void End(u16 keys);
     void Reset(u16 keys);
 
+    Sprite* CurrentCharacterSprite;
+    Sprite* OtherCharacterSprite;
+    CharacterBase::eDirection CurrentCharacterSpriteDirection;
+    CharacterBase::eDirection OtherCharacterSpriteDirection;
+
+    int TurnID = 0;
+    std::vector<TileSystemBase::TileCoordinates> TileMoveVector;
     // Gameplay MenuObject Functions
     enum class eGameMenu {Init = 0, Move = 1, Attack = 2, Items = 3, Wait = 4} GameMenu = eGameMenu::Init;
     // enum class eMenuSelect {Init, Move, Action, Wait} MenuSelect;
@@ -61,6 +68,8 @@ private:
     void InitMenu(u16 keys);
     void MoveMenu(u16 keys);
     void AttackMenu(u16 keys);
+    void ItemMenu(u16 keys);
+    void WaitMenu(u16 keys);
 
     // Gameplay MenuObject variables
     unsigned char MenuSelected = 0;

@@ -14,18 +14,24 @@
 class CharacterBase
 {
 private:
-
+    // int TileIndex = GetTileIndex();
+    TileSystemBase::TileCoordinates TileLocation;
 public:
-    enum class eDirection: unsigned char {SouthEast, SouthWest, NorthEast, NorthWest} Direction;
+
+    enum class eDirection: unsigned char {SouthEast = 0, SouthWest = 1, NorthEast = 2, NorthWest = 3} Direction;
     CharacterBase(const void *ImageData, int ImageSize, int x, int y, int AnimationDelay, int AnimationFrames);
 
-    void Move(eDirection Direction, int NumTiles);
+    void Move(int x, int y);
 
     void HandleMovement();
     void AnimateWalking();
+    void AnimateHalt();
 
     void SetDirection(eDirection Direction);
+    eDirection GetDirection() const {return Direction;}
+    TileSystemBase::TileCoordinates GetTileLocation() const {return TileLocation;}
 
+    bool isOutofRange(TileSystemBase::TileCoordinates t, int Radius); // t = TileCoordinates, p = TileCoordinates
     void Update() const { CharacterSprite->update(); }
     Sprite* Get() const { return CharacterSprite.get(); }
 
@@ -44,14 +50,22 @@ protected:
     int dy;
 
     // Character Attributes
+    int MaxHealth;
     int Health;
     int MoveRadius;
+    int AttackRadius;
     int Strength;
     int Evasion;
+
+    int ClipValue(int Number, int LowerBound, int UpperBound)
+    {
+        return std::max(LowerBound, std::min(Number, UpperBound));
+    }
 public:
     int GetHealth() const { return Health; }
-    void SetHealth(int Health)  { this->Health = Health; }
+    void SetHealth(int Health)  { this->Health = ClipValue(Health, 0, MaxHealth); }
     int GetMoveRadius() const { return MoveRadius; }
+    int GetAttackRadius() const { return AttackRadius; }
 };
 
 

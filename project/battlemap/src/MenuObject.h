@@ -20,13 +20,13 @@ public:
         int x;
         int y;
 
-        void operator +=(vi2d v)
+        void operator += (vi2d v)
         {
             x += v.x;
             y += v.y;
         }
 
-        void operator -=(vi2d v)
+        void operator -= (vi2d v)
         {
             x -= v.x;
             y -= v.y;

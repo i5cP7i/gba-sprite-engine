@@ -11,13 +11,16 @@ TileSystemBase::TileSystemBase()
             .withSize(SIZE_16_16)
             .withLocation(ResetX, ResetY)
             .buildPtr();
+    TempTileSelectionSprite->buildOam(TempTileSelectionSprite->GetTileIndex(), 3);
     TileSelectionSpriteVector.push_back(std::move(TempTileSelectionSprite));
+
 
     TempTileSelectionSprite = TileSelectionBuilder
             .withData(TileSelectionTiles, sizeof(TileSelectionTiles))
             .withSize(SIZE_16_16)
             .withLocation(TileSelectionSpriteVector.at(0)->getX()+16, TileSelectionSpriteVector.at(0)->getY())
             .buildPtr();
+    TempTileSelectionSprite->buildOam(TempTileSelectionSprite->GetTileIndex(), 3);
     TileSelectionSpriteVector.push_back(std::move(TempTileSelectionSprite));
 
     for (int i = 0; i < TileSelectionSpriteVector.size(); ++i)
@@ -87,6 +90,8 @@ void TileSystemBase::Move(int x, int y)
 {
     this->x = x;
     this->y = y;
+    this->TileLocation.x = x+8;
+    this->TileLocation.y = y-19;
     for (int i = 0; i < TileSelectionSpriteVector.size() / 2; i += 2)
     {
         TileSelectionSpriteVector.at(i)->moveTo(x, y);
@@ -95,13 +100,12 @@ void TileSystemBase::Move(int x, int y)
 
 }
 
-void TileSystemBase::MoveRight(int offsetX, int offsetY)
+void TileSystemBase::MoveRight()
 {
-
     Move(x+2*8, y+8);
 }
 
-void TileSystemBase::MoveLeft(int offsetX, int offsetY)
+void TileSystemBase::MoveLeft()
 {
     if (!(x == 102 && y == 88) && !(x == 86 && y == 96) && !(x == 70 && y == 104) && !(x == 54 && y == 112)
             && !(x == 134 && y == 88) && !(x == 86 && y == 144) && !(x == 70 && y == 152) && x >= 54)
@@ -111,18 +115,22 @@ void TileSystemBase::MoveLeft(int offsetX, int offsetY)
 
 }
 
-void TileSystemBase::MoveUp(int offsetX, int offsetY)
+void TileSystemBase::MoveUp()
 {
-    if (!(x == 102 && y == 88) && !(x == 134 && y == 88) && !(x == 150 && y == 96) && !(x == 166 && y == 104) && !(x == 182 && y == 112) && !(x == 214 && y == 112))
+    if (!(x==102 && y==88) && !(x==134 && y==88) && !(x==150 && y==96)
+        && !(x==166 && y==104) && !(x==182 && y==112) && !(x==214 && y==112))
     {
         Move(x+2*8, y-8);
     }
 
 }
 
-void TileSystemBase::MoveDown(int offsetX, int offsetY)
+void TileSystemBase::MoveDown()
 {
-    Move(x-2*8, y+8);
+    if (!(x==54 && y==112) && !(x==70 && y==120) && !(x==86 && y==128))
+    {
+        Move(x-2*8, y+8);
+    }
 }
 
 void TileSystemBase::SetTileStatus(TileSystemBase::eStatus Status)

@@ -18,6 +18,9 @@ CharacterBase::CharacterBase(const void *ImageData, int ImageSize, int x, int y,
     dy = 1;
     FrameOrientation = 2;
     PrevFrame = 0;
+
+    TileLocation.x = x;
+    TileLocation.y = y;
 }
 
 void CharacterBase::HandleMovement()
@@ -56,6 +59,11 @@ void CharacterBase::AnimateWalking()
     Update();
 }
 
+void CharacterBase::AnimateHalt()
+{
+    CharacterSprite->animateToFrame(0);
+}
+
 void CharacterBase::SetDirection(CharacterBase::eDirection Direction)
 {
     switch(Direction)
@@ -87,4 +95,26 @@ void CharacterBase::SetDirection(CharacterBase::eDirection Direction)
     CharacterDirection = Direction;
     Update();
 }
+
+void CharacterBase::Move(int x, int y)
+{
+    CharacterSprite->moveTo(x, y);
+    TileLocation.x = x;
+    TileLocation.y = y;
+}
+
+// If true, p is out of range.
+bool CharacterBase::isOutofRange(TileSystemBase::TileCoordinates t, int r)
+{
+    if ((t.x > (TileLocation.x + 16*r) && t.y > (TileLocation.y + 8*r)) ||
+        (t.x < (TileLocation.x - 16*r) && t.y < (TileLocation.y - 8*r)) ||
+        (t.x < (TileLocation.x - 16*r) && t.y > (TileLocation.y + 8*r)) ||
+        (t.x > (TileLocation.x + 16*r) && t.y < (TileLocation.y - 8*r)))
+    {
+        return true;
+    }
+    return false;
+}
+
+
 

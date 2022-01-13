@@ -12,7 +12,7 @@
 #include <memory>
 
 #include "TileSelectionData.h"
-#include "CharacterBase.h"
+// #include "CharacterBase.h"
 #include "Plains.h"
 
 class TileSystemBase
@@ -32,22 +32,46 @@ private:
     unsigned short ColorShift = 0;
     unsigned ColorShiftTimer = 0;
     void ShiftColor();
+
+
 public:
+    struct TileCoordinates
+    {
+        int x;
+        int y;
+        void operator += (TileCoordinates v)
+        {
+            x += v.x;
+            y += v.y;
+        }
+
+        void operator -= (TileCoordinates v)
+        {
+            x -= v.x;
+            y -= v.y;
+        }
+    };
+    TileCoordinates TileLocation;
     int x, y;
+
     int ResetX = 240;
     int ResetY = 180;
 
     enum class eStatus {Valid, Invalid, Inactive};
     eStatus TileStatus;
     TileSystemBase();
+
+    TileCoordinates GetTileLocation() const { return TileLocation; };
+
     void SetTileStatus(eStatus Status);
+    eStatus GetTileStatus() const {return TileStatus;};
     void Update();
     void Move(int x, int y);
     void ResetPos() { Move(ResetX, ResetY); }
-    void MoveRight(int offsetX, int offsetY);
-    void MoveLeft(int offsetX, int offsetY);
-    void MoveUp(int offsetX, int offsetY);
-    void MoveDown(int offsetX, int offsetY);
+    void MoveRight();
+    void MoveLeft();
+    void MoveUp();
+    void MoveDown();
 
     std::vector<Sprite*> Get() const;
 };

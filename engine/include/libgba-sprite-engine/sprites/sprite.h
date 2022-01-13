@@ -71,11 +71,14 @@ protected:
     void setAttributesBasedOnSize(SpriteSize size);
 
 public:
+    void buildOam(int tileIndex, u32 priority);
     explicit Sprite(const Sprite& other);
     explicit Sprite(const void *imageData, int imageSize, int x, int y, SpriteSize size);
     virtual ~Sprite() {}
 
     void setPalBank(int Palbank) { this->PalBank = Palbank; };
+    void setPriority(u32 priority) { this->priority = priority; };
+    int GetTileIndex() const { return tileIndex;};
     void makeAnimated(int beginFrame, int numberOfFrames, int animationDelay);
     void setBeginFrame(int frame) { this->beginFrame = frame; }
     void animateToFrame(int frame) { this->currentFrame = frame; }

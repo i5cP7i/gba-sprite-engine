@@ -7,17 +7,21 @@
 Player::Player()
         : CharacterBase(soldierBlueTiles, sizeof(soldierBlueTiles), 78, 102, 30, 24)
 {
-    int Health = 102;
-    int MoveRadius = 3;
-    int Strength = 5;
-    int Evasion = 10;
+    MaxHealth = 102;
+    Health = MaxHealth;
+    MoveRadius = 3;
+    AttackRadius = 1;
+    Strength = 5;
+    Evasion = 10;
 }
 
 Player::Player(int x, int y)
         : CharacterBase(soldierBlueTiles, sizeof(soldierBlueTiles), x, y, 30, 24)
 {
-    int Health = 102;
-    int MoveRadius = 3;
-    int Strength = 5;
-    int Evasion = 10;
+    MaxHealth = 102;
+    Health = MaxHealth;
+    MoveRadius = 3;
+    AttackRadius = 1;
+    Strength = 5;
+    Evasion = 10;
 }
