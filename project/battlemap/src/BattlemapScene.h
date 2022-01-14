@@ -25,6 +25,8 @@
 #include "MenuObject.h"
 #include "MenuManager.h"
 
+#include "test.h"
+
 // #define _DEBUGMODE_0
 
 class BattlemapScene : public Scene
@@ -45,24 +47,29 @@ private:
 
     std::unique_ptr<TileSystemBase> TileSystem;
 
-    enum class eGameState {Setup, Play, End} GameState;
+    enum class eGameState {Setup, Play, End, Reset, Quit} GameState;
 
     bool isGameOver();
 
     u16 prev_keys = 0;
 
+    bool isGameStateTransitioning (unsigned Delay);
 
     void Setup(u16 keys);
     void Play(u16 keys);
     void End(u16 keys);
-    void Reset(u16 keys);
+    void Reset();
 
     Sprite* CurrentCharacterSprite;
     Sprite* OtherCharacterSprite;
+    Sprite* WinningSprite;
+    Sprite* LosingSprite;
     CharacterBase::eDirection CurrentCharacterSpriteDirection;
     CharacterBase::eDirection OtherCharacterSpriteDirection;
 
     int TurnID = 0;
+    bool bGameOver = false;
+    bool OnEndState = false;
     int oldTurnID = TurnID;
     std::vector<TileSystemBase::TileCoordinates> TileMoveVector;
     // Gameplay MenuObject Functions

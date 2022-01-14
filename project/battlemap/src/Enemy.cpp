@@ -22,7 +22,7 @@ Enemy::Enemy(int x, int y)
     Health = MaxHealth;
     MoveRadius = 4;
     AttackRadius = 1;
-    Strength = 25;
+    Strength = 250; // Default = 25
     Evasion = 5;
 
 }

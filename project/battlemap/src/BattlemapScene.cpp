@@ -16,10 +16,11 @@ void BattlemapScene::load()
     auto& MenuAction = MenuSystem["main"]["Action"];
     MenuAction["Attack"].SetID(200).Enable(true);
     MenuAction["Items"]["Potion"].SetID(300).Enable(true);
-
     MenuSystem["main"]["Wait"].SetID(101);
+    MenuSystem["end"].SetTable(1,2);
+    MenuSystem["end"]["Retry"].SetID(1000).Enable(true);
+    MenuSystem["end"]["Quit"].SetID(1001).Enable(true);
     MenuSystem.Build();
-
 
     EnemyCharacter = std::unique_ptr<Enemy>(new Enemy(78+4*16, 101-2*8));
     PlayerCharacter = std::unique_ptr<Player>(new Player(78, 101));
@@ -72,7 +73,7 @@ void BattlemapScene::load()
     CurrentCharacterSprite = PlayerCharacter->Get();
     OtherCharacterSprite = EnemyCharacter->Get();
 
-
+    engine->enqueueMusic(test,1872091,16000); // totalSamples = 1952095
 }
 
 void BattlemapScene::tick(u16 keys)
@@ -91,7 +92,18 @@ void BattlemapScene::tick(u16 keys)
                 Play(keys);
                 break;
             case eGameState::End:
-                End(keys);
+                if (!bGameOver && isGameStateTransitioning(200) == 0)
+                {
+                    TextStream::instance().clear();
+                    bGameOver = true;
+                }
+                else
+                {
+                    End(keys);
+                }
+                break;
+            case eGameState::Reset:
+                Reset();
                 break;
             default:
                 break;
@@ -99,7 +111,7 @@ void BattlemapScene::tick(u16 keys)
     }
     else
     {
-
+        // engine->setScene(MainMenu);
     }
 
     #ifdef _DEBUGMODE_0
@@ -246,7 +258,7 @@ std::vector<Background *> BattlemapScene::backgrounds()
 
 bool BattlemapScene::isGameOver()
 {
-    return GameState == eGameState::End;
+    return GameState == eGameState::Quit;
 }
 
 void BattlemapScene::Setup(u16 keys)
@@ -287,10 +299,28 @@ void BattlemapScene::Play(u16 keys)
 
 void BattlemapScene::End(u16 keys)
 {
+    if (OnEndState)
+    {
+        WinningSprite->animateToFrame(9);
+        LosingSprite->animateToFrame(13);
 
+        MenuSystemManager.Open(&MenuSystem["end"]);
+        MenuSystemManager.Draw(MenuScreenOffset);
+        TextStream::instance().setText("COMPLETED!", 2, 10);
+    }
+    else if (!OnEndState && isGameStateTransitioning(300) == 0)
+    {
+        MenuScreenOffset += {10,0};
+        OnEndState = true;
+    }
+    else
+    {
+        WinningSprite->animateToFrame(0);
+        LosingSprite->animateToFrame(13);
+    }
 }
 
-void BattlemapScene::Reset(u16 keys)
+void BattlemapScene::Reset()
 {
 
 }
@@ -587,6 +617,7 @@ void BattlemapScene::MoveMenu(u16 keys)
 
 void BattlemapScene::AttackMenu(u16 keys)
 {
+
     if (isRightKeyRising(keys))
     {
         TileSystem->MoveRight();
@@ -664,7 +695,16 @@ void BattlemapScene::AttackMenu(u16 keys)
         }
         if (EnemyCharacter->GetHealth() <= 0 || PlayerCharacter->GetHealth() <= 0)
         {
-            // GameMenu = eGameMenu::Init;
+            if (CurrentCharacterSprite == PlayerCharacter->Get() && PlayerCharacter->GetHealth() > 0)
+            {
+                WinningSprite = CurrentCharacterSprite;
+                LosingSprite = OtherCharacterSprite;
+            }
+            else
+            {
+                WinningSprite = CurrentCharacterSprite;
+                LosingSprite = OtherCharacterSprite;
+            }
             GameState = eGameState::End;
         }
         else
@@ -1017,6 +1057,21 @@ bool BattlemapScene::isBKeyRising(u16 keys)
         // TextStream::instance().setText("B Key Release.", 4, 1);
         BKeyPressed = false;
         return false;
+    }
+    return false;
+}
+
+bool BattlemapScene::isGameStateTransitioning(unsigned Delay)
+{
+    static unsigned TransitionDelay = 0;
+    TransitionDelay++;
+    if (TransitionDelay >= Delay)
+    {
+        return false;
+    }
+    else
+    {
+        return true;
     }
     return false;
 }
