@@ -18,7 +18,7 @@ private:
     TileSystemBase::TileCoordinates TileLocation;
 public:
 
-    enum class eDirection: unsigned char {SouthEast = 0, SouthWest = 1, NorthEast = 2, NorthWest = 3} Direction;
+    enum class eDirection: unsigned char { SouthEast = 0, SouthWest = 1, NorthEast = 2, NorthWest = 3 } Direction;
     CharacterBase(const void *ImageData, int ImageSize, int x, int y, int AnimationDelay, int AnimationFrames);
 
     void Move(int x, int y);
@@ -28,8 +28,8 @@ public:
     void AnimateHalt();
 
     void SetDirection(eDirection Direction);
-    eDirection GetDirection() const {return Direction;}
-    TileSystemBase::TileCoordinates GetTileLocation() const {return TileLocation;}
+    eDirection GetDirection() const { return Direction; }
+    TileSystemBase::TileCoordinates GetTileLocation() const { return TileLocation; }
 
     bool isOutofRange(TileSystemBase::TileCoordinates t, int Radius); // t = TileCoordinates, p = TileCoordinates
     void Update() const { CharacterSprite->update(); }
@@ -66,6 +66,8 @@ public:
     void SetHealth(int Health)  { this->Health = ClipValue(Health, 0, MaxHealth); }
     int GetMoveRadius() const { return MoveRadius; }
     int GetAttackRadius() const { return AttackRadius; }
+    int GetStrength() const { return Strength; }
+    int GetEvasion() const { return Evasion; }
 };
 
 

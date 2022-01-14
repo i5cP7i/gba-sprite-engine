@@ -6,7 +6,7 @@
 #include <libgba-sprite-engine/allocator.h>
 
 #include "BattlemapScene.h"
-
+#include <time.h>
 /*
  * 16 bit color mode!!!!!!!!!!!!
  * grit bg.png -ftc -mRtpf -gB4 -pe16 -pu16
@@ -18,6 +18,8 @@ int main()
 
     BattlemapScene* startScene = new BattlemapScene(engine);
     engine->setScene(startScene);
+
+    srand (time(NULL));
 
     while (true) {
         engine->update();

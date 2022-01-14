@@ -20,6 +20,16 @@ public:
 
     void Open(MenuObject* Menu) {Close(); panels.push_back(Menu);}
     void Close() {panels.clear(); TextStream::instance().clear();}
+    void OnResetPosY()
+    {
+        if (!panels.empty())
+        {
+            while (panels.back()->GetCursorPosition().y != 0)
+            {
+                panels.back()->OnUp();
+            }
+        }
+    }
     void OnUp() { if (!panels.empty()) panels.back()->OnUp();}
     void OnDown() { if (!panels.empty()) panels.back()->OnDown();}
     void OnBack()

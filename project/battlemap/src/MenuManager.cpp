@@ -23,7 +23,6 @@ MenuObject *MenuManager::OnConfirm()
 {
     if (panels.empty())
     {
-        // bOpen = false;
         return nullptr;
     }
 

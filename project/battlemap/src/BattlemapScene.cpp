@@ -6,16 +6,10 @@
 
 void BattlemapScene::load()
 {
+
     foregroundPalette = std::unique_ptr<ForegroundPaletteManager>(new ForegroundPaletteManager(sharedPal, sizeof(sharedPal)));
     backgroundPalette = std::unique_ptr<BackgroundPaletteManager>(new BackgroundPaletteManager(GizaPlainsMapPal, sizeof(GizaPlainsMapPal)));
 
-    /*
-    MenuSystem["main"].SetTable(1, 10);
-    MenuSystem["main"]["Move"].SetID(101);
-    MenuSystem["main"]["Action"]["Attack"].SetID(102).Enable(true);
-    MenuSystem["main"]["Action"]["Items"]["Potion"].SetID(102).Enable(true);
-    MenuSystem["main"]["Wait"].SetID(103);
-    */
     MenuSystem["main"].SetTable(1, 3);
     MenuSystem["main"]["Move"].SetID(100).Enable(true);
     MenuSystem["main"]["Action"].SetTable(1, 3);
@@ -444,11 +438,15 @@ void BattlemapScene::InitMenu(u16 keys)
 {
     // MenuSystem["main"].DrawSelf(MenuScreenOffset);
     MenuObject *command = nullptr;
-
-    if (isAKeyRising(keys)) {
-        if (!MenuSystemManager.isOpen()) {
+    if (isAKeyRising(keys) || (TurnID != oldTurnID))
+    {
+        oldTurnID = TurnID;
+        if (!MenuSystemManager.isOpen())
+        {
             MenuSystemManager.Open(&MenuSystem["main"]);
-        } else {
+        }
+        else
+        {
             command = MenuSystemManager.OnConfirm();
         }
     }
@@ -523,6 +521,8 @@ void BattlemapScene::MoveMenu(u16 keys)
     {
         TileSystem->ResetPos();
         TileSystem->SetTileStatus(TileSystemBase::eStatus::Inactive);
+        MenuSystemManager.Open(&MenuSystem["main"]);
+        MenuSystemManager.OnResetPosY();
         GameMenu = eGameMenu::Init;
     }
     else if (isAKeyRising(keys))
@@ -607,33 +607,111 @@ void BattlemapScene::AttackMenu(u16 keys)
     {
         TileSystem->ResetPos();
         TileSystem->SetTileStatus(TileSystemBase::eStatus::Inactive);
+        MenuSystemManager.Open(&MenuSystem["main"]);
+        MenuSystemManager.OnResetPosY();
         GameMenu = eGameMenu::Init;
     }
     else if (isAKeyRising(keys))
     {
-        if (TileSystem->GetTileStatus() != TileSystemBase::eStatus::Invalid)
+        if (TileSystem->GetTileStatus() != TileSystemBase::eStatus::Invalid
+            && ((TileSystem->GetTileLocation().x == PlayerCharacter->GetTileLocation().x && TileSystem->TileLocation.y == PlayerCharacter->GetTileLocation().y)))
         {
             TileSystem->ResetPos();
             TileSystem->SetTileStatus(TileSystemBase::eStatus::Inactive);
             MenuSystem["main"]["Action"]["Attack"].Enable(false);
             MenuSystem["main"]["Action"]["Items"].Enable(false);
+
+            int Damage = std::rand() % (EnemyCharacter->GetStrength()+EnemyCharacter->GetStrength()/10) + EnemyCharacter->GetStrength()-EnemyCharacter->GetStrength()/10;
+            std::string sign;
+            if (Damage > 0)
+            {
+                sign = "-";
+            }
+            else
+            {
+                sign = "+";
+            }
+
+            PlayerCharacter->SetHealth(PlayerCharacter->GetHealth()-Damage);
+            TextStream::instance().setText(sign + std::to_string(Damage), 6,1+9);
+            TextStream::instance().setText("Health: " + std::to_string(PlayerCharacter->GetHealth()), 7,1);
+
+        }
+        else if (TileSystem->GetTileStatus() != TileSystemBase::eStatus::Invalid
+                 && ((TileSystem->GetTileLocation().x == EnemyCharacter->GetTileLocation().x && TileSystem->TileLocation.y == EnemyCharacter->GetTileLocation().y)))
+        {
+            TileSystem->ResetPos();
+            TileSystem->SetTileStatus(TileSystemBase::eStatus::Inactive);
+            MenuSystem["main"]["Action"]["Attack"].Enable(false);
+            MenuSystem["main"]["Action"]["Items"].Enable(false);
+
+            int Damage = std::rand() % (PlayerCharacter->GetStrength()+PlayerCharacter->GetStrength()/10) + PlayerCharacter->GetStrength()-PlayerCharacter->GetStrength()/10;
+            std::string sign;
+            if (Damage > 0)
+            {
+                sign = "-";
+            }
+            else
+            {
+                sign = "+";
+            }
+
+            EnemyCharacter->SetHealth(EnemyCharacter->GetHealth()-Damage);
+            TextStream::instance().setText(sign + std::to_string(Damage), 6,14+9);
+            TextStream::instance().setText("Health: " + std::to_string(EnemyCharacter->GetHealth()), 7,14);
+
+
+        }
+        if (EnemyCharacter->GetHealth() <= 0 || PlayerCharacter->GetHealth() <= 0)
+        {
+            // GameMenu = eGameMenu::Init;
+            GameState = eGameState::End;
+        }
+        else
+        {
             GameMenu = eGameMenu::Init;
         }
     }
+
     if (CurrentCharacterSprite == PlayerCharacter->Get())
     {
-        if (PlayerCharacter->isOutofRange(TileSystem->GetTileLocation(), PlayerCharacter->GetMoveRadius()))
+        if (PlayerCharacter->isOutofRange(TileSystem->GetTileLocation(), PlayerCharacter->GetAttackRadius()))
         {
             TileSystem->SetTileStatus(TileSystemBase::eStatus::Invalid);
         }
         else
         {
-            TileSystem->SetTileStatus(TileSystemBase::eStatus::Valid);
+            if (TileSystem->GetTileLocation().x != PlayerCharacter->GetTileLocation().x
+                && TileSystem->GetTileLocation().y != PlayerCharacter->GetTileLocation().y)
+            {
+                TileSystem->SetTileStatus(TileSystemBase::eStatus::Valid);
+            }
+            else
+            {
+                TileSystem->SetTileStatus(TileSystemBase::eStatus::Invalid);
+            }
+
         }
     }
     else
     {
+        if (EnemyCharacter->isOutofRange(TileSystem->GetTileLocation(), EnemyCharacter->GetAttackRadius()))
+        {
+            TileSystem->SetTileStatus(TileSystemBase::eStatus::Invalid);
+        }
+        else
+        {
+            if (TileSystem->GetTileLocation().x != EnemyCharacter->GetTileLocation().x
+                && TileSystem->GetTileLocation().y != EnemyCharacter->GetTileLocation().y)
+            {
+                TileSystem->SetTileStatus(TileSystemBase::eStatus::Valid);
+            }
+            else
+            {
+                TileSystem->SetTileStatus(TileSystemBase::eStatus::Invalid);
+            }
 
+        }
     }
     TextStream::instance().setText("tx: " + std::to_string(TileSystem->GetTileLocation().x), 2,1);
     TextStream::instance().setText("ty: " + std::to_string(TileSystem->GetTileLocation().y), 3,1);
@@ -663,6 +741,8 @@ void BattlemapScene::ItemMenu(u16 keys)
     {
         TileSystem->ResetPos();
         TileSystem->SetTileStatus(TileSystemBase::eStatus::Inactive);
+        MenuSystemManager.Open(&MenuSystem["main"]);
+        MenuSystemManager.OnResetPosY();
         GameMenu = eGameMenu::Init;
     }
     else if (isAKeyRising(keys))
@@ -674,18 +754,10 @@ void BattlemapScene::ItemMenu(u16 keys)
             TileSystem->SetTileStatus(TileSystemBase::eStatus::Inactive);
             MenuSystem["main"]["Action"]["Attack"].Enable(false);
             MenuSystem["main"]["Action"]["Items"].Enable(false);
-            if (CurrentCharacterSprite == PlayerCharacter->Get())
-            {
-                PlayerCharacter->SetHealth(PlayerCharacter->GetHealth()+30);
-                TextStream::instance().setText("+30!", 6,1+9);
-                TextStream::instance().setText("Health: " + std::to_string(PlayerCharacter->GetHealth()), 7,1);
-            }
-            else
-            {
-                EnemyCharacter->SetHealth(EnemyCharacter->GetHealth()+30);
-                TextStream::instance().setText("+30!", 6,14+9);
-                TextStream::instance().setText("Health: " + std::to_string(PlayerCharacter->GetHealth()), 7,14);
-            }
+
+            PlayerCharacter->SetHealth(PlayerCharacter->GetHealth()+30);
+            TextStream::instance().setText("+30!", 6,1+9);
+            TextStream::instance().setText("Health: " + std::to_string(PlayerCharacter->GetHealth()), 7,1);
 
             GameMenu = eGameMenu::Init;
         }
@@ -696,18 +768,12 @@ void BattlemapScene::ItemMenu(u16 keys)
             TileSystem->SetTileStatus(TileSystemBase::eStatus::Inactive);
             MenuSystem["main"]["Action"]["Attack"].Enable(false);
             MenuSystem["main"]["Action"]["Items"].Enable(false);
-            if (CurrentCharacterSprite == PlayerCharacter->Get())
-            {
-                EnemyCharacter->SetHealth(EnemyCharacter->GetHealth()+30);
-                TextStream::instance().setText("+30!", 6,1+9);
-                TextStream::instance().setText("Health: " + std::to_string(PlayerCharacter->GetHealth()), 7,1);
-            }
-            else
-            {
-                PlayerCharacter->SetHealth(PlayerCharacter->GetHealth()+30);
-                TextStream::instance().setText("+30!", 6,14+9);
-                TextStream::instance().setText("Health: " + std::to_string(PlayerCharacter->GetHealth()), 7,14);
-            }
+
+            EnemyCharacter->SetHealth(EnemyCharacter->GetHealth()+30);
+            TextStream::instance().setText("+30!", 6,14+9);
+            TextStream::instance().setText("Health: " + std::to_string(EnemyCharacter->GetHealth()), 7,14);
+
+            GameMenu = eGameMenu::Init;
         }
     }
     if (CurrentCharacterSprite == PlayerCharacter->Get())
@@ -723,7 +789,14 @@ void BattlemapScene::ItemMenu(u16 keys)
     }
     else
     {
-
+        if (EnemyCharacter->isOutofRange(TileSystem->GetTileLocation(), EnemyCharacter->GetAttackRadius()))
+        {
+            TileSystem->SetTileStatus(TileSystemBase::eStatus::Invalid);
+        }
+        else
+        {
+            TileSystem->SetTileStatus(TileSystemBase::eStatus::Valid);
+        }
     }
 }
 
@@ -778,6 +851,8 @@ void BattlemapScene::WaitMenu(u16 keys)
     {
         TileSystem->ResetPos();
         TileSystem->SetTileStatus(TileSystemBase::eStatus::Inactive);
+        MenuSystemManager.Open(&MenuSystem["main"]);
+        MenuSystemManager.OnResetPosY();
         GameMenu = eGameMenu::Init;
     }
     else if (isAKeyRising(keys))
@@ -798,6 +873,8 @@ void BattlemapScene::WaitMenu(u16 keys)
         MenuSystem["main"]["Move"].Enable(true);
         MenuSystem["main"]["Action"]["Attack"].Enable(true);
         MenuSystem["main"]["Action"]["Items"].Enable(true);
+        MenuSystemManager.Open(&MenuSystem["main"]);
+        MenuSystemManager.OnResetPosY();
         GameMenu = eGameMenu::Init;
     }
 }

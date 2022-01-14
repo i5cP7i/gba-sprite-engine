@@ -22,6 +22,6 @@ Player::Player(int x, int y)
     Health = MaxHealth;
     MoveRadius = 3;
     AttackRadius = 1;
-    Strength = 5;
+    Strength = 20;
     Evasion = 10;
 }

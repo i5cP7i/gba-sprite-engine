@@ -10,6 +10,7 @@ Enemy::Enemy()
     MaxHealth = 86;
     Health = MaxHealth;
     MoveRadius = 4;
+    AttackRadius = 1;
     Strength = 7;
     Evasion = 5;
 }
@@ -20,7 +21,8 @@ Enemy::Enemy(int x, int y)
     MaxHealth = 86;
     Health = MaxHealth;
     MoveRadius = 4;
-    Strength = 7;
+    AttackRadius = 1;
+    Strength = 25;
     Evasion = 5;
 
 }

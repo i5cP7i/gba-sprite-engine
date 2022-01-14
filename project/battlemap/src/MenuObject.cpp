@@ -61,12 +61,14 @@ void MenuObject::ClampCursor()
 void MenuObject::OnUp()
 {
     vCellCursor.y = ClipValue(--vCellCursor.y, 0, items.size()-1);
+    vCursorPosition = {vCellCursor.x, vCellCursor.y};
     ClampCursor();
 }
 
 void MenuObject::OnDown()
 {
     vCellCursor.y = ClipValue(++vCellCursor.y, 0, items.size()-1);
+    vCursorPosition = {vCellCursor.x, vCellCursor.y};
     ClampCursor();
 }
 

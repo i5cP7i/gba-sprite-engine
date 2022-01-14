@@ -16,6 +16,7 @@
 #include <libgba-sprite-engine/sprites/sprite_builder.h>
 
 #include <algorithm>
+#include <random>
 
 #include "Player.h"
 #include "Enemy.h"
@@ -30,6 +31,7 @@ class BattlemapScene : public Scene
 {
 private:
     std::unique_ptr<Background> Battlemap;
+
     // std::unique_ptr<Background> Text;
     std::unique_ptr<Background> bg1;
     std::unique_ptr<Background> bg2;
@@ -48,6 +50,8 @@ private:
     bool isGameOver();
 
     u16 prev_keys = 0;
+
+
     void Setup(u16 keys);
     void Play(u16 keys);
     void End(u16 keys);
@@ -59,6 +63,7 @@ private:
     CharacterBase::eDirection OtherCharacterSpriteDirection;
 
     int TurnID = 0;
+    int oldTurnID = TurnID;
     std::vector<TileSystemBase::TileCoordinates> TileMoveVector;
     // Gameplay MenuObject Functions
     enum class eGameMenu {Init = 0, Move = 1, Attack = 2, Items = 3, Wait = 4} GameMenu = eGameMenu::Init;
