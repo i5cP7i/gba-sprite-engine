@@ -16,6 +16,7 @@ private:
 public:
     Player();
     Player(int x, int y);
+    void Reset();
 
     eDirection GetDirection() const { return Direction; }
 };

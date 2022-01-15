@@ -25,3 +25,15 @@ Player::Player(int x, int y)
     Strength = 200; // Default = 20
     Evasion = 10;
 }
+
+void Player::Reset()
+{
+    MaxHealth = 102;
+    Health = MaxHealth;
+    MoveRadius = 3;
+    AttackRadius = 1;
+    Strength = 200; // Default = 20
+    Evasion = 10;
+
+    Move(78, 101);
+}

@@ -73,7 +73,7 @@ void BattlemapScene::load()
     CurrentCharacterSprite = PlayerCharacter->Get();
     OtherCharacterSprite = EnemyCharacter->Get();
 
-    engine->enqueueMusic(test,1872091,16000); // totalSamples = 1952095
+    // engine->enqueueMusic(test,1872091,16000); // totalSamples = 1952095
 }
 
 void BattlemapScene::tick(u16 keys)
@@ -301,14 +301,43 @@ void BattlemapScene::End(u16 keys)
 {
     if (OnEndState)
     {
+        MenuObject *command = nullptr;
         WinningSprite->animateToFrame(9);
         LosingSprite->animateToFrame(13);
 
         MenuSystemManager.Open(&MenuSystem["end"]);
         MenuSystemManager.Draw(MenuScreenOffset);
         TextStream::instance().setText("COMPLETED!", 2, 10);
+
+        if (isUpKeyRising(keys))
+        {
+            MenuSystemManager.OnUp();
+        }
+        else if (isDownKeyRising(keys))
+        {
+            MenuSystemManager.OnDown();
+        }
+        else if (isAKeyRising(keys))
+        {
+            command = MenuSystemManager.OnConfirm();
+        }
+
+        if (command != nullptr)
+        {
+            switch (command->GetID())
+            {
+                case 1000:
+                    GameState = eGameState::Reset;
+                    break;
+                case 1001:
+                    break;
+                default:
+                    break;
+            }
+            MenuSystemManager.OnBack();
+        }
     }
-    else if (!OnEndState && isGameStateTransitioning(300) == 0)
+    else if (!OnEndState && isGameStateTransitioning(225) == 0)
     {
         MenuScreenOffset += {10,0};
         OnEndState = true;
@@ -322,7 +351,30 @@ void BattlemapScene::End(u16 keys)
 
 void BattlemapScene::Reset()
 {
+    TurnID = 0;
+    oldTurnID = TurnID;
+    bGameOver = false;
+    OnEndState = false;
 
+    PlayerCharacter->Reset();
+    EnemyCharacter->Reset();
+
+    TileSystem->ResetPos();
+    TileSystem->SetTileStatus(TileSystemBase::eStatus::Inactive);
+
+    MenuSystem["main"]["Move"].Enable(true);
+    MenuSystem["main"]["Action"]["Attack"].Enable(true);
+    MenuSystem["main"]["Action"]["Items"].Enable(true);
+    MenuSystemManager.Open(&MenuSystem["main"]);
+    MenuSystemManager.OnResetPosY();
+    MenuSystemManager.OnBack();
+    MenuSystemManager.OnResetPosY();
+    MenuScreenOffset = {1,4};
+
+    TextStream::instance().clear();
+
+    GameMenu = eGameMenu::Init;
+    GameState = eGameState::Setup;
 }
 
 void BattlemapScene::Menu(u16 keys)
@@ -705,6 +757,7 @@ void BattlemapScene::AttackMenu(u16 keys)
                 WinningSprite = CurrentCharacterSprite;
                 LosingSprite = OtherCharacterSprite;
             }
+
             GameState = eGameState::End;
         }
         else
@@ -715,7 +768,7 @@ void BattlemapScene::AttackMenu(u16 keys)
 
     if (CurrentCharacterSprite == PlayerCharacter->Get())
     {
-        if (PlayerCharacter->isOutofRange(TileSystem->GetTileLocation(), PlayerCharacter->GetAttackRadius()))
+        if (PlayerCharacter->isOutOfRange(TileSystem->GetTileLocation(), PlayerCharacter->GetAttackRadius()))
         {
             TileSystem->SetTileStatus(TileSystemBase::eStatus::Invalid);
         }
@@ -735,7 +788,7 @@ void BattlemapScene::AttackMenu(u16 keys)
     }
     else
     {
-        if (EnemyCharacter->isOutofRange(TileSystem->GetTileLocation(), EnemyCharacter->GetAttackRadius()))
+        if (EnemyCharacter->isOutOfRange(TileSystem->GetTileLocation(), EnemyCharacter->GetAttackRadius()))
         {
             TileSystem->SetTileStatus(TileSystemBase::eStatus::Invalid);
         }
@@ -753,6 +806,7 @@ void BattlemapScene::AttackMenu(u16 keys)
 
         }
     }
+
     TextStream::instance().setText("tx: " + std::to_string(TileSystem->GetTileLocation().x), 2,1);
     TextStream::instance().setText("ty: " + std::to_string(TileSystem->GetTileLocation().y), 3,1);
     TextStream::instance().setText("px: " + std::to_string(PlayerCharacter->GetTileLocation().x), 4,1);
@@ -818,7 +872,7 @@ void BattlemapScene::ItemMenu(u16 keys)
     }
     if (CurrentCharacterSprite == PlayerCharacter->Get())
     {
-        if (PlayerCharacter->isOutofRange(TileSystem->GetTileLocation(), PlayerCharacter->GetAttackRadius()))
+        if (PlayerCharacter->isOutOfRange(TileSystem->GetTileLocation(), PlayerCharacter->GetAttackRadius()))
         {
             TileSystem->SetTileStatus(TileSystemBase::eStatus::Invalid);
         }
@@ -829,7 +883,7 @@ void BattlemapScene::ItemMenu(u16 keys)
     }
     else
     {
-        if (EnemyCharacter->isOutofRange(TileSystem->GetTileLocation(), EnemyCharacter->GetAttackRadius()))
+        if (EnemyCharacter->isOutOfRange(TileSystem->GetTileLocation(), EnemyCharacter->GetAttackRadius()))
         {
             TileSystem->SetTileStatus(TileSystemBase::eStatus::Invalid);
         }
@@ -924,6 +978,7 @@ unsigned char BattlemapScene::ClipValue(unsigned char Number, unsigned char Lowe
     return std::max(LowerBound, std::min(Number, UpperBound));
 }
 
+// TODO: Source
 bool BattlemapScene::GetKeyState(u16 keys, u16 key)
 {
     return !(key & (keys));
@@ -1067,6 +1122,7 @@ bool BattlemapScene::isGameStateTransitioning(unsigned Delay)
     TransitionDelay++;
     if (TransitionDelay >= Delay)
     {
+        TransitionDelay = 0;
         return false;
     }
     else

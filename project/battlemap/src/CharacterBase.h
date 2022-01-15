@@ -31,7 +31,7 @@ public:
     eDirection GetDirection() const { return Direction; }
     TileSystemBase::TileCoordinates GetTileLocation() const { return TileLocation; }
 
-    bool isOutofRange(TileSystemBase::TileCoordinates t, int Radius); // t = TileCoordinates, p = TileCoordinates
+    bool isOutOfRange(TileSystemBase::TileCoordinates t, int Radius); // t = TileCoordinates, p = TileCoordinates
     void Update() const { CharacterSprite->update(); }
     Sprite* Get() const { return CharacterSprite.get(); }
 
@@ -56,6 +56,8 @@ protected:
     int AttackRadius;
     int Strength;
     int Evasion;
+
+    virtual void Reset() = 0;
 
     int ClipValue(int Number, int LowerBound, int UpperBound)
     {

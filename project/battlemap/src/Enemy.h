@@ -15,6 +15,7 @@ private:
 public:
     Enemy();
     Enemy(int x, int y);
+    void Reset();
 
 };
 

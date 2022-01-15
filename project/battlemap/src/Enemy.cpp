@@ -27,3 +27,15 @@ Enemy::Enemy(int x, int y)
 
 }
 
+void Enemy::Reset()
+{
+    MaxHealth = 86;
+    Health = MaxHealth;
+    MoveRadius = 4;
+    AttackRadius = 1;
+    Strength = 250; // Default = 25
+    Evasion = 5;
+
+    Move(78+4*16, 101-2*8);
+}
+

@@ -104,12 +104,12 @@ void CharacterBase::Move(int x, int y)
 }
 
 // If true, p is out of range.
-bool CharacterBase::isOutofRange(TileSystemBase::TileCoordinates t, int r)
+bool CharacterBase::isOutOfRange(TileSystemBase::TileCoordinates t, int Radius)
 {
-    if ((t.x > (TileLocation.x + 16*r) && t.y > (TileLocation.y + 8*r)) ||
-        (t.x < (TileLocation.x - 16*r) && t.y < (TileLocation.y - 8*r)) ||
-        (t.x < (TileLocation.x - 16*r) && t.y > (TileLocation.y + 8*r)) ||
-        (t.x > (TileLocation.x + 16*r) && t.y < (TileLocation.y - 8*r)))
+    if ((t.x > (TileLocation.x + 16 * Radius) && t.y > (TileLocation.y + 8 * Radius)) ||
+        (t.x < (TileLocation.x - 16 * Radius) && t.y < (TileLocation.y - 8 * Radius)) ||
+        (t.x <(TileLocation.x - 16 * Radius) && t.y > (TileLocation.y + 8 * Radius)) ||
+        (t.x > (TileLocation.x + 16 * Radius) && t.y < (TileLocation.y - 8 * Radius)))
     {
         return true;
     }
