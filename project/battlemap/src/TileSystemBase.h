@@ -8,11 +8,11 @@
 #include <libgba-sprite-engine/sprites/sprite.h>
 #include <libgba-sprite-engine/sprites/sprite_builder.h>
 #include <libgba-sprite-engine/palette/palette_manager.h>
+#include <libgba-sprite-engine/background/text_stream.h>
 #include <vector>
 #include <memory>
 
 #include "TileSelectionData.h"
-// #include "CharacterBase.h"
 #include "Plains.h"
 
 class TileSystemBase
@@ -50,9 +50,31 @@ public:
             x -= v.x;
             y -= v.y;
         }
+        TileCoordinates operator - (TileCoordinates v)
+        {
+            return
+            {
+                -v.x,
+                -v.y,
+            };
+        }
+        bool operator == (TileCoordinates v)
+        {
+            return (x == v.x) && (y == v.y);
+        }
     };
-    TileCoordinates TileLocation;
-    int x, y;
+    const int TileHeight = 16;
+    const int TileWidth = 32;
+
+    TileCoordinates TileLocation; // tile i = TileY * WIDTH + TileX
+    TileCoordinates WorldSize = { 16, 16 };
+    TileCoordinates TileSize = { TileWidth/2, TileHeight/2};
+    TileCoordinates WorldOrigin = {0, 0};
+    TileCoordinates WorldLocation = {0, 0};
+    TileCoordinates WorldOffset;
+
+
+    // int x, y;
 
     int ResetX = 240;
     int ResetY = 180;
@@ -62,11 +84,16 @@ public:
     TileSystemBase();
 
     TileCoordinates GetTileLocation() const { return TileLocation; };
+    TileCoordinates GetWorldLocation() const { return WorldLocation; };
+    TileCoordinates GetWorldTransform(TileCoordinates T) const { return {(T.x) / TileSize.x, (T.y) / TileSize.y}; };
+    TileCoordinates GetWorldTransformOffset(TileCoordinates T) const { return {T.x%TileSize.x, T.y%TileSize.y}; };
 
     void SetTileStatus(eStatus Status);
     eStatus GetTileStatus() const {return TileStatus;};
     void Update();
+    void UpdateLocation();
     void Move(int x, int y);
+    void Move(TileCoordinates T);
     void ResetPos() { Move(ResetX, ResetY); }
     void MoveRight();
     void MoveLeft();

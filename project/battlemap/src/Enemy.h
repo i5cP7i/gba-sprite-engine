@@ -13,9 +13,10 @@ class Enemy : public CharacterBase
 private:
 
 public:
-    Enemy();
     Enemy(int x, int y);
     void Reset();
+
+    eDirection GetDirection() const { return Direction; }
 
 };
 

@@ -4,17 +4,6 @@
 
 #include "Enemy.h"
 
-Enemy::Enemy()
-        : CharacterBase(soldierRedTiles, sizeof(soldierRedTiles), 80, 102, 30, 24)
-{
-    MaxHealth = 86;
-    Health = MaxHealth;
-    MoveRadius = 4;
-    AttackRadius = 1;
-    Strength = 7;
-    Evasion = 5;
-}
-
 Enemy::Enemy(int x, int y)
         : CharacterBase(soldierRedTiles, sizeof(soldierRedTiles), x, y, 30, 24)
 {
@@ -22,9 +11,8 @@ Enemy::Enemy(int x, int y)
     Health = MaxHealth;
     MoveRadius = 4;
     AttackRadius = 1;
-    Strength = 250; // Default = 25
+    Strength = 250;
     Evasion = 5;
-
 }
 
 void Enemy::Reset()
@@ -35,7 +23,8 @@ void Enemy::Reset()
     AttackRadius = 1;
     Strength = 250; // Default = 25
     Evasion = 5;
+    Move(13*TileSystem->TileWidth/2, 13*TileSystem->TileHeight/2);
+    TileSystem->Move(13*TileSystem->TileWidth/2, 13*TileSystem->TileHeight/2);
 
-    Move(78+4*16, 101-2*8);
 }
 

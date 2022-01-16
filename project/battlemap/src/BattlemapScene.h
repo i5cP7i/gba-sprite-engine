@@ -25,7 +25,7 @@
 #include "MenuObject.h"
 #include "MenuManager.h"
 
-// #include "test.h"
+#include "test.h"
 
 // #define _DEBUGMODE_0
 
@@ -116,13 +116,18 @@ private:
     SpriteBuilder<Sprite> Builder;
     std::unique_ptr<Sprite> playertest;
     #endif
+
+    // Background scroll functions and variables
+    std::vector<TileSystemBase::TileCoordinates> TileReference;
+
     bool offsetSprites = false;
-    int m_offsetX = 0;
-    int m_offsetY = 0;
+    int m_offsetX = 0; // offsetX = (m_offsetX % TileWidth)/ TileWidth
+    int m_offsetY = 0; // offsetY = (m_offsetY % TileHeight)/ TileHeight
     int offsetX = 0;
     int offsetY = 0;
     int bglerpX = 0;
     int bglerpY = 0;
+    void ProcessBackgroundScrolling(TileSystemBase::TileCoordinates TilePosition);
 public:
     std::vector<Sprite *> sprites() override;
     std::vector<Background *> backgrounds() override;

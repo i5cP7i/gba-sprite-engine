@@ -15,13 +15,18 @@ class CharacterBase
 {
 private:
     // int TileIndex = GetTileIndex();
-    TileSystemBase::TileCoordinates TileLocation;
-public:
+    TileSystemBase::TileCoordinates TileOffset = {8, -19};
 
+    TileSystemBase::TileCoordinates TileLocation;
+    TileSystemBase::TileCoordinates WorldLocation;
+public:
+    std::unique_ptr<TileSystemBase> TileSystem;
     enum class eDirection: unsigned char { SouthEast = 0, SouthWest = 1, NorthEast = 2, NorthWest = 3 } Direction;
     CharacterBase(const void *ImageData, int ImageSize, int x, int y, int AnimationDelay, int AnimationFrames);
 
-    void Move(int x, int y);
+
+    void Move(int x,int y);
+    void Move(TileSystemBase::TileCoordinates T);
 
     void HandleMovement();
     void AnimateWalking();
@@ -44,8 +49,6 @@ protected:
 
     int AnimationDelay;
     int AnimationFrames;
-    int x;
-    int y;
     int dx;
     int dy;
 

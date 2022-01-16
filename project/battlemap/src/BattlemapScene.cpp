@@ -22,12 +22,6 @@ void BattlemapScene::load()
     MenuSystem["end"]["Quit"].SetID(1001).Enable(true);
     MenuSystem.Build();
 
-    EnemyCharacter = std::unique_ptr<Enemy>(new Enemy(78+4*16, 101-2*8));
-    PlayerCharacter = std::unique_ptr<Player>(new Player(78, 101));
-
-    PlayerCharacter->Get()->setPalBank(0);
-    EnemyCharacter->Get()->setPalBank(1);
-
     TileSystem = std::unique_ptr<TileSystemBase>(new TileSystemBase()); // Tile delta_x = 16, delta_y = 8
     for (int i = 0; i < TileSystem->Get().size(); ++i)
     {
@@ -35,8 +29,17 @@ void BattlemapScene::load()
     }
     TileSystem->Get().at(0)->setPalBank(2);
     TileSystem->Get().at(1)->setPalBank(2);
-
     TileSystem->SetTileStatus(TileSystemBase::eStatus::Inactive);
+
+    EnemyCharacter = std::unique_ptr<Enemy>(new Enemy(TileSystem->GetWorldLocation().x + 13*TileSystem->TileWidth/2, TileSystem->GetWorldLocation().y + 13*TileSystem->TileHeight/2));
+    PlayerCharacter = std::unique_ptr<Player>(new Player(TileSystem->GetWorldLocation().x + 3*TileSystem->TileWidth/2, TileSystem->GetWorldLocation().y + 13*TileSystem->TileHeight/2));
+    PlayerCharacter->TileSystem->GetWorldTransform(PlayerCharacter->GetTileLocation());
+    EnemyCharacter->TileSystem->GetWorldTransform(EnemyCharacter->GetTileLocation());
+
+    PlayerCharacter->Get()->setPalBank(0);
+    EnemyCharacter->Get()->setPalBank(1);
+
+
 
     #ifdef _DEBUGMODE_0
     TileSelector = std::unique_ptr<TileSelection>(new TileSelection()); // Tile delta_x = 16, delta_y = 8
@@ -67,17 +70,23 @@ void BattlemapScene::load()
     Battlemap = std::unique_ptr<Background>(new Background(1, GizaPlainsMapTiles, sizeof(GizaPlainsMapTiles), GizaPlainsMapMap, sizeof(GizaPlainsMapMap),4,1, BG_REG_64x32));
     bg1 = std::unique_ptr<Background>(new Background(2, GizaPlainsMapTiles, sizeof(GizaPlainsMapTiles), GizaPlainsMapMap, sizeof(GizaPlainsMapMap),4,1, BG_REG_64x32));
     bg2 = std::unique_ptr<Background>(new Background(3, GizaPlainsMapTiles, sizeof(GizaPlainsMapTiles), GizaPlainsMapMap, sizeof(GizaPlainsMapMap),4,1, BG_REG_64x32));
+    Battlemap->scroll(bglerpX+TileSystem->WorldOrigin.x, bglerpY+TileSystem->WorldOrigin.y);
+    bg1->scroll(bglerpX+TileSystem->WorldOrigin.x, bglerpY+TileSystem->WorldOrigin.y);
+    bg2->scroll(bglerpX+TileSystem->WorldOrigin.x, bglerpY+TileSystem->WorldOrigin.y);
+
+
 
     GameState = eGameState::Setup;
 
     CurrentCharacterSprite = PlayerCharacter->Get();
     OtherCharacterSprite = EnemyCharacter->Get();
 
-    // engine->enqueueMusic(test,1872091,16000); // totalSamples = 1952095
+    engine->enqueueMusic(test,1872091,16000); // totalSamples = 1952095
 }
 
 void BattlemapScene::tick(u16 keys)
 {
+
     prev_keys = keys;
     keys = REG_KEYINPUT | 0xFC00; // 0XFC00 = KEY_MASK -> Wrongly defined in the Engine!
 
@@ -284,6 +293,8 @@ void BattlemapScene::Play(u16 keys)
     PlayerCharacter->AnimateWalking();
     EnemyCharacter->AnimateWalking();
     TileSystem->Update();
+    PlayerCharacter->TileSystem->UpdateLocation();
+    EnemyCharacter->TileSystem->UpdateLocation();
     Menu(keys);
 
     #ifdef _DEBUGMODE_0
@@ -292,9 +303,9 @@ void BattlemapScene::Play(u16 keys)
         TextStream::instance().setText(std::string("MenuObject: " + std::to_string(MenuSelected)), 2, 0);
     #endif
 
-    Battlemap->scroll(bglerpX, bglerpY);
-    bg1->scroll(bglerpX, bglerpY);
-    bg2->scroll(bglerpX, bglerpY);
+    Battlemap->scroll(bglerpX+TileSystem->WorldOrigin.x, bglerpY+TileSystem->WorldOrigin.y);
+    bg1->scroll(bglerpX+TileSystem->WorldOrigin.x, bglerpY+TileSystem->WorldOrigin.y);
+    bg2->scroll(bglerpX+TileSystem->WorldOrigin.x, bglerpY+TileSystem->WorldOrigin.y);
 }
 
 void BattlemapScene::End(u16 keys)
@@ -356,11 +367,12 @@ void BattlemapScene::Reset()
     bGameOver = false;
     OnEndState = false;
 
-    PlayerCharacter->Reset();
-    EnemyCharacter->Reset();
 
     TileSystem->ResetPos();
     TileSystem->SetTileStatus(TileSystemBase::eStatus::Inactive);
+
+    PlayerCharacter->Reset();
+    EnemyCharacter->Reset();
 
     MenuSystem["main"]["Move"].Enable(true);
     MenuSystem["main"]["Action"]["Attack"].Enable(true);
@@ -547,33 +559,68 @@ void BattlemapScene::InitMenu(u16 keys)
         {
             case 100:
                 TileSystem->SetTileStatus(TileSystemBase::eStatus::Valid);
-                TileSystem->Move(CurrentCharacterSprite->getX()-8, CurrentCharacterSprite->getY()+19);
+                if (CurrentCharacterSprite == PlayerCharacter->Get())
+                {
+                    TileSystem->Move(PlayerCharacter->TileSystem->WorldLocation);
+                }
+                else
+                {
+                    TileSystem->Move(EnemyCharacter->TileSystem->WorldLocation);
+                }
+
                 GameMenu = eGameMenu::Move;
                 break;
             case 200:
                 TileSystem->SetTileStatus(TileSystemBase::eStatus::Valid);
-                TileSystem->Move(CurrentCharacterSprite->getX()-8, CurrentCharacterSprite->getY()+19);
+                if (CurrentCharacterSprite == PlayerCharacter->Get())
+                {
+                    TileSystem->Move(PlayerCharacter->TileSystem->WorldLocation);
+                }
+                else
+                {
+                    TileSystem->Move(EnemyCharacter->TileSystem->WorldLocation);
+                }
                 GameMenu = eGameMenu::Attack;
                 break;
             case 300:
                 TileSystem->SetTileStatus(TileSystemBase::eStatus::Valid);
-                TileSystem->Move(CurrentCharacterSprite->getX()-8, CurrentCharacterSprite->getY()+19);
+                if (CurrentCharacterSprite == PlayerCharacter->Get())
+                {
+                    TileSystem->Move(PlayerCharacter->TileSystem->WorldLocation);
+                }
+                else
+                {
+                    TileSystem->Move(EnemyCharacter->TileSystem->WorldLocation);
+                }
                 GameMenu = eGameMenu::Items;
                 break;
             case 101:
                 TileSystem->SetTileStatus(TileSystemBase::eStatus::Valid);
-                TileSystem->Move(CurrentCharacterSprite->getX()-8, CurrentCharacterSprite->getY()+19);
+                if (CurrentCharacterSprite == PlayerCharacter->Get())
+                {
+                    TileSystem->Move(PlayerCharacter->TileSystem->WorldLocation);
+                }
+                else
+                {
+                    TileSystem->Move(EnemyCharacter->TileSystem->WorldLocation);
+                }
                 GameMenu = eGameMenu::Wait;
                 break;
         }
     }
-
+    // TextStream::instance().setText("PX: " + std::to_string(PlayerCharacter->TileSystem->GetWorldLocation().x), 8, 12);
+    // TextStream::instance().setText("PY: " + std::to_string(PlayerCharacter->TileSystem->GetWorldLocation().y), 9, 12);
     MenuSystemManager.Draw(MenuScreenOffset);
 }
 
 void BattlemapScene::MoveMenu(u16 keys)
 {
+    PlayerCharacter->TileSystem->UpdateLocation();
+    EnemyCharacter->TileSystem->UpdateLocation();
+
     // TileMoveVector.push_back(PlayerCharacter->GetTileLocation().x +
+    // TextStream::instance().setText("PX: " + std::to_string(PlayerCharacter->TileSystem->GetWorldLocation().x), 8, 12);
+    // TextStream::instance().setText("PY: " + std::to_string(PlayerCharacter->TileSystem->GetWorldLocation().y), 9, 12);
 
     if (isRightKeyRising(keys))
     {
@@ -622,11 +669,11 @@ void BattlemapScene::MoveMenu(u16 keys)
         }
         if (CurrentCharacterSprite == PlayerCharacter->Get())
         {
-            PlayerCharacter->Move(TileSystem->GetTileLocation().x, TileSystem->GetTileLocation().y);
+            PlayerCharacter->Move(TileSystem->GetWorldLocation());
         }
         else
         {
-            EnemyCharacter->Move(TileSystem->GetTileLocation().x, TileSystem->GetTileLocation().y);
+            EnemyCharacter->Move(TileSystem->GetWorldLocation());
         }
         if (CurrentCharacterSprite->getX() >= OtherCharacterSprite->getX() && CurrentCharacterSprite->getY() >= OtherCharacterSprite->getY()
             || CurrentCharacterSprite->getX() <= OtherCharacterSprite->getX() && CurrentCharacterSprite->getY() >= OtherCharacterSprite->getY())
@@ -669,6 +716,8 @@ void BattlemapScene::MoveMenu(u16 keys)
 
 void BattlemapScene::AttackMenu(u16 keys)
 {
+    PlayerCharacter->TileSystem->UpdateLocation();
+    EnemyCharacter->TileSystem->UpdateLocation();
 
     if (isRightKeyRising(keys))
     {
@@ -697,7 +746,7 @@ void BattlemapScene::AttackMenu(u16 keys)
     else if (isAKeyRising(keys))
     {
         if (TileSystem->GetTileStatus() != TileSystemBase::eStatus::Invalid
-            && ((TileSystem->GetTileLocation().x == PlayerCharacter->GetTileLocation().x && TileSystem->TileLocation.y == PlayerCharacter->GetTileLocation().y)))
+            && ((TileSystem->GetWorldLocation().x == PlayerCharacter->TileSystem->GetWorldLocation().x && TileSystem->GetWorldLocation().y == PlayerCharacter->TileSystem->GetWorldLocation().y)))
         {
             TileSystem->ResetPos();
             TileSystem->SetTileStatus(TileSystemBase::eStatus::Inactive);
@@ -721,7 +770,7 @@ void BattlemapScene::AttackMenu(u16 keys)
 
         }
         else if (TileSystem->GetTileStatus() != TileSystemBase::eStatus::Invalid
-                 && ((TileSystem->GetTileLocation().x == EnemyCharacter->GetTileLocation().x && TileSystem->TileLocation.y == EnemyCharacter->GetTileLocation().y)))
+                 && ((TileSystem->GetWorldLocation().x == EnemyCharacter->TileSystem->GetWorldLocation().x && TileSystem->GetWorldLocation().y == EnemyCharacter->TileSystem->GetWorldLocation().y)))
         {
             TileSystem->ResetPos();
             TileSystem->SetTileStatus(TileSystemBase::eStatus::Inactive);
@@ -768,14 +817,14 @@ void BattlemapScene::AttackMenu(u16 keys)
 
     if (CurrentCharacterSprite == PlayerCharacter->Get())
     {
-        if (PlayerCharacter->isOutOfRange(TileSystem->GetTileLocation(), PlayerCharacter->GetAttackRadius()))
+        if (PlayerCharacter->isOutOfRange(TileSystem->GetWorldLocation(), PlayerCharacter->GetAttackRadius()))
         {
             TileSystem->SetTileStatus(TileSystemBase::eStatus::Invalid);
         }
         else
         {
-            if (TileSystem->GetTileLocation().x != PlayerCharacter->GetTileLocation().x
-                && TileSystem->GetTileLocation().y != PlayerCharacter->GetTileLocation().y)
+            if (TileSystem->GetWorldLocation().x != PlayerCharacter->TileSystem->GetWorldLocation().x
+                && TileSystem->GetWorldLocation().y != PlayerCharacter->TileSystem->GetWorldLocation().y)
             {
                 TileSystem->SetTileStatus(TileSystemBase::eStatus::Valid);
             }
@@ -788,14 +837,14 @@ void BattlemapScene::AttackMenu(u16 keys)
     }
     else
     {
-        if (EnemyCharacter->isOutOfRange(TileSystem->GetTileLocation(), EnemyCharacter->GetAttackRadius()))
+        if (EnemyCharacter->isOutOfRange(TileSystem->GetWorldLocation(), EnemyCharacter->GetAttackRadius()))
         {
             TileSystem->SetTileStatus(TileSystemBase::eStatus::Invalid);
         }
         else
         {
-            if (TileSystem->GetTileLocation().x != EnemyCharacter->GetTileLocation().x
-                && TileSystem->GetTileLocation().y != EnemyCharacter->GetTileLocation().y)
+            if (TileSystem->GetWorldLocation().x != EnemyCharacter->TileSystem->GetWorldLocation().x
+                && TileSystem->GetWorldLocation().y != EnemyCharacter->TileSystem->GetWorldLocation().y)
             {
                 TileSystem->SetTileStatus(TileSystemBase::eStatus::Valid);
             }
@@ -807,14 +856,19 @@ void BattlemapScene::AttackMenu(u16 keys)
         }
     }
 
-    TextStream::instance().setText("tx: " + std::to_string(TileSystem->GetTileLocation().x), 2,1);
-    TextStream::instance().setText("ty: " + std::to_string(TileSystem->GetTileLocation().y), 3,1);
-    TextStream::instance().setText("px: " + std::to_string(PlayerCharacter->GetTileLocation().x), 4,1);
-    TextStream::instance().setText("py: " + std::to_string(PlayerCharacter->GetTileLocation().y), 5,1);
+    // TextStream::instance().setText("tx: " + std::to_string(TileSystem->GetWorldLocation().x), 2,1);
+    // TextStream::instance().setText("ty: " + std::to_string(TileSystem->GetWorldLocation().y), 3,1);
+    // TextStream::instance().setText("px: " + std::to_string(PlayerCharacter->TileSystem->GetWorldLocation().x), 4,1);
+    // TextStream::instance().setText("py: " + std::to_string(PlayerCharacter->TileSystem->GetWorldLocation().y), 5,1);
+    // TextStream::instance().setText("ex: " + std::to_string(EnemyCharacter->TileSystem->GetWorldLocation().x), 5,1);
+    // TextStream::instance().setText("ey: " + std::to_string(EnemyCharacter->TileSystem->GetWorldLocation().y), 6,1);
 }
 
 void BattlemapScene::ItemMenu(u16 keys)
 {
+    PlayerCharacter->TileSystem->UpdateLocation();
+    EnemyCharacter->TileSystem->UpdateLocation();
+
     if (isRightKeyRising(keys))
     {
         TileSystem->MoveRight();
@@ -842,7 +896,7 @@ void BattlemapScene::ItemMenu(u16 keys)
     else if (isAKeyRising(keys))
     {
         if (TileSystem->GetTileStatus() != TileSystemBase::eStatus::Invalid
-            && ((TileSystem->GetTileLocation().x == PlayerCharacter->GetTileLocation().x && TileSystem->TileLocation.y == PlayerCharacter->GetTileLocation().y)))
+            && ((TileSystem->GetWorldLocation().x == PlayerCharacter->TileSystem->GetWorldLocation().x && TileSystem->GetWorldLocation().y == PlayerCharacter->TileSystem->GetWorldLocation().y)))
         {
             TileSystem->ResetPos();
             TileSystem->SetTileStatus(TileSystemBase::eStatus::Inactive);
@@ -856,7 +910,7 @@ void BattlemapScene::ItemMenu(u16 keys)
             GameMenu = eGameMenu::Init;
         }
         else if (TileSystem->GetTileStatus() != TileSystemBase::eStatus::Invalid
-                 && ((TileSystem->GetTileLocation().x == EnemyCharacter->GetTileLocation().x && TileSystem->TileLocation.y == EnemyCharacter->GetTileLocation().y)))
+                 && ((TileSystem->GetWorldLocation().x == EnemyCharacter->TileSystem->GetWorldLocation().x && TileSystem->GetWorldLocation().y == EnemyCharacter->TileSystem->GetWorldLocation().y)))
         {
             TileSystem->ResetPos();
             TileSystem->SetTileStatus(TileSystemBase::eStatus::Inactive);
@@ -872,7 +926,7 @@ void BattlemapScene::ItemMenu(u16 keys)
     }
     if (CurrentCharacterSprite == PlayerCharacter->Get())
     {
-        if (PlayerCharacter->isOutOfRange(TileSystem->GetTileLocation(), PlayerCharacter->GetAttackRadius()))
+        if (PlayerCharacter->isOutOfRange(TileSystem->GetWorldLocation(), PlayerCharacter->GetAttackRadius()))
         {
             TileSystem->SetTileStatus(TileSystemBase::eStatus::Invalid);
         }
@@ -883,7 +937,7 @@ void BattlemapScene::ItemMenu(u16 keys)
     }
     else
     {
-        if (EnemyCharacter->isOutOfRange(TileSystem->GetTileLocation(), EnemyCharacter->GetAttackRadius()))
+        if (EnemyCharacter->isOutOfRange(TileSystem->GetWorldLocation(), EnemyCharacter->GetAttackRadius()))
         {
             TileSystem->SetTileStatus(TileSystemBase::eStatus::Invalid);
         }
@@ -897,6 +951,9 @@ void BattlemapScene::ItemMenu(u16 keys)
 
 void BattlemapScene::WaitMenu(u16 keys)
 {
+    PlayerCharacter->TileSystem->UpdateLocation();
+    EnemyCharacter->TileSystem->UpdateLocation();
+
     if (isRightKeyRising(keys))
     {
         if (CurrentCharacterSprite == PlayerCharacter->Get())
@@ -1130,6 +1187,11 @@ bool BattlemapScene::isGameStateTransitioning(unsigned Delay)
         return true;
     }
     return false;
+}
+
+void BattlemapScene::ProcessBackgroundScrolling(TileSystemBase::TileCoordinates TilePosition)
+{
+    // for (int i = 0; i < )
 }
 
 

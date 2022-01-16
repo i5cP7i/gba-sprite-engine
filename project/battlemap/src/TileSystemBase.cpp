@@ -28,6 +28,7 @@ TileSystemBase::TileSystemBase()
         TileSelectionSpriteVector.at(i).get()->setPalBank(2);
     }
     SetTileStatus(eStatus::Inactive);
+    WorldOrigin = {8, 8};
 }
 
 std::vector<Sprite*> TileSystemBase::Get() const
@@ -38,12 +39,23 @@ std::vector<Sprite*> TileSystemBase::Get() const
     return Temp;
 }
 
+void TileSystemBase::UpdateLocation()
+{
+    WorldLocation = GetWorldTransform(TileLocation);
+    WorldOffset = GetWorldTransformOffset(TileLocation);
+}
+
 void TileSystemBase::Update()
 {
     Get().at(0)->flipHorizontally(false);
     Get().at(1)->flipHorizontally(true);
     ShiftColor();
-    // TileSelectionPalette->change(2, 0, PaletteManager::color(0x00,0x18,0xF7));
+    UpdateLocation();
+
+    // TextStream::instance().setText("WX: " + std::to_string(WorldLocation.x), 4, 12);
+    // TextStream::instance().setText("WY: " + std::to_string(WorldLocation.y), 5, 12);
+    // TextStream::instance().setText("OffWX: " + std::to_string(WorldLocation.x), 6, 12);
+    // TextStream::instance().setText("OffWY: " + std::to_string(WorldLocation.y), 7, 12);
 }
 
 void TileSystemBase::ShiftColor()
@@ -88,48 +100,58 @@ void TileSystemBase::ShiftColor()
 
 void TileSystemBase::Move(int x, int y)
 {
-    this->x = x;
-    this->y = y;
-    this->TileLocation.x = x+8;
-    this->TileLocation.y = y-19;
+    // this->x = x;
+    // this->y = y;
+    TileLocation.x = x;
+    TileLocation.y = y;
+
     for (int i = 0; i < TileSelectionSpriteVector.size() / 2; i += 2)
     {
         TileSelectionSpriteVector.at(i)->moveTo(x, y);
-        TileSelectionSpriteVector.at(i+1)->moveTo(x+16, y);
+        TileSelectionSpriteVector.at(i+1)->moveTo(x+TileWidth/2, y);
     }
 
 }
 
+void TileSystemBase::Move(TileSystemBase::TileCoordinates T)
+{
+    Move(T.x * TileWidth/2, T.y * TileHeight/2);
+}
+
 void TileSystemBase::MoveRight()
 {
-    Move(x+2*8, y+8);
+    Move(TileLocation.x+TileWidth/2, TileLocation.y+TileHeight/2);
 }
 
 void TileSystemBase::MoveLeft()
 {
-    if (!(x == 102 && y == 88) && !(x == 86 && y == 96) && !(x == 70 && y == 104) && !(x == 54 && y == 112)
-            && !(x == 134 && y == 88) && !(x == 86 && y == 144) && !(x == 70 && y == 152) && x >= 54)
+    if (!(WorldLocation.x == 3 && WorldLocation.y == 13) && !(WorldLocation.x == 4 && WorldLocation.y == 12)
+        && !(WorldLocation.x == 5 && WorldLocation.y == 11) && !(WorldLocation.x == 6 && WorldLocation.y == 10)
+        && !(WorldLocation.x == 8 && WorldLocation.y == 10) && !(WorldLocation.x == 13 && WorldLocation.y == 13)
+        && !(WorldLocation.x == 5 && WorldLocation.y == 17))
     {
-        Move(x-2*8, y-8);
+        Move(TileLocation.x-TileWidth/2, TileLocation.y-TileHeight/2);
     }
 
 }
 
 void TileSystemBase::MoveUp()
 {
-    if (!(x==102 && y==88) && !(x==134 && y==88) && !(x==150 && y==96)
-        && !(x==166 && y==104) && !(x==182 && y==112) && !(x==214 && y==112))
+    if (!(WorldLocation.x == 6 && WorldLocation.y == 10) && !(WorldLocation.x == 8 && WorldLocation.y == 10)
+        && !(WorldLocation.x == 9 && WorldLocation.y == 11) && !(WorldLocation.x == 10 && WorldLocation.y == 12)
+        && !(WorldLocation.x == 11 && WorldLocation.y == 13) && !(WorldLocation.x == 13 && WorldLocation.y == 13))
     {
-        Move(x+2*8, y-8);
+        Move(TileLocation.x+TileWidth/2, TileLocation.y-TileHeight/2);
     }
 
 }
 
 void TileSystemBase::MoveDown()
 {
-    if (!(x==54 && y==112) && !(x==70 && y==120) && !(x==86 && y==128))
+    if (!(WorldLocation.x == 3 && WorldLocation.y == 13) && !(WorldLocation.x == 4 && WorldLocation.y == 14)
+         && !(WorldLocation.x == 5 && WorldLocation.y == 15) && !(WorldLocation.x == 5 && WorldLocation.y == 17))
     {
-        Move(x-2*8, y+8);
+        Move(TileLocation.x-TileWidth/2, TileLocation.y+TileHeight/2);
     }
 }
 
@@ -155,3 +177,5 @@ void TileSystemBase::SetTileStatus(TileSystemBase::eStatus Status)
             break;
     }
 }
+
+

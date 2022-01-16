@@ -14,7 +14,6 @@ class Player : public CharacterBase
 private:
 
 public:
-    Player();
     Player(int x, int y);
     void Reset();
 

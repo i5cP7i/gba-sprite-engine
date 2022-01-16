@@ -4,17 +4,6 @@
 
 #include "Player.h"
 
-Player::Player()
-        : CharacterBase(soldierBlueTiles, sizeof(soldierBlueTiles), 78, 102, 30, 24)
-{
-    MaxHealth = 102;
-    Health = MaxHealth;
-    MoveRadius = 3;
-    AttackRadius = 1;
-    Strength = 5;
-    Evasion = 10;
-}
-
 Player::Player(int x, int y)
         : CharacterBase(soldierBlueTiles, sizeof(soldierBlueTiles), x, y, 30, 24)
 {
@@ -22,9 +11,10 @@ Player::Player(int x, int y)
     Health = MaxHealth;
     MoveRadius = 3;
     AttackRadius = 1;
-    Strength = 200; // Default = 20
+    Strength = 200;
     Evasion = 10;
 }
+
 
 void Player::Reset()
 {
@@ -35,5 +25,6 @@ void Player::Reset()
     Strength = 200; // Default = 20
     Evasion = 10;
 
-    Move(78, 101);
+    Move(3*TileSystem->TileWidth/2,  13*TileSystem->TileHeight/2);
+    TileSystem->Move(3*TileSystem->TileWidth/2, 13*TileSystem->TileHeight/2);
 }
