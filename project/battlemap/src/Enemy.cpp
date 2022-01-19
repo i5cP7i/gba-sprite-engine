@@ -5,7 +5,7 @@
 #include "Enemy.h"
 
 Enemy::Enemy(int x, int y)
-        : CharacterBase(soldierRedTiles, sizeof(soldierRedTiles), x, y, 30, 24)
+        : CharacterBase(soldierRedTiles, sizeof(soldierRedTiles), x, y, 40, 24)
 {
     MaxHealth = 86;
     Health = MaxHealth;

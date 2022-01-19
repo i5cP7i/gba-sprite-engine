@@ -5,7 +5,7 @@
 #include "Player.h"
 
 Player::Player(int x, int y)
-        : CharacterBase(soldierBlueTiles, sizeof(soldierBlueTiles), x, y, 30, 24)
+        : CharacterBase(soldierBlueTiles, sizeof(soldierBlueTiles), x, y, 40, 24)
 {
     MaxHealth = 102;
     Health = MaxHealth;

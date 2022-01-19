@@ -98,6 +98,7 @@ void CharacterBase::SetDirection(CharacterBase::eDirection Direction)
     }
     CharacterSprite->animateToFrame(FrameOrientation-3);
     CharacterDirection = Direction;
+    this->Direction = Direction;
     Update();
 }
 

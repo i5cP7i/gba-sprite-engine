@@ -86,7 +86,8 @@ void BattlemapScene::load()
 
 void BattlemapScene::tick(u16 keys)
 {
-
+    PlayerCharacter->Update();
+    EnemyCharacter->Update();
     prev_keys = keys;
     keys = REG_KEYINPUT | 0xFC00; // 0XFC00 = KEY_MASK -> Wrongly defined in the Engine!
 
@@ -568,6 +569,17 @@ void BattlemapScene::InitMenu(u16 keys)
                     TileSystem->Move(EnemyCharacter->TileSystem->WorldLocation);
                 }
 
+                if (CurrentCharacterSprite == PlayerCharacter->Get())
+                {
+                    CurrentCharacterSpriteDirection = PlayerCharacter->GetDirection();
+                    OtherCharacterSpriteDirection = EnemyCharacter->GetDirection();
+                }
+                else
+                {
+                    CurrentCharacterSpriteDirection = EnemyCharacter->GetDirection();
+                    OtherCharacterSpriteDirection = PlayerCharacter->GetDirection();
+                }
+
                 GameMenu = eGameMenu::Move;
                 break;
             case 200:
@@ -603,6 +615,14 @@ void BattlemapScene::InitMenu(u16 keys)
                 else
                 {
                     TileSystem->Move(EnemyCharacter->TileSystem->WorldLocation);
+                }
+                if (CurrentCharacterSprite == PlayerCharacter->Get())
+                {
+                    CurrentCharacterSpriteDirection = PlayerCharacter->GetDirection();
+                }
+                else
+                {
+                    CurrentCharacterSpriteDirection = EnemyCharacter->GetDirection();
                 }
                 GameMenu = eGameMenu::Wait;
                 break;
@@ -656,17 +676,6 @@ void BattlemapScene::MoveMenu(u16 keys)
     }
     else if (isAKeyRising(keys))
     {
-
-        if (CurrentCharacterSprite == PlayerCharacter->Get())
-        {
-            CurrentCharacterSpriteDirection = PlayerCharacter->GetDirection();
-            OtherCharacterSpriteDirection = EnemyCharacter->GetDirection();
-        }
-        else
-        {
-            CurrentCharacterSpriteDirection = EnemyCharacter->GetDirection();
-            OtherCharacterSpriteDirection = PlayerCharacter->GetDirection();
-        }
         if (CurrentCharacterSprite == PlayerCharacter->Get())
         {
             PlayerCharacter->Move(TileSystem->GetWorldLocation());
@@ -696,16 +705,15 @@ void BattlemapScene::MoveMenu(u16 keys)
         }
         TileSystem->ResetPos();
         MenuSystem["main"]["Move"].Enable(false);
+
         if (CurrentCharacterSprite == PlayerCharacter->Get())
         {
             PlayerCharacter->SetDirection(CurrentCharacterSpriteDirection);
-            engine->delay(100);
             EnemyCharacter->SetDirection(OtherCharacterSpriteDirection);
         }
-        else if (CurrentCharacterSprite != PlayerCharacter->Get())
+        else
         {
             PlayerCharacter->SetDirection(OtherCharacterSpriteDirection);
-            engine->delay(100);
             EnemyCharacter->SetDirection(CurrentCharacterSpriteDirection);
         }
         GameMenu = eGameMenu::Init;
@@ -954,6 +962,7 @@ void BattlemapScene::WaitMenu(u16 keys)
     PlayerCharacter->TileSystem->UpdateLocation();
     EnemyCharacter->TileSystem->UpdateLocation();
 
+
     if (isRightKeyRising(keys))
     {
         if (CurrentCharacterSprite == PlayerCharacter->Get())
@@ -1000,6 +1009,14 @@ void BattlemapScene::WaitMenu(u16 keys)
     }
     else if (isBKeyRising(keys))
     {
+        if (CurrentCharacterSprite == PlayerCharacter->Get())
+        {
+            PlayerCharacter->SetDirection(CurrentCharacterSpriteDirection);
+        }
+        else
+        {
+            EnemyCharacter->SetDirection(CurrentCharacterSpriteDirection);
+        }
         TileSystem->ResetPos();
         TileSystem->SetTileStatus(TileSystemBase::eStatus::Inactive);
         MenuSystemManager.Open(&MenuSystem["main"]);
