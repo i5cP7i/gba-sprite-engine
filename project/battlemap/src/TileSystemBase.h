@@ -72,6 +72,8 @@ public:
     TileCoordinates WorldOrigin = {0, 0};
     TileCoordinates WorldLocation = {0, 0};
     TileCoordinates WorldOffset;
+    TileCoordinates WorldCartesianLocation;
+
 
 
     // int x, y;
@@ -86,7 +88,8 @@ public:
     TileCoordinates GetTileLocation() const { return TileLocation; };
     TileCoordinates GetWorldLocation() const { return WorldLocation; };
     TileCoordinates GetWorldTransform(TileCoordinates T) const { return {(T.x) / TileSize.x, (T.y) / TileSize.y}; };
-    TileCoordinates GetWorldTransformOffset(TileCoordinates T) const { return {T.x%TileSize.x, T.y%TileSize.y}; };
+    TileCoordinates GetWorldTransformOffset(TileCoordinates T) const { return {(T.x%TileSize.x), (T.y%TileSize.y)}; };
+    TileCoordinates GetWorldCartesian() const;
 
     void SetTileStatus(eStatus Status);
     eStatus GetTileStatus() const {return TileStatus;};

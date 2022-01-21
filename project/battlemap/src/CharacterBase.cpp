@@ -119,16 +119,29 @@ void CharacterBase::Move(int x, int y)
 }
 
 // If true, p is out of range.
-bool CharacterBase::isOutOfRange(TileSystemBase::TileCoordinates t, int Radius)
+bool CharacterBase::isOutOfRange(TileSystemBase::TileCoordinates Target, int Radius)
 {
-    if ((t.x >= (TileSystem->WorldLocation.x-Radius) && (t.y >= (TileSystem->WorldLocation.y-Radius)))
-    && (t.x >= (TileSystem->WorldLocation.x-Radius) && (t.y <= (TileSystem->WorldLocation.y+Radius)))
-    && (t.x <= (TileSystem->WorldLocation.x+Radius) && (t.y >= (TileSystem->WorldLocation.y-Radius)))
-    && (t.x <= (TileSystem->WorldLocation.x+Radius) && (t.y <= (TileSystem->WorldLocation.y+Radius))))
+    TileSystemBase::TileCoordinates P = TileSystem->GetWorldCartesian();
+    int R = Radius;
+    bool bOutOfRange = false;
+    for(int i = R; i != -1; i--)
     {
-        return false;
+        if((((Target.y <= (P.y + R -i)) && (Target.x <= P.x+i && Target.x >= P.x-i))
+            && ((P.y - R + i <= Target.y)))
+           || (Target.x <= (P.x + R - i) && (Target.y <= P.x + i && Target.y >= P.x - i)
+               && ((Target.x >= P.x - R + i))))
+        {
+
+            bOutOfRange = false;
+            break;
+        }
+        else
+        {
+            bOutOfRange = true;
+        }
+
     }
-    return true;
+    return  bOutOfRange;
 }
 
 

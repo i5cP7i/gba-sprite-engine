@@ -36,7 +36,7 @@ public:
     eDirection GetDirection() const { return Direction; }
     TileSystemBase::TileCoordinates GetTileLocation() const { return TileLocation; }
 
-    bool isOutOfRange(TileSystemBase::TileCoordinates t, int Radius); // t = TileCoordinates, p = TileCoordinates
+    bool isOutOfRange(TileSystemBase::TileCoordinates Target, int Radius); // t = TileCoordinates, p = TileCoordinates
     void Update() const { CharacterSprite->update(); }
     Sprite* Get() const { return CharacterSprite.get(); }
 
@@ -53,6 +53,7 @@ protected:
     int dy;
 
     // Character Attributes
+    std::string Name;
     int MaxHealth;
     int Health;
     int MoveRadius;

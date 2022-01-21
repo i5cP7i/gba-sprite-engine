@@ -43,6 +43,7 @@ void TileSystemBase::UpdateLocation()
 {
     WorldLocation = GetWorldTransform(TileLocation);
     WorldOffset = GetWorldTransformOffset(TileLocation);
+    WorldCartesianLocation = GetWorldCartesian();
 }
 
 void TileSystemBase::Update()
@@ -125,10 +126,14 @@ void TileSystemBase::MoveRight()
 
 void TileSystemBase::MoveLeft()
 {
+    /*
     if (!(WorldLocation.x == 3 && WorldLocation.y == 13) && !(WorldLocation.x == 4 && WorldLocation.y == 12)
         && !(WorldLocation.x == 5 && WorldLocation.y == 11) && !(WorldLocation.x == 6 && WorldLocation.y == 10)
         && !(WorldLocation.x == 8 && WorldLocation.y == 10) && !(WorldLocation.x == 13 && WorldLocation.y == 13)
         && !(WorldLocation.x == 5 && WorldLocation.y == 17))
+    */
+    if (!(WorldCartesianLocation.x <= 8 && WorldCartesianLocation.y >= 2) && !(WorldCartesianLocation.x == 9 && WorldCartesianLocation.y == 1)
+    && !(WorldCartesianLocation.x == 13 && WorldCartesianLocation.y <= 0))
     {
         Move(TileLocation.x-TileWidth/2, TileLocation.y-TileHeight/2);
     }
@@ -137,9 +142,13 @@ void TileSystemBase::MoveLeft()
 
 void TileSystemBase::MoveUp()
 {
+    /*
     if (!(WorldLocation.x == 6 && WorldLocation.y == 10) && !(WorldLocation.x == 8 && WorldLocation.y == 10)
         && !(WorldLocation.x == 9 && WorldLocation.y == 11) && !(WorldLocation.x == 10 && WorldLocation.y == 12)
         && !(WorldLocation.x == 11 && WorldLocation.y == 13) && !(WorldLocation.x == 13 && WorldLocation.y == 13))
+    */
+    if (!(WorldCartesianLocation.x <= 12 && WorldCartesianLocation.y == 1) && !(WorldCartesianLocation.x >= 13 && WorldCartesianLocation.y <= 0)
+        && !(WorldCartesianLocation.x == 8 && WorldCartesianLocation.y <= 2))
     {
         Move(TileLocation.x+TileWidth/2, TileLocation.y-TileHeight/2);
     }
@@ -148,8 +157,11 @@ void TileSystemBase::MoveUp()
 
 void TileSystemBase::MoveDown()
 {
+    /*
     if (!(WorldLocation.x == 3 && WorldLocation.y == 13) && !(WorldLocation.x == 4 && WorldLocation.y == 14)
          && !(WorldLocation.x == 5 && WorldLocation.y == 15) && !(WorldLocation.x == 5 && WorldLocation.y == 17))
+    */
+    if (!((WorldCartesianLocation.y == 5 && WorldCartesianLocation.x <=14)))
     {
         Move(TileLocation.x-TileWidth/2, TileLocation.y+TileHeight/2);
     }
@@ -178,4 +190,12 @@ void TileSystemBase::SetTileStatus(TileSystemBase::eStatus Status)
     }
 }
 
+TileSystemBase::TileCoordinates TileSystemBase::GetWorldCartesian() const
+{
+    return
+    {
+    (((GetWorldLocation().y-WorldOffset.y) + (GetWorldLocation().x-WorldOffset.x))/2),
+    (((GetWorldLocation().y-WorldOffset.y) - (GetWorldLocation().x-WorldOffset.x))/2),
+    };
+}
 

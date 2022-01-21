@@ -13,9 +13,9 @@ class Enemy : public CharacterBase
 private:
 
 public:
-    Enemy(int x, int y);
-    void Reset();
-
+    Enemy(std::string Name, int x, int y);
+    void Reset() final;
+    std::string GetName() const {return Name;}
     eDirection GetDirection() const { return Direction; }
 
 };

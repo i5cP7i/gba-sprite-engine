@@ -14,9 +14,10 @@ class Player : public CharacterBase
 private:
 
 public:
-    Player(int x, int y);
-    void Reset();
+    Player(std::string Name, int x, int y);
+    void Reset() final;
 
+    std::string GetName() const {return Name;}
     eDirection GetDirection() const { return Direction; }
 };
 

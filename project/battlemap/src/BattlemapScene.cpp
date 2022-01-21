@@ -31,15 +31,13 @@ void BattlemapScene::load()
     TileSystem->Get().at(1)->setPalBank(2);
     TileSystem->SetTileStatus(TileSystemBase::eStatus::Inactive);
 
-    EnemyCharacter = std::unique_ptr<Enemy>(new Enemy(TileSystem->GetWorldLocation().x + 13*TileSystem->TileWidth/2, TileSystem->GetWorldLocation().y + 13*TileSystem->TileHeight/2));
-    PlayerCharacter = std::unique_ptr<Player>(new Player(TileSystem->GetWorldLocation().x + 3*TileSystem->TileWidth/2, TileSystem->GetWorldLocation().y + 13*TileSystem->TileHeight/2));
+    EnemyCharacter = std::unique_ptr<Enemy>(new Enemy("Red", TileSystem->GetWorldLocation().x + 13*TileSystem->TileWidth/2, TileSystem->GetWorldLocation().y + 13*TileSystem->TileHeight/2));
+    PlayerCharacter = std::unique_ptr<Player>(new Player("Blue", TileSystem->GetWorldLocation().x + 3*TileSystem->TileWidth/2, TileSystem->GetWorldLocation().y + 13*TileSystem->TileHeight/2));
     PlayerCharacter->TileSystem->GetWorldTransform(PlayerCharacter->GetTileLocation());
     EnemyCharacter->TileSystem->GetWorldTransform(EnemyCharacter->GetTileLocation());
 
     PlayerCharacter->Get()->setPalBank(0);
     EnemyCharacter->Get()->setPalBank(1);
-
-
 
     #ifdef _DEBUGMODE_0
     TileSelector = std::unique_ptr<TileSelection>(new TileSelection()); // Tile delta_x = 16, delta_y = 8
@@ -74,14 +72,12 @@ void BattlemapScene::load()
     bg1->scroll(bglerpX+TileSystem->WorldOrigin.x, bglerpY+TileSystem->WorldOrigin.y);
     bg2->scroll(bglerpX+TileSystem->WorldOrigin.x, bglerpY+TileSystem->WorldOrigin.y);
 
-
-
     GameState = eGameState::Setup;
 
     CurrentCharacterSprite = PlayerCharacter->Get();
     OtherCharacterSprite = EnemyCharacter->Get();
 
-    engine->enqueueMusic(test,1872091,16000); // totalSamples = 1952095
+    // engine->enqueueMusic(test,1872091,16000); // totalSamples = 1952095
 }
 
 void BattlemapScene::tick(u16 keys)
@@ -374,6 +370,8 @@ void BattlemapScene::Reset()
 
     PlayerCharacter->Reset();
     EnemyCharacter->Reset();
+    CurrentCharacterSpriteDirection = CharacterBase::eDirection::SouthWest;
+    OtherCharacterSpriteDirection = CharacterBase::eDirection::SouthWest;
 
     MenuSystem["main"]["Move"].Enable(true);
     MenuSystem["main"]["Action"]["Attack"].Enable(true);
@@ -531,6 +529,16 @@ void BattlemapScene::Menu(u16 keys)
 
 void BattlemapScene::InitMenu(u16 keys)
 {
+    if (CurrentCharacterSprite == PlayerCharacter->Get())
+    {
+        TextStream::instance().setText(PlayerCharacter->GetName(), 0,1);
+        TextStream::instance().setText("Health: " + std::to_string(PlayerCharacter->GetHealth()), 1,1);
+    }
+    else
+    {
+        TextStream::instance().setText(EnemyCharacter->GetName(), 0,14);
+        TextStream::instance().setText("Health: " + std::to_string(EnemyCharacter->GetHealth()), 1,14);
+    }
     // MenuSystem["main"].DrawSelf(MenuScreenOffset);
     MenuObject *command = nullptr;
     if (isAKeyRising(keys) || (TurnID != oldTurnID))
@@ -550,10 +558,10 @@ void BattlemapScene::InitMenu(u16 keys)
     if (isBKeyRising(keys)) {
         MenuSystemManager.OnBack();
     }
-    TextStream::instance().setText("M.bO.: " + std::to_string(MenuSystemManager.isOpen()), 0, 1);
+    // TextStream::instance().setText("M.bO.: " + std::to_string(MenuSystemManager.isOpen()), 0, 1);
     if (command != nullptr)
     {
-        MenuSystem.sLastAction = "L.Act.: " + command->GetName() + "ID: " + std::to_string(command->GetID());
+        // MenuSystem.sLastAction = "L.Act.: " + command->GetName() + "ID: " + std::to_string(command->GetID());
         MenuSystemManager.Close();
         TextStream::instance().setText(MenuSystem.sLastAction, 1, 1);
         switch (command->GetID())
@@ -635,23 +643,26 @@ void BattlemapScene::InitMenu(u16 keys)
 
 void BattlemapScene::MoveMenu(u16 keys)
 {
-    PlayerCharacter->TileSystem->UpdateLocation();
-    EnemyCharacter->TileSystem->UpdateLocation();
+    // PlayerCharacter->TileSystem->UpdateLocation();
+    // EnemyCharacter->TileSystem->UpdateLocation();
 
     // TileMoveVector.push_back(PlayerCharacter->GetTileLocation().x +
     // TextStream::instance().setText("PX: " + std::to_string(PlayerCharacter->TileSystem->GetWorldLocation().x), 8, 12);
     // TextStream::instance().setText("PY: " + std::to_string(PlayerCharacter->TileSystem->GetWorldLocation().y), 9, 12);
+    if (CurrentCharacterSprite == PlayerCharacter->Get())
+    {
+        TextStream::instance().setText(PlayerCharacter->GetName(), 0,1);
+        TextStream::instance().setText("Health: " + std::to_string(PlayerCharacter->GetHealth()), 1,1);
+    }
+    else
+    {
+        TextStream::instance().setText(EnemyCharacter->GetName(), 0,14);
+        TextStream::instance().setText("Health: " + std::to_string(EnemyCharacter->GetHealth()), 1,14);
+    }
+
 
     if (isRightKeyRising(keys))
     {
-        if (CurrentCharacterSprite == PlayerCharacter->Get())
-        {
-
-        }
-        else
-        {
-
-        }
         TileSystem->MoveRight();
     }
     else if (isLeftKeyRising(keys))
@@ -676,56 +687,103 @@ void BattlemapScene::MoveMenu(u16 keys)
     }
     else if (isAKeyRising(keys))
     {
-        if (CurrentCharacterSprite == PlayerCharacter->Get())
+        if (TileSystem->GetTileStatus() == TileSystemBase::eStatus::Valid)
         {
-            PlayerCharacter->Move(TileSystem->GetWorldLocation());
-        }
-        else
-        {
-            EnemyCharacter->Move(TileSystem->GetWorldLocation());
-        }
-        if (CurrentCharacterSprite->getX() >= OtherCharacterSprite->getX() && CurrentCharacterSprite->getY() >= OtherCharacterSprite->getY()
-            || CurrentCharacterSprite->getX() <= OtherCharacterSprite->getX() && CurrentCharacterSprite->getY() >= OtherCharacterSprite->getY())
-        {
-            for (int i = 0; i < TileSystem->Get().size(); ++i)
+            if (CurrentCharacterSprite == PlayerCharacter->Get())
             {
-                TileSystem->Get().at(i)->buildOam(TileSystem->Get().at(i)->getTileIndex(), 3);
+                PlayerCharacter->Move(TileSystem->GetWorldLocation());
             }
-            CurrentCharacterSprite->buildOam(CurrentCharacterSprite->GetTileIndex(),0);
-            OtherCharacterSprite->buildOam(OtherCharacterSprite->GetTileIndex(),1);
-        }
-        else
-        {
-            for (int i = 0; i < TileSystem->Get().size(); ++i)
+            else
             {
-                TileSystem->Get().at(i)->buildOam(TileSystem->Get().at(i)->getTileIndex(), 3);
+                EnemyCharacter->Move(TileSystem->GetWorldLocation());
             }
-            CurrentCharacterSprite->buildOam(CurrentCharacterSprite->GetTileIndex(),1);
-            OtherCharacterSprite->buildOam(OtherCharacterSprite->GetTileIndex(),0);
-        }
-        TileSystem->ResetPos();
-        MenuSystem["main"]["Move"].Enable(false);
+            if (CurrentCharacterSprite->getX() >= OtherCharacterSprite->getX() && CurrentCharacterSprite->getY() >= OtherCharacterSprite->getY()
+                || CurrentCharacterSprite->getX() <= OtherCharacterSprite->getX() && CurrentCharacterSprite->getY() >= OtherCharacterSprite->getY())
+            {
+                for (int i = 0; i < TileSystem->Get().size(); ++i)
+                {
+                    TileSystem->Get().at(i)->buildOam(TileSystem->Get().at(i)->getTileIndex(), 3);
+                }
+                CurrentCharacterSprite->buildOam(CurrentCharacterSprite->GetTileIndex(),0);
+                OtherCharacterSprite->buildOam(OtherCharacterSprite->GetTileIndex(),1);
+            }
+            else
+            {
+                for (int i = 0; i < TileSystem->Get().size(); ++i)
+                {
+                    TileSystem->Get().at(i)->buildOam(TileSystem->Get().at(i)->getTileIndex(), 3);
+                }
+                CurrentCharacterSprite->buildOam(CurrentCharacterSprite->GetTileIndex(),1);
+                OtherCharacterSprite->buildOam(OtherCharacterSprite->GetTileIndex(),0);
+            }
+            TileSystem->ResetPos();
+            MenuSystem["main"]["Move"].Enable(false);
 
-        if (CurrentCharacterSprite == PlayerCharacter->Get())
+            if (CurrentCharacterSprite == PlayerCharacter->Get())
+            {
+                PlayerCharacter->SetDirection(CurrentCharacterSpriteDirection);
+                EnemyCharacter->SetDirection(OtherCharacterSpriteDirection);
+            }
+            else
+            {
+                PlayerCharacter->SetDirection(OtherCharacterSpriteDirection);
+                EnemyCharacter->SetDirection(CurrentCharacterSpriteDirection);
+            }
+            GameMenu = eGameMenu::Init;
+        }
+    }
+
+    if (CurrentCharacterSprite == PlayerCharacter->Get())
+    {
+
+        if (PlayerCharacter->isOutOfRange(this->TileSystem->GetWorldCartesian(), PlayerCharacter->GetMoveRadius()))
         {
-            PlayerCharacter->SetDirection(CurrentCharacterSpriteDirection);
-            EnemyCharacter->SetDirection(OtherCharacterSpriteDirection);
+            TileSystem->SetTileStatus(TileSystemBase::eStatus::Invalid);
         }
         else
         {
-            PlayerCharacter->SetDirection(OtherCharacterSpriteDirection);
-            EnemyCharacter->SetDirection(CurrentCharacterSpriteDirection);
+            if (!(TileSystem->GetWorldCartesian().x == PlayerCharacter->TileSystem->GetWorldCartesian().x
+                  && TileSystem->GetWorldCartesian().y == PlayerCharacter->TileSystem->GetWorldCartesian().y)
+                  && !(TileSystem->GetWorldCartesian().x == EnemyCharacter->TileSystem->GetWorldCartesian().x
+                       && TileSystem->GetWorldCartesian().y == EnemyCharacter->TileSystem->GetWorldCartesian().y))
+            {
+                TileSystem->SetTileStatus(TileSystemBase::eStatus::Valid);
+            }
+            else
+            {
+                TileSystem->SetTileStatus(TileSystemBase::eStatus::Invalid);
+            }
+
         }
-        GameMenu = eGameMenu::Init;
     }
-    TextStream::instance().setText("x: " + std::to_string(TileSystem->GetTileLocation().x), 2,1);
-    TextStream::instance().setText("y: " + std::to_string(TileSystem->GetTileLocation().y), 3,1);
+    else
+    {
+        if (EnemyCharacter->isOutOfRange(TileSystem->GetWorldCartesian(), EnemyCharacter->GetMoveRadius()))
+        {
+            TileSystem->SetTileStatus(TileSystemBase::eStatus::Invalid);
+        }
+        else
+        {
+            if (!(TileSystem->GetWorldCartesian().x == EnemyCharacter->TileSystem->GetWorldCartesian().x
+                  && TileSystem->GetWorldCartesian().y == EnemyCharacter->TileSystem->GetWorldCartesian().y)
+                  && !(TileSystem->GetWorldCartesian().x == PlayerCharacter->TileSystem->GetWorldCartesian().x
+                       && TileSystem->GetWorldCartesian().y == PlayerCharacter->TileSystem->GetWorldCartesian().y))
+            {
+                TileSystem->SetTileStatus(TileSystemBase::eStatus::Valid);
+            }
+            else
+            {
+                TileSystem->SetTileStatus(TileSystemBase::eStatus::Invalid);
+            }
+
+        }
+    }
 }
 
 void BattlemapScene::AttackMenu(u16 keys)
 {
-    PlayerCharacter->TileSystem->UpdateLocation();
-    EnemyCharacter->TileSystem->UpdateLocation();
+    // PlayerCharacter->TileSystem->UpdateLocation();
+    // EnemyCharacter->TileSystem->UpdateLocation();
 
     if (isRightKeyRising(keys))
     {
@@ -773,6 +831,7 @@ void BattlemapScene::AttackMenu(u16 keys)
             }
 
             PlayerCharacter->SetHealth(PlayerCharacter->GetHealth()-Damage);
+            TextStream::instance().setText(PlayerCharacter->GetName(), 5,1);
             TextStream::instance().setText(sign + std::to_string(Damage), 6,1+9);
             TextStream::instance().setText("Health: " + std::to_string(PlayerCharacter->GetHealth()), 7,1);
 
@@ -797,6 +856,7 @@ void BattlemapScene::AttackMenu(u16 keys)
             }
 
             EnemyCharacter->SetHealth(EnemyCharacter->GetHealth()-Damage);
+            TextStream::instance().setText(EnemyCharacter->GetName(), 5,14);
             TextStream::instance().setText(sign + std::to_string(Damage), 6,14+9);
             TextStream::instance().setText("Health: " + std::to_string(EnemyCharacter->GetHealth()), 7,14);
 
@@ -825,14 +885,15 @@ void BattlemapScene::AttackMenu(u16 keys)
 
     if (CurrentCharacterSprite == PlayerCharacter->Get())
     {
-        if (PlayerCharacter->isOutOfRange(TileSystem->GetWorldLocation(), PlayerCharacter->GetAttackRadius()))
+
+        if (PlayerCharacter->isOutOfRange(this->TileSystem->GetWorldCartesian(), PlayerCharacter->GetAttackRadius()))
         {
             TileSystem->SetTileStatus(TileSystemBase::eStatus::Invalid);
         }
         else
         {
-            if (TileSystem->GetWorldLocation().x != PlayerCharacter->TileSystem->GetWorldLocation().x
-                && TileSystem->GetWorldLocation().y != PlayerCharacter->TileSystem->GetWorldLocation().y)
+            if (!(TileSystem->GetWorldCartesian().x == PlayerCharacter->TileSystem->GetWorldCartesian().x
+                && TileSystem->GetWorldCartesian().y == PlayerCharacter->TileSystem->GetWorldCartesian().y))
             {
                 TileSystem->SetTileStatus(TileSystemBase::eStatus::Valid);
             }
@@ -845,14 +906,14 @@ void BattlemapScene::AttackMenu(u16 keys)
     }
     else
     {
-        if (EnemyCharacter->isOutOfRange(TileSystem->GetWorldLocation(), EnemyCharacter->GetAttackRadius()))
+        if (EnemyCharacter->isOutOfRange(TileSystem->GetWorldCartesian(), EnemyCharacter->GetAttackRadius()))
         {
             TileSystem->SetTileStatus(TileSystemBase::eStatus::Invalid);
         }
         else
         {
-            if (TileSystem->GetWorldLocation().x != EnemyCharacter->TileSystem->GetWorldLocation().x
-                && TileSystem->GetWorldLocation().y != EnemyCharacter->TileSystem->GetWorldLocation().y)
+            if (!(TileSystem->GetWorldCartesian().x == EnemyCharacter->TileSystem->GetWorldCartesian().x
+                  && TileSystem->GetWorldCartesian().y == EnemyCharacter->TileSystem->GetWorldCartesian().y))
             {
                 TileSystem->SetTileStatus(TileSystemBase::eStatus::Valid);
             }
@@ -864,12 +925,11 @@ void BattlemapScene::AttackMenu(u16 keys)
         }
     }
 
-    // TextStream::instance().setText("tx: " + std::to_string(TileSystem->GetWorldLocation().x), 2,1);
-    // TextStream::instance().setText("ty: " + std::to_string(TileSystem->GetWorldLocation().y), 3,1);
-    // TextStream::instance().setText("px: " + std::to_string(PlayerCharacter->TileSystem->GetWorldLocation().x), 4,1);
-    // TextStream::instance().setText("py: " + std::to_string(PlayerCharacter->TileSystem->GetWorldLocation().y), 5,1);
-    // TextStream::instance().setText("ex: " + std::to_string(EnemyCharacter->TileSystem->GetWorldLocation().x), 5,1);
-    // TextStream::instance().setText("ey: " + std::to_string(EnemyCharacter->TileSystem->GetWorldLocation().y), 6,1);
+
+    // TextStream::instance().setText("px: " + std::to_string(PlayerCharacter->TileSystem->GetWorldCartesian().x), 4,1);
+    // TextStream::instance().setText("py: " + std::to_string(PlayerCharacter->TileSystem->GetWorldCartesian().y), 5,1);
+    // TextStream::instance().setText("ex: " + std::to_string(EnemyCharacter->TileSystem->GetWorldCartesian().x), 6,1);
+    // TextStream::instance().setText("ey: " + std::to_string(EnemyCharacter->TileSystem->GetWorldCartesian().y), 7,1);
 }
 
 void BattlemapScene::ItemMenu(u16 keys)
@@ -912,6 +972,7 @@ void BattlemapScene::ItemMenu(u16 keys)
             MenuSystem["main"]["Action"]["Items"].Enable(false);
 
             PlayerCharacter->SetHealth(PlayerCharacter->GetHealth()+30);
+            TextStream::instance().setText(PlayerCharacter->GetName(), 5,1);
             TextStream::instance().setText("+30!", 6,1+9);
             TextStream::instance().setText("Health: " + std::to_string(PlayerCharacter->GetHealth()), 7,1);
 
@@ -926,6 +987,7 @@ void BattlemapScene::ItemMenu(u16 keys)
             MenuSystem["main"]["Action"]["Items"].Enable(false);
 
             EnemyCharacter->SetHealth(EnemyCharacter->GetHealth()+30);
+            TextStream::instance().setText(EnemyCharacter->GetName(), 5,14);
             TextStream::instance().setText("+30!", 6,14+9);
             TextStream::instance().setText("Health: " + std::to_string(EnemyCharacter->GetHealth()), 7,14);
 
@@ -934,7 +996,7 @@ void BattlemapScene::ItemMenu(u16 keys)
     }
     if (CurrentCharacterSprite == PlayerCharacter->Get())
     {
-        if (PlayerCharacter->isOutOfRange(TileSystem->GetWorldLocation(), PlayerCharacter->GetAttackRadius()))
+        if (PlayerCharacter->isOutOfRange(TileSystem->GetWorldCartesian(), PlayerCharacter->GetAttackRadius()))
         {
             TileSystem->SetTileStatus(TileSystemBase::eStatus::Invalid);
         }
@@ -945,7 +1007,7 @@ void BattlemapScene::ItemMenu(u16 keys)
     }
     else
     {
-        if (EnemyCharacter->isOutOfRange(TileSystem->GetWorldLocation(), EnemyCharacter->GetAttackRadius()))
+        if (EnemyCharacter->isOutOfRange(TileSystem->GetWorldCartesian(), EnemyCharacter->GetAttackRadius()))
         {
             TileSystem->SetTileStatus(TileSystemBase::eStatus::Invalid);
         }
@@ -959,8 +1021,8 @@ void BattlemapScene::ItemMenu(u16 keys)
 
 void BattlemapScene::WaitMenu(u16 keys)
 {
-    PlayerCharacter->TileSystem->UpdateLocation();
-    EnemyCharacter->TileSystem->UpdateLocation();
+    // PlayerCharacter->TileSystem->UpdateLocation();
+    // EnemyCharacter->TileSystem->UpdateLocation();
 
 
     if (isRightKeyRising(keys))
