@@ -333,7 +333,7 @@ typedef TILE8		CHARBLOCK8[256];
 */
 //\{
 
-//! Object attributes.
+//! ObjectBase attributes.
 /*!	\note attribute 3 is padding for the interlace with OBJ_AFFINE. If 
 *	not using affine objects, it can be used as a free field
 */
@@ -346,7 +346,7 @@ typedef struct OBJ_ATTR
 } ALIGN4 OBJ_ATTR;
 
 
-//! Object affine parameters.
+//! ObjectBase affine parameters.
 /*!	\note most fields are padding for the interlace with OBJ_ATTR. 
 */
 typedef struct OBJ_AFFINE

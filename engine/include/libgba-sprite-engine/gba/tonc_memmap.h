@@ -49,7 +49,7 @@
 #define MEM_IO		0x04000000	//!< I/O registers
 #define MEM_PAL		0x05000000	//!< Palette. Note: no 8bit write !!
 #define MEM_VRAM	0x06000000	//!< Video RAM. Note: no 8bit write !!
-#define MEM_OAM		0x07000000	//!< Object Attribute Memory (OAM) Note: no 8bit write !!
+#define MEM_OAM		0x07000000	//!< ObjectBase Attribute Memory (OAM) Note: no 8bit write !!
 #define MEM_ROM		0x08000000	//!< ROM. No write at all (duh)
 #define MEM_SRAM	0x0E000000	//!< Static RAM. 8bit write only
 //\}
@@ -68,11 +68,11 @@
 //! \name Sub section sizes
 //\{
 #define PAL_BG_SIZE		0x00200		//!< BG palette size
-#define PAL_OBJ_SIZE	0x00200		//!< Object palette size
+#define PAL_OBJ_SIZE	0x00200		//!< ObjectBase palette size
 #define CBB_SIZE		0x04000		//!< Charblock size
 #define SBB_SIZE		0x00800		//!< Screenblock size
 #define VRAM_BG_SIZE	0x10000		//!< BG VRAM size
-#define VRAM_OBJ_SIZE	0x08000		//!< Object VRAM size
+#define VRAM_OBJ_SIZE	0x08000		//!< ObjectBase VRAM size
 #define M3_SIZE			0x12C00		//!< Mode 3 buffer size
 #define M4_SIZE			0x09600		//!< Mode 4 buffer size
 #define M5_SIZE			0x0A000		//!< Mode 5 buffer size
@@ -85,10 +85,10 @@
 #define REG_BASE		MEM_IO
 
 #define MEM_PAL_BG		(MEM_PAL)					//!< Background palette address
-#define MEM_PAL_OBJ		(MEM_PAL + PAL_BG_SIZE)		//!< Object palette address
+#define MEM_PAL_OBJ		(MEM_PAL + PAL_BG_SIZE)		//!< ObjectBase palette address
 #define MEM_VRAM_FRONT	(MEM_VRAM)					//!< Front page address
 #define MEM_VRAM_BACK	(MEM_VRAM + VRAM_PAGE_SIZE)	//!< Back page address
-#define MEM_VRAM_OBJ	(MEM_VRAM + VRAM_BG_SIZE)	//!< Object VRAM address
+#define MEM_VRAM_OBJ	(MEM_VRAM + VRAM_BG_SIZE)	//!< ObjectBase VRAM address
 //\}
 
 /*!	\}	*/
@@ -116,7 +116,7 @@
 */
 #define pal_bg_mem		((COLOR*)MEM_PAL)
 
-//! Object palette. 
+//! ObjectBase palette.
 /*! pal_obj_mem[i]	= color i					( COLOR )
 */
 #define pal_obj_mem		((COLOR*)MEM_PAL_OBJ)
@@ -128,7 +128,7 @@
 */
 #define pal_bg_bank		((PALBANK*)MEM_PAL)
 
-//! Object palette matrix. 
+//! ObjectBase palette matrix.
 /*!	pal_obj_bank[y]		= bank y				( COLOR[ ] )<br>
 	pal_obj_bank[y][x]	= color y*16+x			( COLOR )
 */
@@ -152,13 +152,13 @@
 */
 #define tile8_mem		((CHARBLOCK8*)MEM_VRAM)
 
-//!	Object charblocks, 4bpp tiles.
+//!	ObjectBase charblocks, 4bpp tiles.
 /*!	tile_mem[y]		= charblock y				( TILE[ ] )<br>
 	tile_mem[y][x]	= block y, tile x			( TILE )
 */
 #define tile_mem_obj	( (CHARBLOCK*)MEM_VRAM_OBJ)
 
-//!	Object charblocks, 4bpp tiles.
+//!	ObjectBase charblocks, 4bpp tiles.
 /*!	tile_mem[y]		= charblock y				( TILE[ ] )<br>
 	tile_mem[y][x]	= block y, tile x			( TILE )
 */
@@ -222,13 +222,13 @@
 //! \name OAM
 //\{
 
-//! Object attribute memory
+//! ObjectBase attribute memory
 /*!	oam_mem[i]		= object i						( OBJ_ATTR )
 */
 #define oam_mem			((OBJ_ATTR*)MEM_OAM)
 #define obj_mem			((OBJ_ATTR*)MEM_OAM)
 
-//! Object affine memory
+//! ObjectBase affine memory
 /*!	obj_aff_mem[i]		= object matrix i			( OBJ_AFFINE )	
 */
 #define obj_aff_mem		((OBJ_AFFINE*)MEM_OAM)

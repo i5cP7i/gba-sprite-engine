@@ -9,6 +9,7 @@
 #include <libgba-sprite-engine/sprites/sprite.h>
 #include <libgba-sprite-engine/sprites/sprite_builder.h>
 
+#include "ObjectBase.h"
 #include "TileSystemBase.h"
 
 class CharacterBase
@@ -41,10 +42,12 @@ public:
     TileSystemBase::TileCoordinates GetTileLocation() const { return TileLocation; }
 
     bool isOutOfRange(TileSystemBase::TileCoordinates Target, int Radius); // t = TileCoordinates, p = TileCoordinates
-    void Update() const { CharacterSprite->update(); }
+    void Update() const { CharacterSprite->update(); Weapon->Get()->update(); }
     Sprite* Get() const { return CharacterSprite.get(); }
+    Sprite* GetWeaponSprite() const { return Weapon->Get(); }
 
 protected:
+    std::unique_ptr<ObjectBase> Weapon;
     SpriteBuilder<Sprite> CharacterBuilder;
     std::unique_ptr<Sprite> CharacterSprite;
     u32 PrevFrame = 0;

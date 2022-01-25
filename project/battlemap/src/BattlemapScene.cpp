@@ -135,6 +135,8 @@ std::vector<Sprite *> BattlemapScene::sprites()
 
     SpriteCollector.push_back(CurrentCharacterSprite);
     SpriteCollector.push_back(OtherCharacterSprite);
+    SpriteCollector.push_back(PlayerCharacter->GetWeaponSprite());
+    SpriteCollector.push_back(EnemyCharacter->GetWeaponSprite());
 
 
     for (int i = 0; i < TileSystem->Get().size(); ++i)
@@ -442,12 +444,12 @@ void BattlemapScene::MoveMenu(u16 keys)
     // TextStream::instance().setText("PY: " + std::to_string(PlayerCharacter->TileSystem->GetWorldLocation().y), 9, 12);
     // TextStream::instance().setText("TX: " + std::to_string(TileSystem->GetWorldCartesian().x), 3, 12);
     // TextStream::instance().setText("TY: " + std::to_string(TileSystem->GetWorldCartesian().y), 4, 12);
-    TextStream::instance().setText("PTX: " + std::to_string(PreviousTileLocation.x), 7, 12);
-    TextStream::instance().setText("PTY: " + std::to_string(PreviousTileLocation.y), 8, 12);
-    TextStream::instance().setText("TX: " + std::to_string(CurrentTileLocation.x), 5, 12);
-    TextStream::instance().setText("TY: " + std::to_string(CurrentTileLocation.y), 6, 12);
-    TextStream::instance().setText("WOX: " + std::to_string(TileSystem->WorldOffset.x), 9, 12);
-    TextStream::instance().setText("WOY: " + std::to_string(TileSystem->WorldOffset.y), 10, 12);
+    // TextStream::instance().setText("PTX: " + std::to_string(PreviousTileLocation.x), 7, 12);
+    // TextStream::instance().setText("PTY: " + std::to_string(PreviousTileLocation.y), 8, 12);
+    // TextStream::instance().setText("TX: " + std::to_string(CurrentTileLocation.x), 5, 12);
+    // TextStream::instance().setText("TY: " + std::to_string(CurrentTileLocation.y), 6, 12);
+    // TextStream::instance().setText("WOX: " + std::to_string(TileSystem->WorldOffset.x), 9, 12);
+    // TextStream::instance().setText("WOY: " + std::to_string(TileSystem->WorldOffset.y), 10, 12);
 
 
     if (CurrentCharacterSprite == PlayerCharacter->Get())
@@ -627,6 +629,8 @@ void BattlemapScene::AttackMenu(u16 keys)
                 MenuSystem["main"]["Action"]["Attack"].Enable(false);
                 MenuSystem["main"]["Action"]["Items"].Enable(false);
                 EnemyCharacter->SetAnimation(CharacterBase::eAnimation::Attacking);
+                PlayerCharacter->GetWeaponSprite()->buildOam(PlayerCharacter->GetWeaponSprite()->GetTileIndex(), 3);
+                EnemyCharacter->GetWeaponSprite()->buildOam(EnemyCharacter->GetWeaponSprite()->GetTileIndex(), 3);
                 // TODO: Attack Direction
                 if (EnemyCharacter->TileSystem->GetWorldCartesian().x == PlayerCharacter->TileSystem->GetWorldCartesian().x)
                 {
@@ -661,6 +665,8 @@ void BattlemapScene::AttackMenu(u16 keys)
                 MenuSystem["main"]["Action"]["Attack"].Enable(false);
                 MenuSystem["main"]["Action"]["Items"].Enable(false);
                 PlayerCharacter->SetAnimation(CharacterBase::eAnimation::Attacking);
+                PlayerCharacter->GetWeaponSprite()->buildOam(PlayerCharacter->GetWeaponSprite()->GetTileIndex(), 3);
+                EnemyCharacter->GetWeaponSprite()->buildOam(EnemyCharacter->GetWeaponSprite()->GetTileIndex(), 3);
                 // TODO: Attack Direction
                 if (PlayerCharacter->TileSystem->GetWorldCartesian().x == EnemyCharacter->TileSystem->GetWorldCartesian().x)
                 {

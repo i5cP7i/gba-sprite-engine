@@ -111,8 +111,8 @@ INLINE void obj_hide(OBJ_ATTR *obj)
 {	BFN_SET2(obj->attr0, ATTR0_HIDE, ATTR0_MODE);		}
 
 //! Unhide an object.
-/*! \param obj	Object to unhide.
-*	\param mode	Object mode to unhide to. Necessary because this affects
+/*! \param obj	ObjectBase to unhide.
+*	\param mode	ObjectBase mode to unhide to. Necessary because this affects
 *	  the affine-ness of the object.
 */
 INLINE void obj_unhide(OBJ_ATTR *obj, u16 mode)
@@ -204,7 +204,7 @@ void obj_aff_copy(OBJ_AFFINE *dst, const OBJ_AFFINE *src, u32 count)
 
 //! Set obj matrix to counter-clockwise rotation.
 /*!
-	\param oaff	Object affine struct to set.
+	\param oaff	ObjectBase affine struct to set.
 	\param alpha	CCW angle. full-circle is 10000h.
 */
 void obj_aff_rotate(OBJ_AFFINE *oaff, u16 alpha)

@@ -837,7 +837,7 @@
 
 // --- OAM attribute 0 -------------------------------------------------
 
-/*!	\defgroup grpVideoAttr0	Object Attribute 0 Flags
+/*!	\defgroup grpVideoAttr0	ObjectBase Attribute 0 Flags
 	\ingroup grpMemBits
 */
 /*!	\{	*/
@@ -879,7 +879,7 @@
 
 // --- OAM attribute 1 -------------------------------------------------
 
-/*!	\defgroup grpVideoAttr1	Object Attribute 1 Flags
+/*!	\defgroup grpVideoAttr1	ObjectBase Attribute 1 Flags
 	\ingroup grpMemBits
 */
 /*!	\{	*/
@@ -935,7 +935,7 @@
 
 // --- OAM attribute 2 -------------------------------------------------
 
-/*!	\defgroup grpVideoAttr2	Object Attribute 2 Flags
+/*!	\defgroup grpVideoAttr2	ObjectBase Attribute 2 Flags
 	\ingroup grpMemBits
 */
 /*!	\{	*/

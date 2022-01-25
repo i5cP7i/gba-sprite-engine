@@ -27,7 +27,11 @@ CharacterBase::CharacterBase(const void *ImageData, int ImageSize, int x, int y,
     TileSystem->TileLocation.x = x;
     TileSystem->TileLocation.y = y;
 
-    Animation = eAnimation::Walking;
+    Weapon = std::unique_ptr<ObjectBase>(new ObjectBase(broadswordTiles, sizeof(broadswordTiles)));
+    Weapon->Get()->setPalBank(3);
+    Weapon->Move(240,180);
+
+    SetAnimation(eAnimation::Walking);
 }
 
 void CharacterBase::HandleMovement()
@@ -53,6 +57,7 @@ void CharacterBase::HandleMovement()
 
 void CharacterBase::AnimateWalking()
 {
+    // Weapon->Move(TileSystem->TileLocation.x, TileSystem->TileLocation.y);
     if (Animation == eAnimation::Walking)
     {
         if (CharacterSprite->getCurrentFrame() == FrameOrientation && PrevFrame != FrameOrientation)
@@ -79,31 +84,138 @@ bool CharacterBase::AnimateAttack()
 {
     if (Animation == eAnimation::Attacking)
     {
+        if (FrameOrientation == 23) // NORTHEAST OR NORTHWEST
+        {
+            switch (CurrentDirection)
+            {
+                case eDirection::NorthWest:
+                    if (CharacterSprite->getCurrentFrame() == 21)
+                    {
+                        Weapon->Get()->flipHorizontally(true);
+                        Weapon->Get()->flipVertically(true);
+                        Weapon->Move(TileSystem->TileLocation.x + 16 + 3, TileSystem->TileLocation.y - 2);
+                        Weapon->Update();
+                        return false;
+                    }
+                    else if (CharacterSprite->getCurrentFrame() == 22)
+                    {
+                        Weapon->Get()->flipHorizontally(false);
+                        Weapon->Get()->flipVertically(false);
+                        Weapon->Move(TileSystem->TileLocation.x + 16 - 18, TileSystem->TileLocation.y - 16);
+                        Weapon->Update();
+                        return false;
+                    }
+                    else if (CharacterSprite->getCurrentFrame() == 23)
+                    {
+                        Weapon->Get()->flipHorizontally(true);
+                        Weapon->Get()->flipVertically(true);
+                        Weapon->Move(TileSystem->TileLocation.x + 16 - 12, TileSystem->TileLocation.y - 12);
+                        Weapon->Update();
+                        Update();
+                        return true;
+                    }
+                    break;
+                case eDirection::NorthEast:
+                    if (CharacterSprite->getCurrentFrame() == 21)
+                    {
+                        Weapon->Get()->flipHorizontally(false);
+                        Weapon->Get()->flipVertically(true);
+                        Weapon->Move(TileSystem->TileLocation.x - 3, TileSystem->TileLocation.y - 2);
+                        Weapon->Update();
+                        return false;
+                    }
+                    else if (CharacterSprite->getCurrentFrame() == 22)
+                    {
+                        Weapon->Get()->flipHorizontally(true);
+                        Weapon->Get()->flipVertically(false);
+                        Weapon->Move(TileSystem->TileLocation.x + 18, TileSystem->TileLocation.y - 16);
+                        Weapon->Update();
+                        return false;
+                    }
+                    else if (CharacterSprite->getCurrentFrame() == 23)
+                    {
+                        Weapon->Get()->flipHorizontally(false);
+                        Weapon->Get()->flipVertically(true);
+                        Weapon->Move(TileSystem->TileLocation.x + 12, TileSystem->TileLocation.y - 12);
+                        Weapon->Update();
+                        Update();
+                        return true;
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+        else if (FrameOrientation == 20)
+        {
+            switch (CurrentDirection)
+            {
+                case eDirection::SouthWest:
+                    if (CharacterSprite->getCurrentFrame() == 18)
+                    {
+                        Weapon->Get()->flipHorizontally(true);
+                        Weapon->Get()->flipVertically(false);
+                        Weapon->Move(TileSystem->TileLocation.x + 16 - 2, TileSystem->TileLocation.y - 14);
+                        Weapon->Update();
+                        return false;
+                    }
+                    else if (CharacterSprite->getCurrentFrame() == 19)
+                    {
+                        Weapon->Get()->flipHorizontally(false);
+                        Weapon->Get()->flipVertically(true);
+                        Weapon->Move(TileSystem->TileLocation.x, TileSystem->TileLocation.y - 6);
+                        Weapon->Update();
+                        return false;
+                    }
+                    else if (CharacterSprite->getCurrentFrame() == 20)
+                    {
+                        Weapon->Get()->flipHorizontally(false);
+                        Weapon->Get()->flipVertically(true);
+                        Weapon->Move(TileSystem->TileLocation.x, TileSystem->TileLocation.y + 2);
+                        Weapon->Update();
+                        Update();
+                        return true;
+                    }
+                    break;
+                case eDirection::SouthEast:
+                    if (CharacterSprite->getCurrentFrame() == 18)
+                    {
+                        Weapon->Get()->flipHorizontally(false);
+                        Weapon->Get()->flipVertically(false);
+                        Weapon->Move(TileSystem->TileLocation.x + 2, TileSystem->TileLocation.y - 14);
+                        Weapon->Update();
+                        return false;
+                    }
+                    else if (CharacterSprite->getCurrentFrame() == 19)
+                    {
+                        Weapon->Get()->flipHorizontally(true);
+                        Weapon->Get()->flipVertically(true);
+                        Weapon->Move(TileSystem->TileLocation.x + 18, TileSystem->TileLocation.y - 6);
+                        Weapon->Update();
+                        return false;
+                    }
+                    else if (CharacterSprite->getCurrentFrame() == 20)
+                    {
+                        Weapon->Get()->flipHorizontally(false);
+                        Weapon->Get()->flipVertically(true);
+                        Weapon->Move(TileSystem->TileLocation.x + 16, TileSystem->TileLocation.y + 6);
+                        Weapon->Update();
+                        Update();
+                        return true;
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
         Update();
-        if (FrameOrientation == 23)
-        {
-            if (CharacterSprite->getCurrentFrame() == 23)
-            {
-                Update();
-                return true;
-            }
-        }
-        else
-        {
-            if (CharacterSprite->getCurrentFrame() == 20)
-            {
-                Update();
-                return true;
-            }
-        }
-
-        return false;
     }
     else
     {
         Update();
         return false;
     }
+    return false;
 }
 
 void CharacterBase::SetDirection(CharacterBase::eDirection Direction)
@@ -166,8 +278,8 @@ void CharacterBase::SetDirection(CharacterBase::eDirection Direction)
         default:
             break;
     }
-    TextStream::instance().setText("FO:" + std::to_string(FrameOrientation),2,2);
-    TextStream::instance().setText("PF:" + std::to_string(PrevFrame),3,2);
+    // TextStream::instance().setText("FO:" + std::to_string(FrameOrientation),2,2);
+    // TextStream::instance().setText("PF:" + std::to_string(PrevFrame),3,2);
     CharacterSprite->animateToFrame(FrameOrientation-3);
     CurrentDirection = Direction;
     this->Direction = Direction;
@@ -225,6 +337,9 @@ bool CharacterBase::isOutOfRange(TileSystemBase::TileCoordinates Target, int Rad
 void CharacterBase::SetAnimation(CharacterBase::eAnimation Animation)
 {
     this->Animation = Animation;
+    Weapon->Get()->flipHorizontally(false);
+    Weapon->Get()->flipVertically(false);
+    Weapon->Move(240, 180);
 }
 
 
