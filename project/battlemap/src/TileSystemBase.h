@@ -58,6 +58,19 @@ public:
                 -v.y,
             };
         }
+        TileCoordinates operator + (TileCoordinates v)
+        {
+            return
+            {
+                    +v.x,
+                    +v.y,
+            };
+        }
+        void operator = (TileCoordinates v)
+        {
+            x = v.x;
+            y = v.y;
+        }
         bool operator == (TileCoordinates v)
         {
             return (x == v.x) && (y == v.y);
@@ -71,7 +84,7 @@ public:
     TileCoordinates TileSize = { TileWidth/2, TileHeight/2};
     TileCoordinates WorldOrigin = {0, 0};
     TileCoordinates WorldLocation = {0, 0};
-    TileCoordinates WorldOffset;
+    TileCoordinates WorldOffset = {0,0};
     TileCoordinates WorldCartesianLocation;
 
 
@@ -85,19 +98,29 @@ public:
     eStatus TileStatus;
     TileSystemBase();
 
-    TileCoordinates GetTileLocation() const { return TileLocation; };
-    TileCoordinates GetWorldLocation() const { return WorldLocation; };
-    TileCoordinates GetWorldTransform(TileCoordinates T) const { return {(T.x) / TileSize.x, (T.y) / TileSize.y}; };
-    TileCoordinates GetWorldTransformOffset(TileCoordinates T) const { return {(T.x%TileSize.x), (T.y%TileSize.y)}; };
+    TileCoordinates GetTileLocation() const { return TileLocation; }
+    TileCoordinates GetWorldLocation() const { return WorldLocation; }
+    TileCoordinates GetWorldTransform(TileCoordinates T) const { return {(T.x) / TileSize.x, (T.y) / TileSize.y}; }
+    TileCoordinates GetWorldTransformOffset(TileCoordinates T) const { return {(T.x%TileSize.x), (T.y%TileSize.y)}; }
     TileCoordinates GetWorldCartesian() const;
+    void SetWorldOffset(TileCoordinates T) { WorldOffset = T; }
 
     void SetTileStatus(eStatus Status);
-    eStatus GetTileStatus() const {return TileStatus;};
+    eStatus GetTileStatus() const { return TileStatus; }
     void Update();
     void UpdateLocation();
     void Move(int x, int y);
     void Move(TileCoordinates T);
-    void ResetPos() { Move(ResetX, ResetY); }
+    void MoveRelative(TileCoordinates T);
+    void ResetPos()
+    {
+        for (int i = 0; i < TileSelectionSpriteVector.size() / 2; i += 2)
+        {
+            TileSelectionSpriteVector.at(i)->moveTo(ResetX, ResetY);
+            TileSelectionSpriteVector.at(i+1)->moveTo(ResetX+TileWidth/2, ResetY);
+        }
+        UpdateLocation();
+    }
     void MoveRight();
     void MoveLeft();
     void MoveUp();

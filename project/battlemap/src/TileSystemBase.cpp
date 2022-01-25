@@ -42,7 +42,7 @@ std::vector<Sprite*> TileSystemBase::Get() const
 void TileSystemBase::UpdateLocation()
 {
     WorldLocation = GetWorldTransform(TileLocation);
-    WorldOffset = GetWorldTransformOffset(TileLocation);
+    // WorldOffset = GetWorldTransformOffset(TileLocation);
     WorldCartesianLocation = GetWorldCartesian();
 }
 
@@ -117,6 +117,15 @@ void TileSystemBase::Move(int x, int y)
 void TileSystemBase::Move(TileSystemBase::TileCoordinates T)
 {
     Move(T.x * TileWidth/2, T.y * TileHeight/2);
+}
+
+void TileSystemBase::MoveRelative(TileSystemBase::TileCoordinates T)
+{
+    for (int i = 0; i < TileSelectionSpriteVector.size() / 2; i += 2)
+    {
+        TileSelectionSpriteVector.at(i)->moveTo(TileLocation.x+T.x*TileWidth/2, TileLocation.y+T.y*TileHeight/2);
+        TileSelectionSpriteVector.at(i+1)->moveTo(TileLocation.x+T.x*TileWidth/2+TileWidth/2, TileLocation.y+T.y*TileHeight/2);
+    }
 }
 
 void TileSystemBase::MoveRight()

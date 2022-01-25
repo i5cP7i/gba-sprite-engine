@@ -10,7 +10,7 @@ Player::Player(std::string Name, int x, int y)
     this->Name = Name;
     MaxHealth = 102;
     Health = MaxHealth;
-    MoveRadius = 4;
+    MoveRadius = 10;
     AttackRadius = 1;
     Strength = 20;
     Evasion = 10;
@@ -21,7 +21,7 @@ void Player::Reset()
 {
     MaxHealth = 102;
     Health = MaxHealth;
-    MoveRadius = 4;
+    MoveRadius = 10;
     AttackRadius = 1;
     Strength = 20; // Default = 20
     Evasion = 10;

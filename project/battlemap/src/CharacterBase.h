@@ -21,18 +21,22 @@ private:
     TileSystemBase::TileCoordinates WorldLocation;
 public:
     std::unique_ptr<TileSystemBase> TileSystem;
-    enum class eDirection: unsigned char { SouthEast = 0, SouthWest = 1, NorthEast = 2, NorthWest = 3 } Direction;
+    enum class eDirection: signed char { SouthEast = 2, SouthWest = 1, NorthEast = -1, NorthWest = -2 } Direction;
+    enum class eAnimation: unsigned char { Walking = 0, Attacking = 1, Healing = 2 } Animation;
     CharacterBase(const void *ImageData, int ImageSize, int x, int y, int AnimationDelay, int AnimationFrames);
-
 
     void Move(int x,int y);
     void Move(TileSystemBase::TileCoordinates T);
+    void MoveRelative(TileSystemBase::TileCoordinates T);
 
     void HandleMovement();
     void AnimateWalking();
     void AnimateHalt();
+    bool AnimateAttack();
 
     void SetDirection(eDirection Direction);
+    void SetAnimation(eAnimation Animation);
+    eAnimation GetAnimation() const { return  Animation; }
     eDirection GetDirection() const { return Direction; }
     TileSystemBase::TileCoordinates GetTileLocation() const { return TileLocation; }
 
@@ -45,7 +49,7 @@ protected:
     std::unique_ptr<Sprite> CharacterSprite;
     u32 PrevFrame = 0;
     u32 FrameOrientation = 2;
-    eDirection CharacterDirection;
+    eDirection CurrentDirection;
 
     int AnimationDelay;
     int AnimationFrames;

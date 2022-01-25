@@ -60,6 +60,7 @@ private:
     void End(u16 keys);
     void Reset();
 
+    // Sprites
     Sprite* CurrentCharacterSprite;
     Sprite* OtherCharacterSprite;
     Sprite* WinningSprite;
@@ -71,7 +72,7 @@ private:
     bool bGameOver = false;
     bool OnEndState = false;
     int oldTurnID = TurnID;
-    std::vector<TileSystemBase::TileCoordinates> TileMoveVector;
+
     // Gameplay MenuObject Functions
     enum class eGameMenu {Init = 0, Move = 1, Attack = 2, Items = 3, Wait = 4} GameMenu = eGameMenu::Init;
     // enum class eMenuSelect {Init, Move, Action, Wait} MenuSelect;
@@ -119,15 +120,19 @@ private:
 
     // Background scroll functions and variables
     std::vector<TileSystemBase::TileCoordinates> TileReference;
+    TileSystemBase::TileCoordinates BackgroundScroll;
+    TileSystemBase::TileCoordinates CurrentTileLocation;
+    TileSystemBase::TileCoordinates PreviousTileLocation;
 
     bool offsetSprites = false;
     int m_offsetX = 0; // offsetX = (m_offsetX % TileWidth)/ TileWidth
     int m_offsetY = 0; // offsetY = (m_offsetY % TileHeight)/ TileHeight
-    int offsetX = 0;
-    int offsetY = 0;
+    TileSystemBase::TileCoordinates bgOffset = {0,0};
     int bglerpX = 0;
     int bglerpY = 0;
-    void ProcessBackgroundScrolling(TileSystemBase::TileCoordinates TilePosition);
+    void ScrollBackground(TileSystemBase::TileCoordinates T);
+    void ScrollBackground(int x, int y);
+    void ProcessBackgroundScrolling();
 public:
     std::vector<Sprite *> sprites() override;
     std::vector<Background *> backgrounds() override;

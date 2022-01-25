@@ -13,7 +13,7 @@ CharacterBase::CharacterBase(const void *ImageData, int ImageSize, int x, int y,
             .withLocation(x+TileOffset.x, y+TileOffset.y)
             .buildPtr();
     CharacterSprite->flipHorizontally(false);
-    CharacterDirection = eDirection::SouthWest;
+    CurrentDirection = eDirection::SouthWest;
     dx = 2;
     dy = 1;
     FrameOrientation = 2;
@@ -21,16 +21,18 @@ CharacterBase::CharacterBase(const void *ImageData, int ImageSize, int x, int y,
 
     TileSystem = std::unique_ptr<TileSystemBase>(new TileSystemBase());
 
-    TileLocation.x = x;
-    TileLocation.y = y;
+    TileLocation.x = x/16;
+    TileLocation.y = y/8;
 
     TileSystem->TileLocation.x = x;
     TileSystem->TileLocation.y = y;
+
+    Animation = eAnimation::Walking;
 }
 
 void CharacterBase::HandleMovement()
 {
-    switch(CharacterDirection)
+    switch(CurrentDirection)
     {
         case eDirection::SouthEast: // KEY_RIGHT
             CharacterSprite->moveTo(CharacterSprite->getX()+2, CharacterSprite->getY()+1);
@@ -51,22 +53,55 @@ void CharacterBase::HandleMovement()
 
 void CharacterBase::AnimateWalking()
 {
-    if (CharacterSprite->getCurrentFrame() == FrameOrientation && PrevFrame != FrameOrientation)
+    if (Animation == eAnimation::Walking)
     {
-        PrevFrame = CharacterSprite->getCurrentFrame();
-        CharacterSprite->animateToFrame(FrameOrientation-2);
+        if (CharacterSprite->getCurrentFrame() == FrameOrientation && PrevFrame != FrameOrientation)
+        {
+            PrevFrame = CharacterSprite->getCurrentFrame();
+            CharacterSprite->animateToFrame(FrameOrientation-2);
+        }
+        else if (CharacterSprite->getCurrentFrame() == FrameOrientation-1 && PrevFrame == FrameOrientation)
+        {
+            PrevFrame = CharacterSprite->getCurrentFrame();
+            CharacterSprite->animateToFrame(FrameOrientation-3);
+        }
+        Update();
     }
-    else if (CharacterSprite->getCurrentFrame() == FrameOrientation-1 && PrevFrame == FrameOrientation)
-    {
-        PrevFrame = CharacterSprite->getCurrentFrame();
-        CharacterSprite->animateToFrame(FrameOrientation-3);
-    }
-    Update();
+
 }
 
 void CharacterBase::AnimateHalt()
 {
     CharacterSprite->animateToFrame(0);
+}
+
+bool CharacterBase::AnimateAttack()
+{
+    if (Animation == eAnimation::Attacking)
+    {
+        if (CharacterSprite->getCurrentFrame() == FrameOrientation && PrevFrame != FrameOrientation)
+        {
+            PrevFrame = CharacterSprite->getCurrentFrame();
+            CharacterSprite->animateToFrame(FrameOrientation-2);
+        }
+        else if (CharacterSprite->getCurrentFrame() == FrameOrientation-1 && PrevFrame == FrameOrientation)
+        {
+            PrevFrame = CharacterSprite->getCurrentFrame();
+            CharacterSprite->animateToFrame(FrameOrientation-3);
+        }
+        Update();
+        if (CharacterSprite->getCurrentFrame() == 23)
+        {
+            Update();
+            return true;
+        }
+        return false;
+    }
+    else
+    {
+        Update();
+        return false;
+    }
 }
 
 void CharacterBase::SetDirection(CharacterBase::eDirection Direction)
@@ -75,36 +110,77 @@ void CharacterBase::SetDirection(CharacterBase::eDirection Direction)
     {
         case eDirection::SouthEast: // KEY_RIGHT
             CharacterSprite->flipHorizontally(true);
-            FrameOrientation = 2;
-            PrevFrame = 0;
+            if (Animation == eAnimation::Walking)
+            {
+                FrameOrientation = 2;
+                PrevFrame = 0;
+            }
+            else if (Animation == eAnimation::Attacking)
+            {
+                FrameOrientation = 23;
+                PrevFrame = 21;
+            }
+
             break;
         case eDirection::SouthWest: // KEY_DOWN
             CharacterSprite->flipHorizontally(false);
-            FrameOrientation = 2;
-            PrevFrame = 0;
+            if (Animation == eAnimation::Walking)
+            {
+                FrameOrientation = 2;
+                PrevFrame = 0;
+            }
+            else if (Animation == eAnimation::Attacking)
+            {
+                FrameOrientation = 23;
+                PrevFrame = 21;
+            }
             break;
         case eDirection::NorthEast: // KEY_UP
             CharacterSprite->flipHorizontally(true);
-            FrameOrientation = 5;
-            PrevFrame = 3;
+            if (Animation == eAnimation::Walking)
+            {
+                FrameOrientation = 5;
+                PrevFrame = 3;
+            }
+            else if (Animation == eAnimation::Attacking)
+            {
+                FrameOrientation = 25;
+                PrevFrame = 23;
+            }
             break;
         case eDirection::NorthWest: // KEY_LEFT
             CharacterSprite->flipHorizontally(false);
-            FrameOrientation = 5;
-            PrevFrame = 3;
+            if (Animation == eAnimation::Walking)
+            {
+                FrameOrientation = 5;
+                PrevFrame = 3;
+            }
+            else if (Animation == eAnimation::Attacking)
+            {
+                FrameOrientation = 25;
+                PrevFrame = 23;
+            }
             break;
         default:
             break;
     }
+    TextStream::instance().setText("FO:" + std::to_string(FrameOrientation),2,2);
+    TextStream::instance().setText("PF:" + std::to_string(PrevFrame),3,2);
     CharacterSprite->animateToFrame(FrameOrientation-3);
-    CharacterDirection = Direction;
+    CurrentDirection = Direction;
     this->Direction = Direction;
     Update();
 }
 
+void CharacterBase::MoveRelative(TileSystemBase::TileCoordinates T)
+{
+    CharacterSprite->moveTo( TileLocation.x * 16 + T.x * 16 + TileOffset.x,
+                             TileLocation.y * 8 + T.y * 8 + TileOffset.y);
+}
+
 void CharacterBase::Move(TileSystemBase::TileCoordinates T)
 {
-    CharacterSprite->moveTo(T.x * 16 + TileOffset.x,T.y * 8 + TileOffset.y);
+    CharacterSprite->moveTo((T.x+TileSystem->WorldOffset.x) * 16 + TileOffset.x,(T.y+TileSystem->WorldOffset.y) * 8 + TileOffset.y);
     TileLocation = T;
     TileSystem->TileLocation = {T.x * 16, T.y * 8};
 }
@@ -143,6 +219,13 @@ bool CharacterBase::isOutOfRange(TileSystemBase::TileCoordinates Target, int Rad
     }
     return  bOutOfRange;
 }
+
+void CharacterBase::SetAnimation(CharacterBase::eAnimation Animation)
+{
+    this->Animation = Animation;
+}
+
+
 
 
 
