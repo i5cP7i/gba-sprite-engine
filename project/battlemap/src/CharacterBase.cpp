@@ -79,22 +79,24 @@ bool CharacterBase::AnimateAttack()
 {
     if (Animation == eAnimation::Attacking)
     {
-        if (CharacterSprite->getCurrentFrame() == FrameOrientation && PrevFrame != FrameOrientation)
-        {
-            PrevFrame = CharacterSprite->getCurrentFrame();
-            CharacterSprite->animateToFrame(FrameOrientation-2);
-        }
-        else if (CharacterSprite->getCurrentFrame() == FrameOrientation-1 && PrevFrame == FrameOrientation)
-        {
-            PrevFrame = CharacterSprite->getCurrentFrame();
-            CharacterSprite->animateToFrame(FrameOrientation-3);
-        }
         Update();
-        if (CharacterSprite->getCurrentFrame() == 23)
+        if (FrameOrientation == 23)
         {
-            Update();
-            return true;
+            if (CharacterSprite->getCurrentFrame() == 23)
+            {
+                Update();
+                return true;
+            }
         }
+        else
+        {
+            if (CharacterSprite->getCurrentFrame() == 20)
+            {
+                Update();
+                return true;
+            }
+        }
+
         return false;
     }
     else
@@ -117,8 +119,8 @@ void CharacterBase::SetDirection(CharacterBase::eDirection Direction)
             }
             else if (Animation == eAnimation::Attacking)
             {
-                FrameOrientation = 23;
-                PrevFrame = 21;
+                FrameOrientation = 20;
+                PrevFrame = 18;
             }
 
             break;
@@ -131,8 +133,8 @@ void CharacterBase::SetDirection(CharacterBase::eDirection Direction)
             }
             else if (Animation == eAnimation::Attacking)
             {
-                FrameOrientation = 23;
-                PrevFrame = 21;
+                FrameOrientation = 20;
+                PrevFrame = 18;
             }
             break;
         case eDirection::NorthEast: // KEY_UP
@@ -144,8 +146,8 @@ void CharacterBase::SetDirection(CharacterBase::eDirection Direction)
             }
             else if (Animation == eAnimation::Attacking)
             {
-                FrameOrientation = 25;
-                PrevFrame = 23;
+                FrameOrientation = 23;
+                PrevFrame = 21;
             }
             break;
         case eDirection::NorthWest: // KEY_LEFT
@@ -157,8 +159,8 @@ void CharacterBase::SetDirection(CharacterBase::eDirection Direction)
             }
             else if (Animation == eAnimation::Attacking)
             {
-                FrameOrientation = 25;
-                PrevFrame = 23;
+                FrameOrientation = 23;
+                PrevFrame = 21;
             }
             break;
         default:

@@ -627,8 +627,31 @@ void BattlemapScene::AttackMenu(u16 keys)
                 MenuSystem["main"]["Action"]["Attack"].Enable(false);
                 MenuSystem["main"]["Action"]["Items"].Enable(false);
                 EnemyCharacter->SetAnimation(CharacterBase::eAnimation::Attacking);
-                auto ReversedDirection = -1*static_cast<signed char>(PlayerCharacter->GetDirection());
-                EnemyCharacter->SetDirection(CharacterBase::eDirection::NorthEast);
+                // TODO: Attack Direction
+                if (EnemyCharacter->TileSystem->GetWorldCartesian().x == PlayerCharacter->TileSystem->GetWorldCartesian().x)
+                {
+                    if (EnemyCharacter->TileSystem->GetWorldCartesian().y > PlayerCharacter->TileSystem->GetWorldCartesian().y)
+                    {
+                        EnemyCharacter->SetDirection(CharacterBase::eDirection::NorthEast);
+                    }
+                    else
+                    {
+                        EnemyCharacter->SetDirection(CharacterBase::eDirection::SouthWest);
+                    }
+
+                }
+                else
+                {
+                    if (EnemyCharacter->TileSystem->GetWorldCartesian().x > PlayerCharacter->TileSystem->GetWorldCartesian().x)
+                    {
+                        EnemyCharacter->SetDirection(CharacterBase::eDirection::NorthWest);
+                    }
+                    else
+                    {
+                        EnemyCharacter->SetDirection(CharacterBase::eDirection::SouthEast);
+                    }
+                }
+
             }
             else if (TileSystem->GetTileStatus() != TileSystemBase::eStatus::Invalid
                      && ((TileSystem->GetWorldLocation().x == EnemyCharacter->TileSystem->GetWorldLocation().x && TileSystem->GetWorldLocation().y == EnemyCharacter->TileSystem->GetWorldLocation().y)))
@@ -638,7 +661,30 @@ void BattlemapScene::AttackMenu(u16 keys)
                 MenuSystem["main"]["Action"]["Attack"].Enable(false);
                 MenuSystem["main"]["Action"]["Items"].Enable(false);
                 PlayerCharacter->SetAnimation(CharacterBase::eAnimation::Attacking);
-                PlayerCharacter->SetDirection(CharacterBase::eDirection::NorthEast);
+                // TODO: Attack Direction
+                if (PlayerCharacter->TileSystem->GetWorldCartesian().x == EnemyCharacter->TileSystem->GetWorldCartesian().x)
+                {
+                    if (PlayerCharacter->TileSystem->GetWorldCartesian().y > EnemyCharacter->TileSystem->GetWorldCartesian().y)
+                    {
+                        PlayerCharacter->SetDirection(CharacterBase::eDirection::NorthEast);
+                    }
+                    else
+                    {
+                        PlayerCharacter->SetDirection(CharacterBase::eDirection::SouthWest);
+                    }
+
+                }
+                else
+                {
+                    if (PlayerCharacter->TileSystem->GetWorldCartesian().x > EnemyCharacter->TileSystem->GetWorldCartesian().x)
+                    {
+                        PlayerCharacter->SetDirection(CharacterBase::eDirection::NorthWest);
+                    }
+                    else
+                    {
+                        PlayerCharacter->SetDirection(CharacterBase::eDirection::SouthEast);
+                    }
+                }
             }
         }
 
@@ -687,37 +733,12 @@ void BattlemapScene::AttackMenu(u16 keys)
     else
     {
         // TODO: check AttackAnimation ended bool. If ended, add damage code and game end condition
-        if (PlayerCharacter->AnimateAttack())
+        if (CurrentCharacterSprite == PlayerCharacter->Get())
         {
-            PlayerCharacter->SetAnimation(CharacterBase::eAnimation::Walking);
-            PlayerCharacter->SetDirection(PlayerCharacter->GetDirection());
-
-            EnemyCharacter->SetAnimation(CharacterBase::eAnimation::Walking);
-            EnemyCharacter->SetDirection(EnemyCharacter->GetDirection());
-            
-            if (TileSystem->GetTileStatus() != TileSystemBase::eStatus::Invalid
-                && ((TileSystem->GetWorldLocation().x == PlayerCharacter->TileSystem->GetWorldLocation().x && TileSystem->GetWorldLocation().y == PlayerCharacter->TileSystem->GetWorldLocation().y)))
+            if (PlayerCharacter->AnimateAttack())
             {
-                int Damage = std::rand() % (EnemyCharacter->GetStrength()+EnemyCharacter->GetStrength()/10) + EnemyCharacter->GetStrength()-EnemyCharacter->GetStrength()/10;
-                std::string sign;
-                if (Damage > 0)
-                {
-                    sign = "-";
-                }
-                else
-                {
-                    sign = "+";
-                }
-
-                PlayerCharacter->SetHealth(PlayerCharacter->GetHealth()-Damage);
-                TextStream::instance().setText(PlayerCharacter->GetName(), 5,1);
-                TextStream::instance().setText(sign + std::to_string(Damage), 6,1+9);
-                TextStream::instance().setText("Health: " + std::to_string(PlayerCharacter->GetHealth()), 7,1);
-
-            }
-            else if (TileSystem->GetTileStatus() != TileSystemBase::eStatus::Invalid
-                     && ((TileSystem->GetWorldLocation().x == EnemyCharacter->TileSystem->GetWorldLocation().x && TileSystem->GetWorldLocation().y == EnemyCharacter->TileSystem->GetWorldLocation().y)))
-            {
+                PlayerCharacter->SetAnimation(CharacterBase::eAnimation::Walking);
+                PlayerCharacter->SetDirection(PlayerCharacter->GetDirection());
                 int Damage = std::rand() % (PlayerCharacter->GetStrength()+PlayerCharacter->GetStrength()/10) + PlayerCharacter->GetStrength()-PlayerCharacter->GetStrength()/10;
                 std::string sign;
                 if (Damage > 0)
@@ -733,31 +754,70 @@ void BattlemapScene::AttackMenu(u16 keys)
                 TextStream::instance().setText(EnemyCharacter->GetName(), 5,14);
                 TextStream::instance().setText(sign + std::to_string(Damage), 6,14+9);
                 TextStream::instance().setText("Health: " + std::to_string(EnemyCharacter->GetHealth()), 7,14);
-            }
-            if (EnemyCharacter->GetHealth() <= 0 || PlayerCharacter->GetHealth() <= 0)
-            {
-                if (CurrentCharacterSprite == PlayerCharacter->Get() && PlayerCharacter->GetHealth() > 0)
+                if (EnemyCharacter->GetHealth() <= 0 || PlayerCharacter->GetHealth() <= 0)
                 {
-                    WinningSprite = CurrentCharacterSprite;
-                    LosingSprite = OtherCharacterSprite;
+                    if (CurrentCharacterSprite == PlayerCharacter->Get() && PlayerCharacter->GetHealth() > 0)
+                    {
+                        WinningSprite = CurrentCharacterSprite;
+                        LosingSprite = OtherCharacterSprite;
+                    }
+                    else
+                    {
+                        WinningSprite = CurrentCharacterSprite;
+                        LosingSprite = OtherCharacterSprite;
+                    }
+
+                    GameState = eGameState::End;
                 }
                 else
                 {
-                    WinningSprite = CurrentCharacterSprite;
-                    LosingSprite = OtherCharacterSprite;
+                    GameMenu = eGameMenu::Init;
+                }
+            }
+        }
+        else
+        {
+            if (EnemyCharacter->AnimateAttack())
+            {
+                EnemyCharacter->SetAnimation(CharacterBase::eAnimation::Walking);
+                EnemyCharacter->SetDirection(EnemyCharacter->GetDirection());
+                int Damage = std::rand() % (EnemyCharacter->GetStrength()+EnemyCharacter->GetStrength()/10) + EnemyCharacter->GetStrength()-EnemyCharacter->GetStrength()/10;
+                std::string sign;
+                if (Damage > 0)
+                {
+                    sign = "-";
+                }
+                else
+                {
+                    sign = "+";
                 }
 
-                GameState = eGameState::End;
-            }
-            else
-            {
-                GameMenu = eGameMenu::Init;
-            }
+                PlayerCharacter->SetHealth(PlayerCharacter->GetHealth()-Damage);
+                TextStream::instance().setText(PlayerCharacter->GetName(), 5,1);
+                TextStream::instance().setText(sign + std::to_string(Damage), 6,1+9);
+                TextStream::instance().setText("Health: " + std::to_string(PlayerCharacter->GetHealth()), 7,1);
+                if (EnemyCharacter->GetHealth() <= 0 || PlayerCharacter->GetHealth() <= 0)
+                {
+                    if (CurrentCharacterSprite == PlayerCharacter->Get() && PlayerCharacter->GetHealth() > 0)
+                    {
+                        WinningSprite = CurrentCharacterSprite;
+                        LosingSprite = OtherCharacterSprite;
+                    }
+                    else
+                    {
+                        WinningSprite = CurrentCharacterSprite;
+                        LosingSprite = OtherCharacterSprite;
+                    }
 
+                    GameState = eGameState::End;
+                }
+                else
+                {
+                    GameMenu = eGameMenu::Init;
+                }
+            }
         }
     }
-
-
 
     // TextStream::instance().setText("px: " + std::to_string(PlayerCharacter->TileSystem->GetWorldCartesian().x), 4,1);
     // TextStream::instance().setText("py: " + std::to_string(PlayerCharacter->TileSystem->GetWorldCartesian().y), 5,1);
