@@ -12,7 +12,7 @@ Player::Player(std::string Name, int x, int y)
     Health = MaxHealth;
     MoveRadius = 10;
     AttackRadius = 1;
-    Strength = 20;
+    Strength = 200;
     Evasion = 10;
 }
 
@@ -23,7 +23,7 @@ void Player::Reset()
     Health = MaxHealth;
     MoveRadius = 10;
     AttackRadius = 1;
-    Strength = 20; // Default = 20
+    Strength = 200; // Default = 20
     Evasion = 10;
 
     Move(3*TileSystem->TileWidth/2,  13*TileSystem->TileHeight/2);

@@ -135,7 +135,7 @@
 #define BG_REG_32x32		 0	//!< reg bg, 32x32 (256x256 px)
 #define BG_REG_64x32	0x0001	//!< reg bg, 64x32 (512x256 px)
 #define BG_REG_32x64	0x8000	//!< reg bg, 32x64 (256x512 px)
-#define BG_REG_64x64	0xC000	//!< reg bg, 64x64 (512x512 px)
+#define BG_REG_64x64	0x0011	//!< reg bg, 64x64 (512x512 px)
 #define BG_AFF_16x16		 0	//!< affine bg, 16x16 (128x128 px)
 #define BG_AFF_32x32	0x4000	//!< affine bg, 32x32 (256x256 px)
 #define BG_AFF_64x64	0x8000	//!< affine bg, 64x64 (512x512 px)

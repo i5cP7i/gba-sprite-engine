@@ -3,6 +3,7 @@
 //
 
 #include "BattlemapScene.h"
+#include "MainMenuScene.h"
 
 void BattlemapScene::load()
 {
@@ -90,9 +91,7 @@ void BattlemapScene::tick(u16 keys)
     PlayerCharacter->Update();
     EnemyCharacter->Update();
     prev_keys = keys;
-    keys = REG_KEYINPUT | 0xFC00; // 0XFC00 = KEY_MASK -> Wrongly defined in the Engine!
-
-
+    keys = REG_KEYINPUT | 0xFC00; // 0XFC00 = KEY_MASK
 
     if (!isGameOver())
     {
@@ -124,7 +123,11 @@ void BattlemapScene::tick(u16 keys)
     }
     else
     {
-        // engine->setScene(MainMenu);
+        if (!engine->isTransitioning())
+        {
+            // engine->enqueueSound(zelda_secret_16K_mono, zelda_secret_16K_mono_bytes);
+            engine->transitionIntoScene(new MainMenuScene(engine), new FadeOutScene(2));
+        }
     }
 }
 
@@ -146,7 +149,7 @@ std::vector<Sprite *> BattlemapScene::sprites()
 
     return
     {
-            SpriteCollector
+        SpriteCollector
     };
 
 }
@@ -167,7 +170,6 @@ void BattlemapScene::Setup(u16 keys)
     // bg1->scroll(bglerpX+TileSystem->WorldOrigin.x, bglerpY+TileSystem->WorldOrigin.y);
     // bg2->scroll(bglerpX+TileSystem->WorldOrigin.x, bglerpY+TileSystem->WorldOrigin.y);
 
-    TextStream::instance().setText("FINAL FANTASY TACTICS CLONE", 0, 1);
     TextStream::instance().setText("Press Start to begin!", 2, 4);
     PlayerCharacter->AnimateHalt();
     EnemyCharacter->AnimateHalt();
@@ -240,6 +242,7 @@ void BattlemapScene::End(u16 keys)
                     GameState = eGameState::Reset;
                     break;
                 case 1001:
+                    GameState = eGameState::Quit;
                     break;
                 default:
                     break;

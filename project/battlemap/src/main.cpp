@@ -5,7 +5,7 @@
 #include <libgba-sprite-engine/palette/palette_manager.h>
 #include <libgba-sprite-engine/allocator.h>
 
-#include "BattlemapScene.h"
+#include "MainMenuScene.h"
 #include <time.h>
 /*
  * 16 bit color mode!!!!!!!!!!!!
@@ -16,7 +16,7 @@ int main()
 {
     std::shared_ptr<GBAEngine> engine(new GBAEngine());
 
-    BattlemapScene* startScene = new BattlemapScene(engine);
+    MainMenuScene* startScene = new MainMenuScene(engine);
     engine->setScene(startScene);
 
     srand (time(NULL));
