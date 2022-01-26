@@ -40,7 +40,7 @@ At the beginning of the battlemap scene, the two characters and the battlemap ba
   
 ![image](https://user-images.githubusercontent.com/48355782/151186751-c9f166b3-9756-4b03-b341-08edaa047d09.png)
 
-The game has started. To perform an action or move, press the "A" button. This opens the menu system. The player can now choose to move, act, or wait.
+The game has started. To perform an action or move, press the "A" button. This opens the menu system. The player can now choose to move, act, or wait. Pressing the "B" button closes the menu system. The menu system can be navigated top to bottom using the "down" or "up" arrow keys.
 
 ![image](https://user-images.githubusercontent.com/48355782/151192125-2978cd34-34c1-47a7-ad2a-882fa1e1bda8.png)
 <p><em>The menu system</em></p>
@@ -50,19 +50,25 @@ The game has started. To perform an action or move, press the "A" button. This o
 <details>
 <summary>Player Move and Wait</summary>
 
-The player has to select a tile within the boundaries of the map and his move radius. The move radius dictates how many tiles the player can cross and thus determines how far the player can move in each direction. There are four directions in which the player can move: Northeast, southeast, southwest, and Northwest. The player cannot act to the "right" (east, positive x direction), "left" (west, negative x direction), "up" (north, negative y direction), or "down" (south, positive y direction). The player moves instantaneously to the designated tile, if it is a valid tile to move on.
+The player has to select a tile using the "arrow keys" within the boundaries of the map and his move radius. The move radius dictates how many tiles the player can cross and thus determines how far the player can move in each direction. There are four directions in which the player can move: Northeast, southeast, southwest, and Northwest. The player cannot act to the "right" (east, positive x direction), "left" (west, negative x direction), "up" (north, negative y direction), or "down" (south, positive y direction). The player moves instantaneously to the designated tile after pressing "A", if it is a valid tile to move on. if "B" is pressed, the player returns to the menu.
   
 ![image](https://user-images.githubusercontent.com/48355782/151189692-63f98f64-4caf-41f4-9558-63709706b181.png)
 <p><em>Player "Blue" selects a tile within his move radius (left), and moves to it (right).</em></p>
 
+After moving, the player can still act or wait. For instance, the player could still choose to heal himself although he is at full health. If the player decides to wait, then his turn will be handed over to the other player. When the "wait" option is selected, the player selects a direction using the arrow keys. After pressing "A", the player's turn has ended.
+
 ![image](https://user-images.githubusercontent.com/48355782/151192564-055b5d02-d9d7-4214-95df-1ba18963342c.png)
 <p><em>Player "Blue" is ending his turn and can select a direction.</em></p>
+
+It is now player Red's  turn. This character is identical the first player, but he has less health, and more strength. He can move in a similar fashion. The images below show some invalid move selections.
 
 ![image](https://user-images.githubusercontent.com/48355782/151190288-cafa88ec-8247-4c60-bf6b-682bc17d9257.png)
 <p><em>Player "Red" selects a tile out of his move radius and cannot move to it.</em></p>
 
 ![image](https://user-images.githubusercontent.com/48355782/151191140-a69ad339-548b-4dc4-a5a0-a20cc58568f9.png)
 <p><em>Player "Red" selects a tile within his move radius, but he is currently occupying it.</em></p>
+
+If the players are next to each other i.e., one tile away in the direction in which they can act, then they can enter combat. The next section discusses player actions.
 
 ![image](https://user-images.githubusercontent.com/48355782/151193388-80de4ab7-14b8-41d4-accd-0aaecbd50f3e.png)
 <p><em>The players are now within the attack range and can enter combat.</em></p>
@@ -71,11 +77,15 @@ The player has to select a tile within the boundaries of the map and his move ra
 <details>
 <summary>Player Action</summary>
 
+The "Action" menu contains two options: "Attack" and "Items". Press the "up" or "down" arrow key to navigate to the action menu, and press "A" to open it.
+
 ![image](https://user-images.githubusercontent.com/48355782/151193855-2d3df1d5-a288-4ff0-beea-d2fff1cf5fcc.png)
 <p><em>Navigation to the action menu.</em></p>
 
 ![image](https://user-images.githubusercontent.com/48355782/151194207-432c99be-d858-4641-8637-2678e9104685.png)
 <p><em>The action menu contents.</em></p>
+  
+The player can choose to attack a enemy standing in the direction in which he can act, which is northeast, southeast, southwest, or northwest. He cannot attack himself or attack a tile which is not occupied by the enemy. Neither can the player attack outside his attack range, which is a radius of one tile.
 
 ![image](https://user-images.githubusercontent.com/48355782/151194782-b08b6fef-819e-4f55-8959-32ed6a56bc1b.png)
 <p><em>The player cannot attack himself.</em></p>
@@ -85,12 +95,18 @@ The player has to select a tile within the boundaries of the map and his move ra
 
 ![image](https://user-images.githubusercontent.com/48355782/151195189-a1c9bac2-ac8b-41b2-9569-944adc172023.png)
 <p><em>The player selects a tile outside his attack radius.</em></p>
+  
+When the player chooses to attack the enemy, he will deal damage based on his strength parameter. The blue player has a strength rating of 20, and the red player has a strength rating of 25.
 
 ![image](https://user-images.githubusercontent.com/48355782/151197447-e8d8fda8-394b-454d-8416-52a1cd934403.png)
 <p><em>Player "Blue" attacks Player "Red".</em></p>
 
+The red player is damaged. He can now choose to heal himself or strike back, move back, and wait or do nothing and wait. Or he could choose to only move and wait. This is up to the player. 
+
 ![image](https://user-images.githubusercontent.com/48355782/151197817-8a4b1751-73df-471f-ad38-e1b3353c0ff2.png)
 <p><em>Player "Red" is damaged and chooses to heal himself.</em></p>
+
+Note that each player who chooses to heal, can also heal the enemy!
 
 ![image](https://user-images.githubusercontent.com/48355782/151198031-26328775-5a15-4b6f-9257-846390f4487f.png)
 <p><em>Player "Red" highlights the enemy player's tile.</em></p>
@@ -108,6 +124,8 @@ The player has to select a tile within the boundaries of the map and his move ra
 <details>
 <summary>Player Death</summary>
 
+
+  
 ![image](https://user-images.githubusercontent.com/48355782/151199741-b0778d35-627e-432a-a47f-e9b31a470861.png)
 <p><em>Player "Red" has zero health and loses the game.</em></p>
 </details>
