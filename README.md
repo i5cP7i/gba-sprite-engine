@@ -29,15 +29,18 @@ At startup, the main menu is loaded. When the user presses the "A" button, the g
 
 ### Battlemap Scene
 
-This is the battlemap scene where the gameplay takes place. The battle is located on a grass field where two player characters duel with melee combat.
+This is the battlemap scene where the gameplay takes place. The battle is located on a grass field where two player characters duel with melee combat. The combat is turn-based, so each player can move and act only once each turn. Each player can either move, act, or wait. After a move and an action, the player has to wait and hand over the turn to the other player. After moving (or acting), the player can still act (or move) or wait. Moving and acting is final and cannot be undone. The available actions are "attack" and "items" which is further explained below. The game ends if either player has zero or less health points, which is displayed while moving and attacking in the corners of the screen.
 
 ![battlemapScene](https://user-images.githubusercontent.com/48355782/151186224-2c791616-813c-4523-bbd4-8bea28aa2c0d.png)
-
 
 <details>
 <summary>Start of the Battle</summary>
 
+At the beginning of the battlemap scene, the two characters and the battlemap background are shown. If the user presses the start button, the game begins.
+  
 ![image](https://user-images.githubusercontent.com/48355782/151186751-c9f166b3-9756-4b03-b341-08edaa047d09.png)
+
+
 
 ![image](https://user-images.githubusercontent.com/48355782/151192125-2978cd34-34c1-47a7-ad2a-882fa1e1bda8.png)
 <p><em>The menu system</em></p>
