@@ -20,8 +20,34 @@ Next, type `make`. Finally, the gba file `battlemap.gba` can be found at `/build
 
 ## Functional Description
 
+### Main Menu Scene
+![MainMenuScene](https://user-images.githubusercontent.com/48355782/151185305-941d5fbc-add6-4130-8131-13c649384e61.gif)
 
-## The Project's Object Oriented Model 
+### Battlemap Scene
+![battlemapScene](https://user-images.githubusercontent.com/48355782/151186224-2c791616-813c-4523-bbd4-8bea28aa2c0d.png)
+
+#### Start of the Battle
+![image](https://user-images.githubusercontent.com/48355782/151186751-c9f166b3-9756-4b03-b341-08edaa047d09.png)
+
+![image](https://user-images.githubusercontent.com/48355782/151192125-2978cd34-34c1-47a7-ad2a-882fa1e1bda8.png)
+<p><em>The menu system</em></p>
+
+#### Player Move
+![image](https://user-images.githubusercontent.com/48355782/151189692-63f98f64-4caf-41f4-9558-63709706b181.png)
+<p><em>Player "Blue" selects a tile within his move radius (left), and moves to it (right).</em></p>
+
+![image](https://user-images.githubusercontent.com/48355782/151192564-055b5d02-d9d7-4214-95df-1ba18963342c.png)
+<p><em>Player "Blue" is ending his turn and can select a direction.</em></p>
+
+![image](https://user-images.githubusercontent.com/48355782/151190288-cafa88ec-8247-4c60-bf6b-682bc17d9257.png)
+<p><em>Player "Red" selects a tile out of his move radius and cannot move to it.</em></p>
+![image](https://user-images.githubusercontent.com/48355782/151191140-a69ad339-548b-4dc4-a5a0-a20cc58568f9.png)
+<p><em>Player "Red" selects a within his move radius, but he is currently occupying it.</em></p>
+
+## The Object Oriented Model 
 
 
 ## References
+
+
+
