@@ -150,8 +150,12 @@ The winning player is presented and the player has now the option to retry or qu
 ![domainmodel_fftclone drawio](https://user-images.githubusercontent.com/48355782/151253896-8a480a07-b90d-40b3-bf38-c398e8538343.png)
 <p><em>Domain Model</em></p>
 
+The figure above shows a simplified overview of the object oriented (OO) model specific to the game. The startscene is loaded at startup, which is the main menu scene. It contains a menumanager and menuobject object to facilitate the player with a interactive menu. Currently, the player can only start the game. The scene simply polls for the start key, and if pressed, the engine transitions into the battlemap scene. This scene comprises of a menuobject, menumanager, tilesystem, characters, and a variety of member variables and methods. The menuobject and menumanager constitute the menu system. The menusystem controls the state of the game and thus controls the gameplay. There are two characters: a player and an enemy. Both characters are inherited from the characterbase class. The characterbase class contains all member variables and methods specific to the character such as, Animatewalking(), AnimateAttack(), GetHealth(), etc. Both the player and enemy are thus characters, but they have different stats and use different spritedata. Therefore, a characterbase class is required to differentiate the players.
+
 ## References
 
+The "key pressed" and "key released" functionality is based on the code in this [link](https://jamiedstewart.github.io/gba%20dev/2019/03/21/GBA-Dev-Input-Handling.html).
+The Menu system is based on a tree datastructure which is adapted from a programmer on youtube, which can be found [here](https://youtu.be/jde1Jq5dF0E).
 
 
 
