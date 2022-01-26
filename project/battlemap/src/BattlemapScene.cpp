@@ -78,7 +78,7 @@ void BattlemapScene::load()
 
     CurrentCharacterSprite = PlayerCharacter->Get();
     OtherCharacterSprite = EnemyCharacter->Get();
-    engine->enqueueMusic(battle,sizeof(battle),16000);
+    engine->enqueueMusic(battle,sizeof(battle),16000); // samples = 1023509
 }
 
 void BattlemapScene::tick(u16 keys)
@@ -241,7 +241,15 @@ void BattlemapScene::End(u16 keys)
 
         MenuSystemManager.Open(&MenuSystem["end"]);
         MenuSystemManager.Draw(MenuScreenOffset);
-        TextStream::instance().setText("COMPLETED!", 2, 10);
+        TextStream::instance().setText("COMPLETED!", 1, 10);
+        if (WinningSprite == PlayerCharacter->Get())
+        {
+            TextStream::instance().setText(PlayerCharacter->GetName() + " WINS!", 2, 10);
+        }
+        else
+        {
+            TextStream::instance().setText(EnemyCharacter->GetName() + " WINS!", 2, 10);
+        }
 
         if (isUpKeyRising(keys))
         {
@@ -275,7 +283,7 @@ void BattlemapScene::End(u16 keys)
             MenuSystemManager.OnBack();
         }
     }
-    else if (!OnEndState && isGameStateTransitioning(225) == 0)
+    else if (!OnEndState && isGameStateTransitioning(215) == 0)
     {
         MenuScreenOffset += {10,0};
         OnEndState = true;
