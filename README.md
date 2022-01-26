@@ -41,6 +41,7 @@ Next, type `make`. Finally, the gba file `battlemap.gba` can be found at `/build
 
 ![image](https://user-images.githubusercontent.com/48355782/151190288-cafa88ec-8247-4c60-bf6b-682bc17d9257.png)
 <p><em>Player "Red" selects a tile out of his move radius and cannot move to it.</em></p>
+
 ![image](https://user-images.githubusercontent.com/48355782/151191140-a69ad339-548b-4dc4-a5a0-a20cc58568f9.png)
 <p><em>Player "Red" selects a within his move radius, but he is currently occupying it.</em></p>
 
