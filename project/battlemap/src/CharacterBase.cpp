@@ -58,7 +58,6 @@ void CharacterBase::HandleMovement()
 
 void CharacterBase::AnimateWalking()
 {
-    // Weapon->Move(TileSystem->TileLocation.x, TileSystem->TileLocation.y);
     if (Animation == eAnimation::Walking)
     {
         if (CharacterSprite->getCurrentFrame() == FrameOrientation && PrevFrame != FrameOrientation)
@@ -279,8 +278,6 @@ void CharacterBase::SetDirection(CharacterBase::eDirection Direction)
         default:
             break;
     }
-    // TextStream::instance().setText("FO:" + std::to_string(FrameOrientation),2,2);
-    // TextStream::instance().setText("PF:" + std::to_string(PrevFrame),3,2);
     CharacterSprite->animateToFrame(FrameOrientation-3);
     CurrentDirection = Direction;
     this->Direction = Direction;

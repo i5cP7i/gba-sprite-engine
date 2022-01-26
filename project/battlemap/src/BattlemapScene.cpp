@@ -33,46 +33,15 @@ void BattlemapScene::load()
 
     EnemyCharacter = std::unique_ptr<Enemy>(new Enemy("Red", TileSystem->GetWorldLocation().x + 13*TileSystem->TileWidth/2, TileSystem->GetWorldLocation().y + 13*TileSystem->TileHeight/2));
     PlayerCharacter = std::unique_ptr<Player>(new Player("Blue", TileSystem->GetWorldLocation().x + 3*TileSystem->TileWidth/2, TileSystem->GetWorldLocation().y + 13*TileSystem->TileHeight/2));
-    // PlayerCharacter->TileSystem->GetWorldTransform(PlayerCharacter->GetTileLocation());
-    // EnemyCharacter->TileSystem->GetWorldTransform(EnemyCharacter->GetTileLocation());
 
     PlayerCharacter->Get()->setPalBank(0);
     EnemyCharacter->Get()->setPalBank(1);
 
-    #ifdef _DEBUGMODE_0
-    TileSelector = std::unique_ptr<TileSelection>(new TileSelection()); // Tile delta_x = 16, delta_y = 8
-    TileSelector->Get().at(0)->setPalBank(2);
-    TileSelector->Get().at(1)->setPalBank(2);
-
-    TextStream::instance().setText("FINAL FANTASY TACTICS CLONE!", 3, 1);
-
-    TextStream::instance().setRGB(31,31,31);
-
-    TextStream::instance() << "!!abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!!";
-
-    TextStream::instance().setText("YES!!!", 4, 3);
-
-    TextStream::instance().setRGB(31,0,0);
-    TextStream::instance().setText("WERKT!!!", 6, 6);
-
-    playertest = Builder
-            .withData(soldierTiles, sizeof(soldierTiles))
-            .withSize(SIZE_16_32)
-            .withAnimated(24, 30)
-            .withLocation(80, 102)
-            .buildPtr();
-
-    // playertest->stopAnimating();
-    // playertest->setBeginFrame(1);
-    #endif
     Battlemap = std::unique_ptr<Background>(new Background(1, GizaPlainsMapTiles, sizeof(GizaPlainsMapTiles), GizaPlainsMapMap, sizeof(GizaPlainsMapMap),4,1, BG_REG_64x32));
     bg1 = std::unique_ptr<Background>(new Background(2, GizaPlainsMapTiles, sizeof(GizaPlainsMapTiles), GizaPlainsMapMap, sizeof(GizaPlainsMapMap),4,1, BG_REG_64x32));
     bg2 = std::unique_ptr<Background>(new Background(3, GizaPlainsMapTiles, sizeof(GizaPlainsMapTiles), GizaPlainsMapMap, sizeof(GizaPlainsMapMap),4,1, BG_REG_64x32));
 
     ScrollBackground(0,0);
-    // Battlemap->scroll(bglerpX+TileSystem->WorldOrigin.x, bglerpY+TileSystem->WorldOrigin.y);
-    // bg1->scroll(bglerpX+TileSystem->WorldOrigin.x, bglerpY+TileSystem->WorldOrigin.y);
-    // bg2->scroll(bglerpX+TileSystem->WorldOrigin.x, bglerpY+TileSystem->WorldOrigin.y);
 
     GameState = eGameState::Setup;
 
@@ -84,7 +53,6 @@ void BattlemapScene::load()
 void BattlemapScene::tick(u16 keys)
 {
     BackgroundScroll = TileSystem->GetWorldCartesian();
-    // ProcessBackgroundScrolling();
 
     PlayerCharacter->Update();
     EnemyCharacter->Update();
@@ -171,10 +139,6 @@ bool BattlemapScene::isGameOver()
 
 void BattlemapScene::Setup(u16 keys)
 {
-    // Battlemap->scroll(bglerpX+TileSystem->WorldOrigin.x, bglerpY+TileSystem->WorldOrigin.y);
-    // bg1->scroll(bglerpX+TileSystem->WorldOrigin.x, bglerpY+TileSystem->WorldOrigin.y);
-    // bg2->scroll(bglerpX+TileSystem->WorldOrigin.x, bglerpY+TileSystem->WorldOrigin.y);
-
     TextStream::instance().setText("Press Start to begin!", 2, 4);
     PlayerCharacter->AnimateHalt();
     EnemyCharacter->AnimateHalt();
@@ -185,8 +149,6 @@ void BattlemapScene::Setup(u16 keys)
     {
 
         TextStream::instance().clear();
-        // TileSystem->SetTileStatus(TileSystemBase::eStatus::Valid);
-        // TileSystem->Move(PlayerCharacter->Get()->getX()-8, PlayerCharacter->Get()->getY()+19);
         GameState = eGameState::Play;
         PlayerCharacter->TileSystem->UpdateLocation();
         EnemyCharacter->TileSystem->UpdateLocation();
@@ -198,7 +160,6 @@ void BattlemapScene::Setup(u16 keys)
         {
             TileSystem->Move(EnemyCharacter->TileSystem->WorldLocation);
         }
-        // prev_keys = keys;
         old_key = KEY_START;
     }
 }
@@ -366,7 +327,6 @@ void BattlemapScene::InitMenu(u16 keys)
         TextStream::instance().setText(EnemyCharacter->GetName(), 0,14);
         TextStream::instance().setText("Health: " + std::to_string(EnemyCharacter->GetHealth()), 1,14);
     }
-    // MenuSystem["main"].DrawSelf(MenuScreenOffset);
     MenuObject *command = nullptr;
     if (isAKeyRising(keys) || (TurnID != oldTurnID))
     {
@@ -385,10 +345,8 @@ void BattlemapScene::InitMenu(u16 keys)
     if (isBKeyRising(keys)) {
         MenuSystemManager.OnBack();
     }
-    // TextStream::instance().setText("M.bO.: " + std::to_string(MenuSystemManager.isOpen()), 0, 1);
     if (command != nullptr)
     {
-        // MenuSystem.sLastAction = "L.Act.: " + command->GetName() + "ID: " + std::to_string(command->GetID());
         MenuSystemManager.Close();
         TextStream::instance().setText(MenuSystem.sLastAction, 1, 1);
         switch (command->GetID())
@@ -465,30 +423,12 @@ void BattlemapScene::InitMenu(u16 keys)
                 break;
         }
     }
-    // TextStream::instance().setText("PX: " + std::to_string(PlayerCharacter->TileSystem->GetWorldLocation().x), 8, 12);
-    // =TextStream::instance().setText("PY: " + std::to_string(PlayerCharacter->TileSystem->GetWorldLocation().y), 9, 12);
     MenuSystemManager.Draw(MenuScreenOffset);
 }
 
 void BattlemapScene::MoveMenu(u16 keys)
 {
     CurrentTileLocation = TileSystem->GetWorldCartesian();
-    // TileSystem->UpdateLocation();
-    // PlayerCharacter->TileSystem->UpdateLocation();
-    // EnemyCharacter->TileSystem->UpdateLocation();
-
-    // TileMoveVector.push_back(PlayerCharacter->GetTileLocation().x +
-    // TextStream::instance().setText("PX: " + std::to_string(PlayerCharacter->TileSystem->GetWorldLocation().x), 8, 12);
-    // TextStream::instance().setText("PY: " + std::to_string(PlayerCharacter->TileSystem->GetWorldLocation().y), 9, 12);
-    // TextStream::instance().setText("TX: " + std::to_string(TileSystem->GetWorldCartesian().x), 3, 12);
-    // TextStream::instance().setText("TY: " + std::to_string(TileSystem->GetWorldCartesian().y), 4, 12);
-    // TextStream::instance().setText("PTX: " + std::to_string(PreviousTileLocation.x), 7, 12);
-    // TextStream::instance().setText("PTY: " + std::to_string(PreviousTileLocation.y), 8, 12);
-    // TextStream::instance().setText("TX: " + std::to_string(CurrentTileLocation.x), 5, 12);
-    // TextStream::instance().setText("TY: " + std::to_string(CurrentTileLocation.y), 6, 12);
-    // TextStream::instance().setText("WOX: " + std::to_string(TileSystem->WorldOffset.x), 9, 12);
-    // TextStream::instance().setText("WOY: " + std::to_string(TileSystem->WorldOffset.y), 10, 12);
-
 
     if (CurrentCharacterSprite == PlayerCharacter->Get())
     {
@@ -629,8 +569,6 @@ void BattlemapScene::MoveMenu(u16 keys)
 
 void BattlemapScene::AttackMenu(u16 keys)
 {
-    // PlayerCharacter->TileSystem->UpdateLocation();
-    // EnemyCharacter->TileSystem->UpdateLocation();
     if (MenuSystem["main"]["Action"]["Items"].isEnabled())
     {
         if (isRightKeyRising(keys))
@@ -669,7 +607,6 @@ void BattlemapScene::AttackMenu(u16 keys)
                 EnemyCharacter->SetAnimation(CharacterBase::eAnimation::Attacking);
                 PlayerCharacter->GetWeaponSprite()->buildOam(PlayerCharacter->GetWeaponSprite()->GetTileIndex(), 3);
                 EnemyCharacter->GetWeaponSprite()->buildOam(EnemyCharacter->GetWeaponSprite()->GetTileIndex(), 3);
-                // TODO: Attack Direction
                 if (EnemyCharacter->TileSystem->GetWorldCartesian().x == PlayerCharacter->TileSystem->GetWorldCartesian().x)
                 {
                     if (EnemyCharacter->TileSystem->GetWorldCartesian().y > PlayerCharacter->TileSystem->GetWorldCartesian().y)
@@ -705,7 +642,6 @@ void BattlemapScene::AttackMenu(u16 keys)
                 PlayerCharacter->SetAnimation(CharacterBase::eAnimation::Attacking);
                 PlayerCharacter->GetWeaponSprite()->buildOam(PlayerCharacter->GetWeaponSprite()->GetTileIndex(), 3);
                 EnemyCharacter->GetWeaponSprite()->buildOam(EnemyCharacter->GetWeaponSprite()->GetTileIndex(), 3);
-                // TODO: Attack Direction
                 if (PlayerCharacter->TileSystem->GetWorldCartesian().x == EnemyCharacter->TileSystem->GetWorldCartesian().x)
                 {
                     if (PlayerCharacter->TileSystem->GetWorldCartesian().y > EnemyCharacter->TileSystem->GetWorldCartesian().y)
@@ -776,7 +712,6 @@ void BattlemapScene::AttackMenu(u16 keys)
     }
     else
     {
-        // TODO: check AttackAnimation ended bool. If ended, add damage code and game end condition
         BroadSwordHitsSoundCounter++;
         clamp(BroadSwordHitsSoundCounter, 0, 4);
         if (BroadSwordHitsSoundCounter >= 4)
@@ -1222,13 +1157,11 @@ bool BattlemapScene::isBKeyRising(u16 keys)
 {
     if (isKeyPressed(keys, KEY_B) && !BKeyPressed)
     {
-        // TextStream::instance().setText("B Key Press.", 4, 1);
         BKeyPressed = true;
         return true;
     }
     else if (isKeyReleased(keys, KEY_B) && BKeyPressed)
     {
-        // TextStream::instance().setText("B Key Release.", 4, 1);
         BKeyPressed = false;
         return false;
     }
