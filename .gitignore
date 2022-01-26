@@ -125,3 +125,8 @@ CTestTestfile.cmake
 
 #VisualStudio code
 .vscode
+project/battlemap/music/endgame_data/e08/d08/e0808e33.au
+project/battlemap/music/endgame.aup
+*.au
+*.au
+*.aup
