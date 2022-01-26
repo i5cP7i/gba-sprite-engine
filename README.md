@@ -20,13 +20,16 @@ Next, type `make`. Finally, the gba file `battlemap.gba` can be found at `/build
 
 ## Functional Description
 
+This is a Final Fantasy Tactics clone based on the original Final Fantasy Tactics Advance (Square Enix, 2003) which is a turn-based role-playing strategy game for the gameboy advance. This clone features a basic implementation of the battle system and can potentially be expanded with more maps and abilities. The following description elaborates on the current implementation and its functionality.
+
 ### Main Menu Scene
 ![MainMenuScene](https://user-images.githubusercontent.com/48355782/151185305-941d5fbc-add6-4130-8131-13c649384e61.gif)
-<details>
 
-</details>
+At startup, the main menu is loaded. When the user presses the "A" button, the game transitions into the battlemap scene.
 
 ### Battlemap Scene
+
+This is the battlemap scene where the gameplay takes place. The battle is located on a grass field where two player characters duel with melee combat.
 
 ![battlemapScene](https://user-images.githubusercontent.com/48355782/151186224-2c791616-813c-4523-bbd4-8bea28aa2c0d.png)
 
