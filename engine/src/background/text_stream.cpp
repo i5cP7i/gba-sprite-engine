@@ -17,7 +17,7 @@ void TextStream::clear() {
 }
 
 TextStream::TextStream() : Background(0, text_data, sizeof(text_data), nullptr, TILE_WIDTH * TILE_WIDTH), currCol(0), currRow(0) {
-    useMapScreenBlock(24);
+    useMapScreenBlock(30);
     this->palette = std::unique_ptr<BackgroundPaletteManager>(new BackgroundPaletteManager());
 
     persist();
@@ -110,5 +110,12 @@ void TextStream::setFontColor(COLOR color) {
 void TextStream::persist() {
     Background::persist();
     // WARNING: stream hijacks last bg palette bank, last index, no matter what.
-    setFontColor(PaletteManager::color(31, 31, 31));
+
+    setFontColor(PaletteManager::color(FontColorR, FontColorG, FontColorB));
+}
+
+void TextStream::setRGB(u32 r, u32 g, u32 b) {
+    this->FontColorR = r;
+    this->FontColorG = g;
+    this->FontColorB = b;
 }
