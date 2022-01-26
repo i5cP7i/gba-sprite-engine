@@ -7,7 +7,6 @@
 
 void BattlemapScene::load()
 {
-
     foregroundPalette = std::unique_ptr<ForegroundPaletteManager>(new ForegroundPaletteManager(sharedPal, sizeof(sharedPal)));
     backgroundPalette = std::unique_ptr<BackgroundPaletteManager>(new BackgroundPaletteManager(GizaPlainsMapPal, sizeof(GizaPlainsMapPal)));
 
@@ -79,8 +78,7 @@ void BattlemapScene::load()
 
     CurrentCharacterSprite = PlayerCharacter->Get();
     OtherCharacterSprite = EnemyCharacter->Get();
-
-    // engine->enqueueMusic(test,1872091,16000); // totalSamples = 1952095
+    engine->enqueueMusic(battle,sizeof(battle),16000);
 }
 
 void BattlemapScene::tick(u16 keys)
@@ -106,6 +104,7 @@ void BattlemapScene::tick(u16 keys)
             case eGameState::End:
                 if (!bGameOver && isGameStateTransitioning(200) == 0)
                 {
+                    engine->dequeueAllSounds();
                     TextStream::instance().clear();
                     bGameOver = true;
                 }
@@ -123,10 +122,16 @@ void BattlemapScene::tick(u16 keys)
     }
     else
     {
-        if (!engine->isTransitioning())
+        static unsigned countFade = 0;
+        countFade++;
+        WinningSprite->animateToFrame(9);
+        LosingSprite->animateToFrame(13);
+        if (!engine->isTransitioning() && countFade > 70)
         {
-            // engine->enqueueSound(zelda_secret_16K_mono, zelda_secret_16K_mono_bytes);
-            engine->transitionIntoScene(new MainMenuScene(engine), new FadeOutScene(2));
+            WinningSprite->animateToFrame(9);
+            LosingSprite->animateToFrame(13);
+            countFade = 0;
+            engine->transitionIntoScene(new MainMenuScene(engine), new FadeOutScene(1));
         }
     }
 }
@@ -178,6 +183,7 @@ void BattlemapScene::Setup(u16 keys)
 
     if (GetKeyState(keys, KEY_START))
     {
+
         TextStream::instance().clear();
         // TileSystem->SetTileStatus(TileSystemBase::eStatus::Valid);
         // TileSystem->Move(PlayerCharacter->Get()->getX()-8, PlayerCharacter->Get()->getY()+19);
@@ -213,6 +219,22 @@ void BattlemapScene::End(u16 keys)
 {
     if (OnEndState)
     {
+        static unsigned EndGameMusicCounter = 0;
+
+        if (EndGameMusicCounter == 0)
+        {
+            EndGameMusicCounter++;
+            engine->enqueueMusic(endgame, sizeof(endgame));
+        }
+        else if (EndGameMusicCounter >= 1 && EndGameMusicCounter < 500)
+        {
+            EndGameMusicCounter++;
+        }
+        else
+        {
+            EndGameMusicCounter = 500;
+            engine->dequeueAllSounds();
+        }
         MenuObject *command = nullptr;
         WinningSprite->animateToFrame(9);
         LosingSprite->animateToFrame(13);
@@ -242,11 +264,14 @@ void BattlemapScene::End(u16 keys)
                     GameState = eGameState::Reset;
                     break;
                 case 1001:
+                    engine->dequeueAllSounds();
+                    engine->enqueueSound(fade1, sizeof(fade1));
                     GameState = eGameState::Quit;
                     break;
                 default:
                     break;
             }
+            EndGameMusicCounter = 0;
             MenuSystemManager.OnBack();
         }
     }
@@ -264,6 +289,7 @@ void BattlemapScene::End(u16 keys)
 
 void BattlemapScene::Reset()
 {
+    engine->dequeueAllSounds();
     TurnID = 0;
     oldTurnID = TurnID;
     bGameOver = false;
@@ -289,6 +315,7 @@ void BattlemapScene::Reset()
 
     TextStream::instance().clear();
 
+    engine->enqueueMusic(battle,sizeof(battle));
     GameMenu = eGameMenu::Init;
     GameState = eGameState::Setup;
 }
@@ -742,8 +769,35 @@ void BattlemapScene::AttackMenu(u16 keys)
     else
     {
         // TODO: check AttackAnimation ended bool. If ended, add damage code and game end condition
+        BroadSwordHitsSoundCounter++;
+        clamp(BroadSwordHitsSoundCounter, 0, 4);
+        if (BroadSwordHitsSoundCounter >= 4)
+        {
+            BroadSwordHitsSoundCounter = 0;
+        }
         if (CurrentCharacterSprite == PlayerCharacter->Get())
         {
+            if (PlayerCharacter->Get()->getCurrentFrame() == 22 || PlayerCharacter->Get()->getCurrentFrame() == 19)
+            {
+                switch (BroadSwordHitsSoundCounter)
+                {
+                    case 0:
+                        engine->enqueueSound(broadswordhit1, sizeof(broadswordhit1));
+                        break;
+                    case 1:
+                        engine->enqueueSound(broadswordhits2, sizeof(broadswordhits2));
+                        break;
+                    case 2:
+                        engine->enqueueSound(broadswordhits3, sizeof(broadswordhits3));
+                        break;
+                    case 4:
+                        engine->enqueueSound(broadswordhits4, sizeof(broadswordhits4));
+                        break;
+                    default:
+                        break;
+                }
+
+            }
             if (PlayerCharacter->AnimateAttack())
             {
                 PlayerCharacter->SetAnimation(CharacterBase::eAnimation::Walking);
@@ -786,6 +840,26 @@ void BattlemapScene::AttackMenu(u16 keys)
         }
         else
         {
+            if (EnemyCharacter->Get()->getCurrentFrame() == 22 || EnemyCharacter->Get()->getCurrentFrame() == 19)
+            {
+                switch (BroadSwordHitsSoundCounter)
+                {
+                    case 0:
+                        engine->enqueueSound(broadswordhit1, sizeof(broadswordhit1));
+                        break;
+                    case 1:
+                        engine->enqueueSound(broadswordhits2, sizeof(broadswordhits2));
+                        break;
+                    case 2:
+                        engine->enqueueSound(broadswordhits3, sizeof(broadswordhits3));
+                        break;
+                    case 4:
+                        engine->enqueueSound(broadswordhits4, sizeof(broadswordhits4));
+                        break;
+                    default:
+                        break;
+                }
+            }
             if (EnemyCharacter->AnimateAttack())
             {
                 EnemyCharacter->SetAnimation(CharacterBase::eAnimation::Walking);
@@ -817,7 +891,6 @@ void BattlemapScene::AttackMenu(u16 keys)
                         WinningSprite = CurrentCharacterSprite;
                         LosingSprite = OtherCharacterSprite;
                     }
-
                     GameState = eGameState::End;
                 }
                 else

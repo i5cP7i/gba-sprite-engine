@@ -7,6 +7,7 @@
 
 void MainMenuScene::load()
 {
+
     backgroundPalette = std::unique_ptr<BackgroundPaletteManager>(new BackgroundPaletteManager(MainMenuBackgroundPal, sizeof(MainMenuBackgroundPal)));
     bg0 = std::unique_ptr<Background>(new Background(1, MainMenuBackgroundTiles, sizeof(MainMenuBackgroundTiles), MainMenuBackgroundMap, sizeof(MainMenuBackgroundMap),4,1, BG_REG_32x32));
     bg1 = std::unique_ptr<Background>(new Background(2, MainMenuBackgroundTiles, sizeof(MainMenuBackgroundTiles), MainMenuBackgroundMap, sizeof(MainMenuBackgroundMap),4,1, BG_REG_32x32));
@@ -18,7 +19,7 @@ void MainMenuScene::load()
     MenuSystemManager.Open(&MenuSystem["main"]);
     TextStream::instance().setText("FINAL FANTASY TACTICS", 0, 5);
     TextStream::instance().setText("-CLONE-", 1, 18);
-
+    engine->enqueueMusic(MainMenuMusic, sizeof(MainMenuMusic));
     // MenuSystemManager.Draw(MenuScreenOffset);
 }
 
@@ -41,10 +42,12 @@ void MainMenuScene::tick(u16 keys)
     }
     else
     {
-        if (!engine->isTransitioning())
+        static unsigned countFade = 0;
+        countFade++;
+        if (!engine->isTransitioning() && countFade > 70)
         {
-            // engine->enqueueSound(zelda_secret_16K_mono, zelda_secret_16K_mono_bytes);
-            engine->transitionIntoScene(new BattlemapScene(engine), new FadeOutScene(2));
+            countFade = 0;
+            engine->transitionIntoScene(new BattlemapScene(engine), new FadeOutScene(1));
         }
     }
 
@@ -68,20 +71,20 @@ void MainMenuScene::InitMenu(u16 keys)
     MenuObject *command = nullptr;
     static unsigned TextToggleCount = 0;
     TextToggleCount++;
-    if (TextToggleCount >= 0 && TextToggleCount < 50)
+    if (TextToggleCount >= 0 && TextToggleCount < 43)
     {
-        TextStream::instance().setText("FINAL FANTASY TACTICS", 0, 5);
-        TextStream::instance().setText("-CLONE-", 1, 18);
-        TextStream::instance().setText("Push A to Start", 18, 4);
-    }
-    else if (TextToggleCount >= 50 && TextToggleCount < 100)
-    {
-        TextStream::instance().clear();
         TextStream::instance().setText("FINAL FANTASY TACTICS", 0, 5);
         TextStream::instance().setText("-CLONE-", 1, 18);
         TextStream::instance().setText("Push A to Start", 18, 6);
     }
-    else if (TextToggleCount >= 100)
+    else if (TextToggleCount >= 43 && TextToggleCount < 86)
+    {
+        TextStream::instance().clear();
+        TextStream::instance().setText("FINAL FANTASY TACTICS", 0, 5);
+        TextStream::instance().setText("-CLONE-", 1, 18);
+        TextStream::instance().setText("Push A to Start", 18, 10);
+    }
+    else if (TextToggleCount >= 86)
     {
         TextToggleCount = 0;
     }
@@ -105,6 +108,8 @@ void MainMenuScene::InitMenu(u16 keys)
         switch (command->GetID())
         {
             case 100:
+                engine->dequeueAllSounds();
+                engine->enqueueSound(fade1, sizeof(fade1));
                 bStart = true;
                 break;
             default:

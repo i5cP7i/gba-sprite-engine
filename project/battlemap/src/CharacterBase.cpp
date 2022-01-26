@@ -3,6 +3,7 @@
 //
 
 #include "CharacterBase.h"
+#include <libgba-sprite-engine/gba_engine.h>
 
 CharacterBase::CharacterBase(const void *ImageData, int ImageSize, int x, int y, int AnimationDelay, int AnimationFrames)
 {

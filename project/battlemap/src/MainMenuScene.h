@@ -19,6 +19,9 @@
 #include "MenuObject.h"
 #include "MenuManager.h"
 
+#include "../music/MainMenuMusic.h"
+#include "../sfx/fade1.h"
+
 class MainMenuScene : public Scene
 {
 private:

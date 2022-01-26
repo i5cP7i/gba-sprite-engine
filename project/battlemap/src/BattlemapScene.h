@@ -25,6 +25,12 @@
 #include "MenuObject.h"
 #include "MenuManager.h"
 
+#include "../sfx/broadswordhit1.h"
+#include "../sfx/broadswordhit2.h"
+#include "../sfx/broadswordhit3.h"
+#include "../sfx/broadswordhit4.h"
+#include "../music/battle.h"
+#include "../music/endgame.h"
 // #include "test.h"
 
 // #define _DEBUGMODE_0
@@ -133,6 +139,9 @@ private:
     void ScrollBackground(TileSystemBase::TileCoordinates T);
     void ScrollBackground(int x, int y);
     void ProcessBackgroundScrolling();
+
+    // Sound FX variables
+    int BroadSwordHitsSoundCounter = 0;
 public:
     std::vector<Sprite *> sprites() override;
     std::vector<Background *> backgrounds() override;
