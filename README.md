@@ -147,6 +147,8 @@ The winning player is presented and the player has now the option to retry or qu
   
 ## The Object Oriented Model 
 
+![domainmodel_fftclone drawio](https://user-images.githubusercontent.com/48355782/151253896-8a480a07-b90d-40b3-bf38-c398e8538343.png)
+<p><em>Domain Model</em></p>
 
 ## References
 
