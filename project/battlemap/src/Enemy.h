@@ -16,7 +16,7 @@ public:
     Enemy(std::string Name, int x, int y);
     void Reset() final;
     std::string GetName() const {return Name;}
-    eDirection GetDirection() const { return Direction; }
+    eDirection GetDirection() const { return CurrentDirection; }
 
 };
 
