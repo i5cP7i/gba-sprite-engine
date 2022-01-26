@@ -87,12 +87,25 @@ Next, type `make`. Finally, the gba file `battlemap.gba` can be found at `/build
 ![image](https://user-images.githubusercontent.com/48355782/151199091-f9658734-1010-44c9-a294-2a5e42c47f27.png)
 <p><em>Player "Red" tries to escape.</em></p>
 
+#### Player Death
+![image](https://user-images.githubusercontent.com/48355782/151199741-b0778d35-627e-432a-a47f-e9b31a470861.png)
+<p><em>Player "Red" has zero health and loses the game.</em></p>
 
+#### Victory Sequence and menu
+![image](https://user-images.githubusercontent.com/48355782/151200154-d1c7dede-6d25-47e7-bb95-c9a1b2235d1d.png)
+<p><em>Player "Blue" wins.</em></p>
+
+![endgamequit](https://user-images.githubusercontent.com/48355782/151202626-5a583ca9-7579-476c-b4c5-1c9414370653.gif)
+<p><em>Select quit to return to the main menu.</em></p>
 
 ## The Object Oriented Model 
 
 
 ## References
+
+
+
+
 
 
 
