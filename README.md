@@ -8,6 +8,8 @@ This project is an assignment of the course "software ontwerp in C/C++" (softwar
 2. The project started out from the [GBA sprite engine](https://github.com/i5cP7i/gba-sprite-engine) and uses GBA [MODE0](https://github.com/i5cP7i/gba-sprite-engine/blob/624c893aba7d43eb0c8a02df0d82c4ae5601b6cc/engine/src/gba_engine.cpp#L109) and [C++11](https://github.com/i5cP7i/gba-sprite-engine/blob/624c893aba7d43eb0c8a02df0d82c4ae5601b6cc/CMakeLists.txt#L17).
 3. This project contains code and uses art taken from or based on external sources. The details can be found in the last chapter which contains all the references. The source code itself also mentions in comments if it is based on external sources.
 4. The project should compile. However, this can only be checked by downloading or cloning the repository and compile by using cmake. This project was built using the [CLion IDE](https://www.jetbrains.com/clion/) from Jetbrains. 
+5. The ReadME contains a short functional description of the game. This description is given below.
+6. The ReadME also contains a sketch of the OO model specific to the project supported with a description.
 
 ## Building the project
 Assuming that the user has the (necessary requirements)[https://github.com/wgroeneveld/gba-sprite-engine#compiling-everything] set up, the project can be compiled by using cmake. First, the project has te be cloned or downloaded and extracted to a accessible folder. Open cmd at the project's root folder and create a 'build' folder. Then change directory to the build folder. If on Windows, type:
@@ -15,4 +17,11 @@ Assuming that the user has the (necessary requirements)[https://github.com/wgroe
 cmake -G "Unix Makefiles" -DCMAKE_SH="CMAKE_SH-NOTFOUND" ./..
 ```
 Next, type `make`. Finally, the gba file `battlemap.gba` can be found at `/build/project/battlemap`.
+
+## Functional Description
+
+
+## The Project's Object Oriented Model 
+
+
 ## References
