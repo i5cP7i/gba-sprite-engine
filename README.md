@@ -101,7 +101,7 @@ When the player chooses to attack the enemy, he will deal damage based on his st
 ![image](https://user-images.githubusercontent.com/48355782/151197447-e8d8fda8-394b-454d-8416-52a1cd934403.png)
 <p><em>Player "Blue" attacks Player "Red".</em></p>
 
-The red player is damaged. He can now choose to heal himself or strike back, move back, and wait or do nothing and wait. Or he could choose to only move and wait. This is up to the player. 
+The red player is damaged. He can now choose to heal himself with a potion or strike back, move back, and wait or do nothing and wait. Or he could choose to only move and wait. This is up to the player. 
 
 ![image](https://user-images.githubusercontent.com/48355782/151197817-8a4b1751-73df-471f-ad38-e1b3353c0ff2.png)
 <p><em>Player "Red" is damaged and chooses to heal himself.</em></p>
@@ -124,7 +124,7 @@ Note that each player who chooses to heal, can also heal the enemy!
 <details>
 <summary>Player Death</summary>
 
-
+When either one of the players reaches zero health or less loses the game. This also ends the game and the game transitions the end game menu.
   
 ![image](https://user-images.githubusercontent.com/48355782/151199741-b0778d35-627e-432a-a47f-e9b31a470861.png)
 <p><em>Player "Red" has zero health and loses the game.</em></p>
@@ -133,6 +133,8 @@ Note that each player who chooses to heal, can also heal the enemy!
 <details>
 <summary>Victory Sequence and menu</summary>
 
+The winning player is presented and the player has now the option to retry or quit to the main menu. If retry is selected, then the battle resets and can be played again. If quit is selected, the game transitions to the main menu scene.
+  
 ![image](https://user-images.githubusercontent.com/48355782/151200154-d1c7dede-6d25-47e7-bb95-c9a1b2235d1d.png)
 <p><em>Player "Blue" wins.</em></p>
 
