@@ -98,6 +98,9 @@ Next, type `make`. Finally, the gba file `battlemap.gba` can be found at `/build
 ![endgamequit](https://user-images.githubusercontent.com/48355782/151202626-5a583ca9-7579-476c-b4c5-1c9414370653.gif)
 <p><em>Select quit to return to the main menu.</em></p>
 
+![endgameretry](https://user-images.githubusercontent.com/48355782/151203665-e8021386-ae8e-4597-b8c8-01337c039639.gif)
+<p><em>Select retry to play again.</em></p>
+
 ## The Object Oriented Model 
 
 
