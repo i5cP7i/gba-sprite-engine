@@ -36,11 +36,11 @@ This is the battlemap scene where the gameplay takes place. The battle is locate
 <details>
 <summary>Start of the Battle</summary>
 
-At the beginning of the battlemap scene, the two characters and the battlemap background are shown. If the user presses the start button, the game begins.
+At the beginning of the battlemap scene, the two characters and the battlemap background are shown. If the user presses the "Start" button, the game begins.
   
 ![image](https://user-images.githubusercontent.com/48355782/151186751-c9f166b3-9756-4b03-b341-08edaa047d09.png)
 
-
+The game has started. To perform an action or move, press the "A" button. This opens the menu system. The player can now choose to move, act, or wait.
 
 ![image](https://user-images.githubusercontent.com/48355782/151192125-2978cd34-34c1-47a7-ad2a-882fa1e1bda8.png)
 <p><em>The menu system</em></p>
@@ -50,6 +50,8 @@ At the beginning of the battlemap scene, the two characters and the battlemap ba
 <details>
 <summary>Player Move and Wait</summary>
 
+The player has to select a tile within the boundaries of the map and his move radius. The move radius dictates how many tiles the player can cross and thus determines how far the player can move in each direction. There are four directions in which the player can move: Northeast, southeast, southwest, and Northwest. The player cannot act to the "right" (east, positive x direction), "left" (west, negative x direction), "up" (north, negative y direction), or "down" (south, positive y direction). The player moves instantaneously to the designated tile, if it is a valid tile to move on.
+  
 ![image](https://user-images.githubusercontent.com/48355782/151189692-63f98f64-4caf-41f4-9558-63709706b181.png)
 <p><em>Player "Blue" selects a tile within his move radius (left), and moves to it (right).</em></p>
 
