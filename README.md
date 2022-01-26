@@ -21,21 +21,28 @@ Next, type `make`. Finally, the gba file `battlemap.gba` can be found at `/build
 ## Functional Description
 
 ### Main Menu Scene
-
 ![MainMenuScene](https://user-images.githubusercontent.com/48355782/151185305-941d5fbc-add6-4130-8131-13c649384e61.gif)
+<details>
+
+</details>
 
 ### Battlemap Scene
 
 ![battlemapScene](https://user-images.githubusercontent.com/48355782/151186224-2c791616-813c-4523-bbd4-8bea28aa2c0d.png)
 
-#### Start of the Battle
+
+<details>
+<summary>Start of the Battle</summary>
 
 ![image](https://user-images.githubusercontent.com/48355782/151186751-c9f166b3-9756-4b03-b341-08edaa047d09.png)
 
 ![image](https://user-images.githubusercontent.com/48355782/151192125-2978cd34-34c1-47a7-ad2a-882fa1e1bda8.png)
 <p><em>The menu system</em></p>
 
-#### Player Move and Wait
+</details>
+
+<details>
+<summary>Player Move and Wait</summary>
 
 ![image](https://user-images.githubusercontent.com/48355782/151189692-63f98f64-4caf-41f4-9558-63709706b181.png)
 <p><em>Player "Blue" selects a tile within his move radius (left), and moves to it (right).</em></p>
@@ -47,12 +54,14 @@ Next, type `make`. Finally, the gba file `battlemap.gba` can be found at `/build
 <p><em>Player "Red" selects a tile out of his move radius and cannot move to it.</em></p>
 
 ![image](https://user-images.githubusercontent.com/48355782/151191140-a69ad339-548b-4dc4-a5a0-a20cc58568f9.png)
-<p><em>Player "Red" selects a within his move radius, but he is currently occupying it.</em></p>
+<p><em>Player "Red" selects a tile within his move radius, but he is currently occupying it.</em></p>
 
 ![image](https://user-images.githubusercontent.com/48355782/151193388-80de4ab7-14b8-41d4-accd-0aaecbd50f3e.png)
 <p><em>The players are now within the attack range and can enter combat.</em></p>
+</details>
 
-#### Player Action
+<details>
+<summary>Player Action</summary>
 
 ![image](https://user-images.githubusercontent.com/48355782/151193855-2d3df1d5-a288-4ff0-beea-d2fff1cf5fcc.png)
 <p><em>Navigation to the action menu.</em></p>
@@ -86,12 +95,18 @@ Next, type `make`. Finally, the gba file `battlemap.gba` can be found at `/build
 
 ![image](https://user-images.githubusercontent.com/48355782/151199091-f9658734-1010-44c9-a294-2a5e42c47f27.png)
 <p><em>Player "Red" tries to escape.</em></p>
+</details>
 
-#### Player Death
+<details>
+<summary>Player Death</summary>
+
 ![image](https://user-images.githubusercontent.com/48355782/151199741-b0778d35-627e-432a-a47f-e9b31a470861.png)
 <p><em>Player "Red" has zero health and loses the game.</em></p>
+</details>
 
-#### Victory Sequence and menu
+<details>
+<summary>Victory Sequence and menu</summary>
+
 ![image](https://user-images.githubusercontent.com/48355782/151200154-d1c7dede-6d25-47e7-bb95-c9a1b2235d1d.png)
 <p><em>Player "Blue" wins.</em></p>
 
@@ -100,7 +115,8 @@ Next, type `make`. Finally, the gba file `battlemap.gba` can be found at `/build
 
 ![endgameretry](https://user-images.githubusercontent.com/48355782/151203665-e8021386-ae8e-4597-b8c8-01337c039639.gif)
 <p><em>Select retry to play again.</em></p>
-
+</details>
+  
 ## The Object Oriented Model 
 
 
