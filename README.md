@@ -33,6 +33,8 @@ This is the battlemap scene where the gameplay takes place. The battle is locate
 
 ![battlemapScene](https://user-images.githubusercontent.com/48355782/151186224-2c791616-813c-4523-bbd4-8bea28aa2c0d.png)
 
+*(**Click to expand each menu**)*
+
 <details>
 <summary>Start of the Battle</summary>
 
